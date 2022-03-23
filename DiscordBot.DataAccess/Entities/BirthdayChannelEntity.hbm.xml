@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
+                   namespace="DiscordBot.DataAccess.Entities">
+    <class name="BirthdayChannelEntity" table="birthdayChannel">
+        <id name="Id" column="id" type="Int64">
+            <generator class="increment"/>
+        </id>
+        <property name="GuildId" type="String" column="guildId"/>
+        <property name="ChannelId" type="String" column="channelId"/>
+        <property name="JanMessageId" type="String" column="janMsgId"/>
+        <property name="FebMessageId" type="String" column="febMsgId"/>
+        <property name="MarMessageId" type="String" column="marMsgId"/>
+        <property name="AprMessageId" type="String" column="aprMsgId"/>
+        <property name="MaiMessageId" type="String" column="maiMsgId"/>
+        <property name="JunMessageId" type="String" column="junMsgId"/>
+        <property name="JulMessageId" type="String" column="julMsgId"/>
+        <property name="AugMessageId" type="String" column="augMsgId"/>
+        <property name="SepMessageId" type="String" column="sepMsgId"/>
+        <property name="OctMessageId" type="String" column="octMsgId"/>
+        <property name="NovMessageId" type="String" column="novMsgId"/>
+        <property name="DezMessageId" type="String" column="dezMsgId"/>
+    </class>
+</hibernate-mapping>

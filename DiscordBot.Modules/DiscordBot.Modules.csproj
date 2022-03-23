@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.3.0" />
+      <PackageReference Include="Discord.Net" Version="3.3.2" />
+      <PackageReference Include="MySql.Data" Version="8.0.28" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DiscordBot.DataAccess.Contract\DiscordBot.DataAccess.Contract.csproj" />
+      <ProjectReference Include="..\DiscordBot.Framework.Contract\DiscordBot.Framework.Contract.csproj" />
+      <ProjectReference Include="..\DiscordBot.MusicPlayer\DiscordBot.MusicPlayer.csproj" />
+      <ProjectReference Include="..\Victoria\Victoria.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DiscordBot.DataAccess.Contract\DiscordBot.DataAccess.Contract.csproj" />
+      <ProjectReference Include="..\Victoria\Victoria.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
+                   namespace="DiscordBot.DataAccess.Entities">
+    <class name="ReactionRoleEntity" table="reactionroles">
+        <id name="ReactionRoleId" column="reactionroleid" type="Int64">
+            <generator class="increment"/>
+        </id>
+        <property name="GuildId" type="String" column="guildid"/>
+        <property name="ChannelId" type="String" column="channelid"/>
+        <property name="MessageId" type="String" column="messageid"/>
+        <property name="EmojiId" type="String" column="emojiid"/>
+        <property name="RoleId" type="String" column="roleId"/>
+        <property name="IsEmoji" type="Boolean" column="isEmoji"/>
+    </class>
+</hibernate-mapping>

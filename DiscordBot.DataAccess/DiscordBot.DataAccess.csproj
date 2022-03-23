@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="6.3.0" />
+      <PackageReference Include="Discord.Net" Version="3.3.2" />
+      <PackageReference Include="MySql.Data" Version="8.0.28" />
+      <PackageReference Include="NHibernate" Version="5.3.10" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DiscordBot.DataAccess.Contract\DiscordBot.DataAccess.Contract.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="hibernate.cfg.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Entities\AutoroleSetupEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Entities\BirthdayRoleAssotiationEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Entities\BirthdayRoleSetupEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Include="Entities\PlaylistItemEntity.hbm.xml" />
+      <EmbeddedResource Include="hibernate.cfg.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Entities\ZenQuoteEntity.hbm.xml" />
+      <None Remove="Entities\BirthdayEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\BirthdayEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Entities\BIrthdayChannel.hbm.xml" />
+      <EmbeddedResource Include="Entities\BirthdayChannelEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Entities\BirthdaySubChannelEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\BirthdaySubChannelEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <None Remove="Entities\ZenQuoteRegistrationEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\ZenQuoteRegistrationEntity.hbm.xml" />
+      <None Remove="Entities\PlaylistEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\PlaylistEntity.hbm.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Entities\ReactionRoleEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\ReactionRoleEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+</Project>
