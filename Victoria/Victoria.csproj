@@ -22,13 +22,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Discord.Net.WebSocket" Version="3.3.0"/>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
-		<PackageReference Include="System.Text.Json" Version="6.0.2"/>
+		<PackageReference Include="Autofac" Version="6.3.0" />
+		<PackageReference Include="Discord.Net.WebSocket" Version="3.3.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+		<PackageReference Include="System.Text.Json" Version="6.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="Logo.png" Pack="true" Visible="false" PackagePath=""/>
+		<None Include="Logo.png" Pack="true" Visible="false" PackagePath="" />
 	</ItemGroup>
 
 </Project>
