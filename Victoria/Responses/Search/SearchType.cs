@@ -1,26 +1,26 @@
-namespace Victoria.Responses.Search;
-
-/// <summary>
-/// 
-/// </summary>
-public enum SearchType {
+namespace Victoria.Responses.Search {
     /// <summary>
     /// 
     /// </summary>
-    YouTube,
+    public enum SearchType {
+        /// <summary>
+        /// 
+        /// </summary>
+        YouTube,
 
-    /// <summary>
-    /// 
-    /// </summary>
-    YouTubeMusic,
+        /// <summary>
+        /// 
+        /// </summary>
+        YouTubeMusic,
 
-    /// <summary>
-    /// 
-    /// </summary>
-    SoundCloud,
+        /// <summary>
+        /// 
+        /// </summary>
+        SoundCloud,
 
-    /// <summary>
-    /// 
-    /// </summary>
-    Direct,
+        /// <summary>
+        /// 
+        /// </summary>
+        Direct,
+    }
 }

@@ -1,6 +1,6 @@
-namespace Victoria.Filters;
-
-/// <summary>
-/// 
-/// </summary>
-public interface IFilter { }
+namespace Victoria.Filters {
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IFilter { }
+}

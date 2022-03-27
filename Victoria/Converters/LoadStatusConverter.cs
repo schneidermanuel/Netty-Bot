@@ -3,15 +3,15 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Victoria.Responses.Search;
 
-namespace Victoria.Converters;
+namespace Victoria.Converters {
+    internal sealed class LoadStatusConverter : JsonConverter<SearchStatus> {
+        public override SearchStatus Read(ref Utf8JsonReader reader, Type typeToConvert,
+                                          JsonSerializerOptions options) {
+            return (SearchStatus) reader.ValueSpan[0];
+        }
 
-internal sealed class LoadStatusConverter : JsonConverter<SearchStatus> {
-    public override SearchStatus Read(ref Utf8JsonReader reader, Type typeToConvert,
-        JsonSerializerOptions options) {
-        return (SearchStatus) reader.ValueSpan[0];
-    }
-
-    public override void Write(Utf8JsonWriter writer, SearchStatus value, JsonSerializerOptions options) {
-        throw new NotImplementedException();
+        public override void Write(Utf8JsonWriter writer, SearchStatus value, JsonSerializerOptions options) {
+            throw new NotImplementedException();
+        }
     }
 }

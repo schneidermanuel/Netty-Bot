@@ -1,20 +1,20 @@
 using System.Text.Json.Serialization;
 
-namespace Victoria.Filters;
-
-/// <summary>
-/// Uses amplification to create a shuddering effect, where the volume quickly oscillates.
-/// </summary>
-public struct TremoloFilter : IFilter {
+namespace Victoria.Filters {
     /// <summary>
-    /// 
+    /// Uses amplification to create a shuddering effect, where the volume quickly oscillates.
     /// </summary>
-    [JsonPropertyName("frequency")]
-    public double Frequency { get; set; }
+    public struct TremoloFilter : IFilter {
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonPropertyName("frequency")]
+        public double Frequency { get; set; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    [JsonPropertyName("depth")]
-    public double Depth { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonPropertyName("depth")]
+        public double Depth { get; set; }
+    }
 }
