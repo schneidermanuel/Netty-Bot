@@ -132,6 +132,13 @@ public abstract class CommandModuleBase : IGuildModule
         return output;
     }
 
+    protected async Task<string> RequireReminderOrEmpty(ICommandContext context, int position = 1)
+    {
+        var args = context.Message.Content.Split(' ').Skip(position);
+        var output = args.Aggregate(string.Empty, (current, arg) => current + $"{arg} ");
+        return output;
+    }
+    
     protected int RequireIntArgOrDefault(ICommandContext context, int position = 1, int defaultValue = 0)
     {
         var args = context.Message.Content.Split(' ').Skip(position);

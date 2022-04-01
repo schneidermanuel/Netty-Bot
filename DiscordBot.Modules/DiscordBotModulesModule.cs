@@ -5,6 +5,7 @@ using DiscordBot.Modules.BirthdayList;
 using DiscordBot.Modules.Huebcraft;
 using DiscordBot.Modules.MusicPlayer;
 using DiscordBot.Modules.ReactionRoles;
+using DiscordBot.Modules.TwitchNotifications;
 using DiscordBot.Modules.ZenQuote;
 
 namespace DiscordBot.Modules;
@@ -19,6 +20,7 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<ZenQuoteModule>();
         builder.RegisterModule<BirthdayListModule>();
         builder.RegisterModule<MusicPlayerModule>();
+        builder.RegisterModule<TwitchNotificationsModule>();
         builder.RegisterModule<AutoRoleModule>();
     }
 }

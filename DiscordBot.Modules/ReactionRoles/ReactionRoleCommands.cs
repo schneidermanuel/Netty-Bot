@@ -51,7 +51,19 @@ public class ReactionRoleCommands : CommandModuleBase, IGuildModule
         }
 
         var content = await RequireReminderArg(context, 3);
-        var message = await context.Channel.SendMessageAsync(content);
+        Embed embed = null;
+        if (content.StartsWith("embed:"))
+        {
+            var prefixLength = "embed:".Length;
+            content = content.Substring(prefixLength, content.Length - prefixLength);
+            var builder = new EmbedBuilder();
+            builder.WithDescription(content);
+            content = string.Empty;
+            builder.WithColor(Color.Green);
+            embed = builder.Build();
+        }
+
+        var message = await context.Channel.SendMessageAsync(content, false, embed);
         await message.AddReactionAsync(emote);
         var reactionRole = new ReactionRole
         {

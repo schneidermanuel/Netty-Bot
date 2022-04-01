@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Autofac;
 using DiscordBot.DataAccess;
 using DiscordBot.Framework;
+using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Modules;
 using DiscordBot.MusicPlayer;
+using DiscordBot.PubSub;
 using Victoria;
 
 namespace DiscordBot.MainBot;
@@ -40,6 +42,7 @@ public class DiscordBotSystem
         builder.RegisterType<BotManager>();
         builder.RegisterModule<MusicPlayerModule>();
         builder.RegisterModule<VictoriaModule>();
+        builder.RegisterModule<PubSubModule>();
         builder.RegisterInstance(BotManager._client);
         _container = builder.Build();
     }

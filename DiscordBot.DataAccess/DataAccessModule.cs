@@ -4,6 +4,7 @@ using DiscordBot.DataAccess.Modules.AutoRole;
 using DiscordBot.DataAccess.Modules.GeburtstagList;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
 using DiscordBot.DataAccess.Modules.ReactionRoles;
+using DiscordBot.DataAccess.Modules.TwitchNotifications;
 using DiscordBot.DataAccess.Modules.ZenQuote;
 using DiscordBot.DataAccess.NHibernate;
 
@@ -20,5 +21,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<GeburtstagListModule>();
         builder.RegisterModule<MusicPlayerModule>();
         builder.RegisterModule<AutoRoleModule>();
+        builder.RegisterModule<TwitchNotificationsModule>();
     }
 }

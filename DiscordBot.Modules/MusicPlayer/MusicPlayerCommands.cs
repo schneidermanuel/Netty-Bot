@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -58,18 +59,17 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
 
         var channel = voiceState.VoiceChannel;
 
-        var request = await searchSongTask;
-        if ((request.Status != SearchStatus.SearchResult && request.Status != SearchStatus.TrackLoaded) ||
-            !request.Tracks.Any())
+        var track = await searchSongTask;
+        if (!track.Tracks.Any())
         {
             await messageChannel.SendMessageAsync($"Kein Song für die Suche '{songname}' gefunden");
             return false;
         }
 
-        var track = request.Tracks.First();
-        await _manager.PlayTrackAsync(guild, track, channel);
+        await _manager.PlayTrackAsync(guild, track.Tracks.First(), channel);
         return true;
     }
+
 
     [Command("skip")]
     public async Task SkipCommand(ICommandContext context)
@@ -258,6 +258,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         _manager.ShufflePlaylist(context.Guild);
         await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
     }
+
     [Command("reconnectMusicSystem")]
     public async Task ReconnectAsync(ICommandContext context)
     {
@@ -271,6 +272,5 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         await _lavaNode.DisconnectAsync();
         await _lavaNode.ConnectAsync();
         await context.Channel.SendMessageAsync("Reconnected");
-
     }
 }

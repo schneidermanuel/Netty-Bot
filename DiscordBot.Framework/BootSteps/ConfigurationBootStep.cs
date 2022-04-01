@@ -16,6 +16,8 @@ public class ConfigurationBootStep : IBootStep
         var stream = new FileStream(path, FileMode.Open);
         var config = serializer.Deserialize(stream) as MainConfig;
         BotClientConstants.BotToken = config?.DiscordBotToken;
+        BotClientConstants.TwitchClientId = config?.TwitchClientId;
+        BotClientConstants.TwitchClientSecret = config?.TwitchClientSecret;
         await Task.CompletedTask;
     }
 

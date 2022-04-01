@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <MainConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <DiscordBotToken><!-- BOT TOKEN HERE --></DiscordBotToken>
-    <DatabaseConnectionString><!--CONNECTION STRING HERE --></DatabaseConnectionString>
+    <TwitchClientId><!-- CLIENT ID HERE --></TwitchClientId>
+    <TwitchClientSecret><!-- CLIENT SECRET HERE --></TwitchClientSecret>
 </MainConfig>

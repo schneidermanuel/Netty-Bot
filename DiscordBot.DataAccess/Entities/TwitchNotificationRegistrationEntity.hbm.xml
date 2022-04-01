@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
+                   namespace="DiscordBot.DataAccess.Entities">
+    <class name="TwitchNotificationRegistrationEntity" table="twitchRegistration">
+        <id name="Id" column="id" type="Int64">
+            <generator class="increment"/>
+        </id>
+        <property name="GuildId" type="String" column="guildid"/>
+        <property name="ChannelId" type="String" column="channelid"/>
+        <property name="Message" type="String" column="message"/>
+        <property name="Streamer" type="String" column="streamer"/>
+    </class>
+</hibernate-mapping>
