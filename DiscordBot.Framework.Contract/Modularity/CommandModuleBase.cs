@@ -136,7 +136,7 @@ public abstract class CommandModuleBase : IGuildModule
     {
         var args = context.Message.Content.Split(' ').Skip(position);
         var output = args.Aggregate(string.Empty, (current, arg) => current + $"{arg} ");
-        return output;
+        return await Task.FromResult(output);
     }
     
     protected int RequireIntArgOrDefault(ICommandContext context, int position = 1, int defaultValue = 0)

@@ -49,7 +49,7 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         return true;
     }
 
-    private async void StreamUp(object? sender, OnStreamUpArgs e)
+    private async void StreamUp(object sender, OnStreamUpArgs e)
     {
         var data = await _api.Helix.Channels.GetChannelInformationAsync(e.ChannelId);
         if (!data.Data.Any())
@@ -65,8 +65,8 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         }
 
         var user = userResponse.Users.First();
-
-        var thumbnail = $"https://static-cdn.jtvnw.net/previews-ttv/live_user_{channel.BroadcasterName}-1920x1080.jpg";
+        
+        var thumbnail = $"https://static-cdn.jtvnw.net/previews-ttv/live_user_{channel.BroadcasterName.ToLower()}.jpg";
         var information = new StreamerInformation
         {
             PlayingGame = channel.GameName,
@@ -78,7 +78,7 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         await _callback.Invoke(information);
     }
 
-    private void ServerConnected(object? sender, EventArgs e)
+    private void ServerConnected(object sender, EventArgs e)
     {
         _client.SendTopics();
     }

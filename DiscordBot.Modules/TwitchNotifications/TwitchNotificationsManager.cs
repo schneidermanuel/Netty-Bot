@@ -48,7 +48,7 @@ internal class TwitchNotificationsManager
         embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl);
         var embed = embedBuilder.Build();
 
-        foreach (var registration in _registrations.Where(reg => reg.Streamer == streamInformation.StreamerName))
+        foreach (var registration in _registrations.Where(reg => reg.Streamer.ToLower() == streamInformation.StreamerName.ToLower()))
         {
             try
             {
