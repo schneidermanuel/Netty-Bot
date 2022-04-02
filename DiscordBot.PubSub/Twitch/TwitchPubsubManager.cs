@@ -57,15 +57,23 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
             throw new InvalidOperationException();
         }
 
-        var user = data.Data.First();
-
-        var thumbnail = $"https://static-cdn.jtvnw.net/previews-ttv/live_user_{user.BroadcasterName}-1920x1080.jpg";
-            var information = new StreamerInformation
+        var channel = data.Data.First();
+        var userResponse = await _api.Helix.Users.GetUsersAsync(new List<string> { channel.BroadcasterId });
+        if (!userResponse.Users.Any())
         {
-            PlayingGame = user.GameName,
-            StreamerName = user.BroadcasterName,
-            StreamTitle = user.Title,
-            ThumbnailUrl = thumbnail
+            throw new InvalidOperationException();
+        }
+
+        var user = userResponse.Users.First();
+
+        var thumbnail = $"https://static-cdn.jtvnw.net/previews-ttv/live_user_{channel.BroadcasterName}-1920x1080.jpg";
+        var information = new StreamerInformation
+        {
+            PlayingGame = channel.GameName,
+            StreamerName = channel.BroadcasterName,
+            StreamTitle = channel.Title,
+            ThumbnailUrl = thumbnail,
+            ProfilePictureUrl = user.ProfileImageUrl
         };
         await _callback.Invoke(information);
     }

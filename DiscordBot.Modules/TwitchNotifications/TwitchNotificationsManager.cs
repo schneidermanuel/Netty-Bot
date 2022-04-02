@@ -44,7 +44,8 @@ internal class TwitchNotificationsManager
         embedBuilder.WithTitle(streamInformation.StreamTitle);
         embedBuilder.WithDescription(streamInformation.PlayingGame);
         embedBuilder.WithUrl($"https://twitch.tv/{streamInformation.StreamerName}");
-        embedBuilder.WithThumbnailUrl(streamInformation.ThumbnailUrl);
+        embedBuilder.WithThumbnailUrl(streamInformation.ProfilePictureUrl);
+        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl);
         var embed = embedBuilder.Build();
 
         foreach (var registration in _registrations.Where(reg => reg.Streamer == streamInformation.StreamerName))
