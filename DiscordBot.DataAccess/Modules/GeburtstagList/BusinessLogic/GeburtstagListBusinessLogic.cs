@@ -6,7 +6,7 @@ using DiscordBot.DataAccess.Modules.GeburtstagList.Repository;
 
 namespace DiscordBot.DataAccess.Modules.GeburtstagList.BusinessLogic;
 
-public class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
+internal class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
 {
     private readonly IGeburtstagListRepository _repository;
 
@@ -28,24 +28,21 @@ public class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
 
     private static BirthdayChannelData MapChannelToData(BirthdayChannel birthdayChannel)
     {
-        var data = new BirthdayChannelData
-        {
-            Id = birthdayChannel.Id,
-            ChannelId = birthdayChannel.ChannelId,
-            GuildId = birthdayChannel.GuildId,
-            JanMessageId = birthdayChannel.JanMessageId,
-            FebMessageId = birthdayChannel.FebMessageId,
-            MarMessageId = birthdayChannel.MarMessageId,
-            AprMessageId = birthdayChannel.AprMessageId,
-            MaiMessageId = birthdayChannel.MaiMessageId,
-            JunMessageId = birthdayChannel.JunMessageId,
-            JulMessageId = birthdayChannel.JulMessageId,
-            AugMessageId = birthdayChannel.AugMessageId,
-            SepMessageId = birthdayChannel.SepMessageId,
-            OctMessageId = birthdayChannel.OctMessageId,
-            NovMessageId = birthdayChannel.NovMessageId,
-            DezMessageId = birthdayChannel.DezMessageId
-        };
+        var data = new BirthdayChannelData(birthdayChannel.Id,
+            birthdayChannel.GuildId,
+            birthdayChannel.ChannelId,
+            birthdayChannel.JanMessageId,
+            birthdayChannel.FebMessageId,
+            birthdayChannel.MarMessageId,
+            birthdayChannel.AprMessageId,
+            birthdayChannel.MaiMessageId,
+            birthdayChannel.JunMessageId,
+            birthdayChannel.JulMessageId,
+            birthdayChannel.AugMessageId,
+            birthdayChannel.SepMessageId,
+            birthdayChannel.OctMessageId,
+            birthdayChannel.NovMessageId,
+            birthdayChannel.DezMessageId);
         return data;
     }
 
@@ -86,12 +83,7 @@ public class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
 
     public async Task SaveBirthdaySubAsync(BirthdaySubChannel sub)
     {
-        var data = new BirthdaySubChannelData
-        {
-            Id = sub.Id,
-            ChannelId = sub.ChannelId,
-            GuildId = sub.GuildId
-        };
+        var data = new BirthdaySubChannelData(sub.Id, sub.GuildId, sub.ChannelId);
         await _repository.SaveBirthdaySubAsync(data);
     }
 
@@ -153,8 +145,8 @@ public class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
     {
         return new BirthdayRoleSetup
         {
-            GuildId = data.GuildId,
-            RoleId = data.RoleId,
+            GuildId = ulong.Parse(data.GuildId),
+            RoleId = ulong.Parse(data.RoleId),
             SetupId = data.SetupId
         };
     }
@@ -164,8 +156,8 @@ public class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
         return new BirthdayRoleAssotiation
         {
             AssotiationId = data.AssotiationId,
-            GuildId = data.GuildId,
-            UserId = data.UserId
+            GuildId = ulong.Parse(data.GuildId),
+            UserId = ulong.Parse(data.UserId)
         };
     }
 
@@ -174,26 +166,22 @@ public class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
         return new BirthdaySubChannel
         {
             Id = data.Id,
-            ChannelId = data.ChannelId,
-            GuildId = data.GuildId
+            ChannelId = ulong.Parse(data.ChannelId),
+            GuildId = ulong.Parse(data.GuildId)
         };
     }
 
     private BirthdayData MapBirthdayToData(Birthday registration)
     {
-        return new BirthdayData
-        {
-            Geburtsdatum = registration.Geburtsdatum,
-            UserId = registration.UserId
-        };
+        return new BirthdayData(registration.UserId, registration.Geburtsdatum);
     }
 
     private Birthday MapDataToBirthday(BirthdayData data)
     {
         return new Birthday
         {
-            Geburtsdatum = data.Geburtsdatum,
-            UserId = data.UserId
+            Geburtsdatum = data.Birthday,
+            UserId = ulong.Parse(data.UserId)
         };
     }
 
@@ -202,20 +190,20 @@ public class GeburtstagListBusinessLogic : IGeburtstagListBusinessLogic
         return new BirthdayChannel
         {
             Id = data.Id,
-            ChannelId = data.ChannelId,
-            GuildId = data.GuildId,
-            JanMessageId = data.JanMessageId,
-            FebMessageId = data.FebMessageId,
-            MarMessageId = data.MarMessageId,
-            AprMessageId = data.AprMessageId,
-            MaiMessageId = data.MaiMessageId,
-            JunMessageId = data.JunMessageId,
-            JulMessageId = data.JulMessageId,
-            AugMessageId = data.AugMessageId,
-            SepMessageId = data.SepMessageId,
-            OctMessageId = data.OctMessageId,
-            NovMessageId = data.NovMessageId,
-            DezMessageId = data.DezMessageId
+            ChannelId = ulong.Parse(data.ChannelId),
+            GuildId = ulong.Parse(data.GuildId),
+            JanMessageId = ulong.Parse(data.JanMessageId),
+            FebMessageId = ulong.Parse(data.FebMessageId),
+            MarMessageId = ulong.Parse(data.MarMessageId),
+            AprMessageId = ulong.Parse(data.AprMessageId),
+            MaiMessageId = ulong.Parse(data.MaiMessageId),
+            JunMessageId = ulong.Parse(data.JunMessageId),
+            JulMessageId = ulong.Parse(data.JulMessageId),
+            AugMessageId = ulong.Parse(data.AugMessageId),
+            SepMessageId = ulong.Parse(data.SepMessageId),
+            OctMessageId = ulong.Parse(data.OctMessageId),
+            NovMessageId = ulong.Parse(data.NovMessageId),
+            DezMessageId = ulong.Parse(data.DezMessageId)
         };
     }
 }

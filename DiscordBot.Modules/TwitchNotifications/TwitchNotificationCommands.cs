@@ -4,7 +4,6 @@ using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.TwitchNotifications;
 using DiscordBot.Framework.Contract.Modularity;
-using Microsoft.VisualBasic;
 
 namespace DiscordBot.Modules.TwitchNotifications;
 

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using DiscordBot.Framework.Contract;
 
 namespace Victoria;
 
@@ -16,8 +17,10 @@ public class VictoriaModule : Module
         builder.RegisterType<LavaNode>().SingleInstance().AsSelf();
         var config = new LavaConfig
         {
-            Port = 9898,
-            Hostname = "10.50.1.188"
+            Port = BotClientConstants.LavalinkPort,
+            Hostname = BotClientConstants.LavalinkHost,
+            Authorization = BotClientConstants.LavalinkPassword,
+            IsSsl = BotClientConstants.LavalinkSsl
         };
         builder.RegisterInstance(config);
     }

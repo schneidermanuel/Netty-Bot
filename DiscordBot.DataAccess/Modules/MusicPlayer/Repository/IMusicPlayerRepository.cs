@@ -4,7 +4,7 @@ using DiscordBot.DataAccess.Modules.MusicPlayer.BusinessLogic;
 
 namespace DiscordBot.DataAccess.Modules.MusicPlayer.Repository;
 
-public interface IMusicPlayerRepository
+internal interface IMusicPlayerRepository
 {
     Task<bool> CanUserCreatePlaylistAsync(string userId);
     Task<long> SavePlaylistAsync(PlaylistData playlistData);

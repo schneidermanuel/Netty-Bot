@@ -34,26 +34,22 @@ internal class TwitchNotificationsManager
         {
             await _pubsubManager.RegisterStreamerAsync(registration.Streamer);
         }
+
+        await _pubsubManager.ReconnectAsync();
     }
 
     public async Task StreamUp(StreamerInformation streamInformation)
     {
-        Console.WriteLine("CALLBACL: STREAM UP " + streamInformation.StreamerName);
-        var embedBuilder = new EmbedBuilder();
-        embedBuilder.WithColor(Color.Purple);
-        embedBuilder.WithTitle(streamInformation.StreamTitle);
-        embedBuilder.WithDescription(streamInformation.PlayingGame);
-        embedBuilder.WithUrl($"https://twitch.tv/{streamInformation.StreamerName}");
-        embedBuilder.WithThumbnailUrl(streamInformation.ProfilePictureUrl);
-        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl);
-        var embed = embedBuilder.Build();
-
-        foreach (var registration in _registrations.Where(reg => reg.Streamer.ToLower() == streamInformation.StreamerName.ToLower()))
+        foreach (var registration in _registrations.Where(reg =>
+                     reg.Streamer.ToLower() == streamInformation.StreamerName.ToLower()))
         {
             try
             {
+                Console.WriteLine("CALLBACK: STREAM UP " + streamInformation.StreamerName);
                 var channel =
                     (ISocketMessageChannel)_client.GetGuild(registration.GuildId).GetChannel(registration.ChannelId);
+                var embed = BuildEmbed(streamInformation);
+
                 await channel.SendMessageAsync(registration.Message, false, embed);
             }
             catch
@@ -63,6 +59,19 @@ internal class TwitchNotificationsManager
         }
     }
 
+    private static Embed BuildEmbed(StreamerInformation streamInformation)
+    {
+        var embedBuilder = new EmbedBuilder();
+        embedBuilder.WithColor(Color.Purple);
+        embedBuilder.WithTitle(streamInformation.StreamTitle);
+        embedBuilder.WithDescription(streamInformation.PlayingGame);
+        embedBuilder.WithUrl($"https://twitch.tv/{streamInformation.StreamerName}");
+        embedBuilder.WithThumbnailUrl(streamInformation.ProfilePictureUrl);
+        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl);
+        var embed = embedBuilder.Build();
+        return embed;
+    }
+    
     public void RemoveUser(string username, ulong guildId)
     {
         var registrationsToDelete = _registrations
@@ -78,5 +87,6 @@ internal class TwitchNotificationsManager
     {
         _registrations.Add(registration);
         await _pubsubManager.RegisterStreamerAsync(registration.Streamer);
+        await _pubsubManager.ReconnectAsync();
     }
 }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.DataAccess.Modules.AutoRole.Repository;
 
-public interface IAutoRoleRepository
+internal interface IAutoRoleRepository
 {
     Task<bool> CanCreateAutoRoleAsync(ulong guildId, ulong roleId);
 

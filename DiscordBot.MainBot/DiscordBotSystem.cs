@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 using Autofac;
 using DiscordBot.DataAccess;
 using DiscordBot.Framework;
-using DiscordBot.Framework.Contract;
+using DiscordBot.Framework.BootSteps;
 using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Modules;
 using DiscordBot.MusicPlayer;
 using DiscordBot.PubSub;
+using DiscordBot.PubSub.Backend;
 using Victoria;
 
 namespace DiscordBot.MainBot;
@@ -26,6 +27,12 @@ public class DiscordBotSystem
             Console.WriteLine("Skip Daily");
         }
 
+        if (args.Length > 1 && args[1] == "Debug")
+        {
+            MainConfig.Debug = true;
+            Console.WriteLine("STARTING IN DEBUG MODE");
+        }
+        Configurator.Configure();
         BuildContainer();
         BootAsync().GetAwaiter().GetResult();
         var manager = _container.Resolve<BotManager>();
@@ -36,13 +43,13 @@ public class DiscordBotSystem
     private static void BuildContainer()
     {
         var builder = new ContainerBuilder();
-        builder.RegisterModule<FrameworkModule>();
         builder.RegisterModule<DiscordBotModulesModule>();
         builder.RegisterModule<DataAccessModule>();
         builder.RegisterType<BotManager>();
         builder.RegisterModule<MusicPlayerModule>();
         builder.RegisterModule<VictoriaModule>();
         builder.RegisterModule<PubSubModule>();
+        builder.RegisterModule<DiscordBotPubSubBackendModule>();
         builder.RegisterInstance(BotManager._client);
         _container = builder.Build();
     }

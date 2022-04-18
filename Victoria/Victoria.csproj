@@ -2,9 +2,9 @@
 
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
-		<TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -23,13 +23,19 @@
 
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="6.3.0" />
-		<PackageReference Include="Discord.Net.WebSocket" Version="3.3.0" />
+		<PackageReference Include="Discord.Net.WebSocket" Version="3.5.0" />
+		<PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2658" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-		<PackageReference Include="System.Text.Json" Version="6.0.2" />
+		<PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
+		<PackageReference Include="System.Text.Json" Version="6.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="Logo.png" Pack="true" Visible="false" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DiscordBot.Framework.Contract\DiscordBot.Framework.Contract.csproj" />
 	</ItemGroup>
 
 </Project>

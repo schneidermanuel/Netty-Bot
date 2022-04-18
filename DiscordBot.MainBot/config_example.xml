@@ -3,4 +3,11 @@
     <DiscordBotToken><!-- BOT TOKEN HERE --></DiscordBotToken>
     <TwitchClientId><!-- CLIENT ID HERE --></TwitchClientId>
     <TwitchClientSecret><!-- CLIENT SECRET HERE --></TwitchClientSecret>
+    <Hostname><!-- HOSTNAME HERE --></Hostname>
+    <Port><!-- PORT HERE --></Port>
+    <LavalinkHost><!--LAVALINK HOSTNAME--></LavalinkHost>
+    <LavalinkPort><!--LAVALINK PORT--></LavalinkPort>
+    <LavalinkPassword><!--LAVALINK PASSWORD--></LavalinkPassword>
+    <LavalinkSsl><!--LAVALINK SSL--></LavalinkSsl>
+    <YoutubeApiKey><!--API KEY --></YoutubeApiKey>
 </MainConfig>

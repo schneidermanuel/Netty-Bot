@@ -7,11 +7,15 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.3.0" />
+      <PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2658" />
+      <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
       <PackageReference Include="TwitchLib" Version="3.3.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\DiscordBot.Framework.Contract\DiscordBot.Framework.Contract.csproj" />
+      <ProjectReference Include="..\DiscordBot.Framework\DiscordBot.Framework.csproj" />
+      <ProjectReference Include="..\DiscordBot.PubSub.Backend\DiscordBot.PubSub.Backend.csproj" />
     </ItemGroup>
 
 </Project>

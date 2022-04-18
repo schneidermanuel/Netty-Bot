@@ -8,11 +8,11 @@ using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.ReactionRoles.Repository;
 
-public class ReactionRolesRepository : IReactionRolesRepository
+internal class ReactionRolesRepository : IReactionRolesRepository
 {
-    private readonly ISessionFactoryProvider _provider;
+    private readonly ISessionProvider _provider;
 
-    public ReactionRolesRepository(ISessionFactoryProvider provider)
+    public ReactionRolesRepository(ISessionProvider provider)
     {
         _provider = provider;
     }
@@ -33,11 +33,11 @@ public class ReactionRolesRepository : IReactionRolesRepository
         {
             var entity = new ReactionRoleEntity
             {
-                ChannelId = data.ChannelId.ToString(),
+                ChannelId = data.ChannelId,
                 EmojiId = data.EmojiId,
-                GuildId = data.GuildId.ToString(),
-                MessageId = data.MessageId.ToString(),
-                RoleId = data.RoleId.ToString(),
+                GuildId = data.GuildId,
+                MessageId = data.MessageId,
+                RoleId = data.RoleId,
                 ReactionRoleId = data.ReactionRoleId,
                 IsEmoji = data.IsEmoji
             };
@@ -58,15 +58,7 @@ public class ReactionRolesRepository : IReactionRolesRepository
 
     private ReactionRoleData MapToData(ReactionRoleEntity entity)
     {
-        return new ReactionRoleData
-        {
-            ChannelId = ulong.Parse(entity.ChannelId),
-            EmojiId = entity.EmojiId,
-            GuildId = ulong.Parse(entity.GuildId),
-            MessageId = ulong.Parse(entity.MessageId),
-            RoleId = ulong.Parse(entity.RoleId),
-            ReactionRoleId = entity.ReactionRoleId,
-            IsEmoji = entity.IsEmoji
-        };
+        return new ReactionRoleData(entity.ReactionRoleId, entity.GuildId, entity.ChannelId, entity.MessageId,
+            entity.EmojiId, entity.RoleId, entity.IsEmoji);
     }
 }

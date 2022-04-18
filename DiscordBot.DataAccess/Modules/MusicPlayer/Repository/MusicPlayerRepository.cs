@@ -8,23 +8,23 @@ using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.MusicPlayer.Repository;
 
-public class MusicPlayerRepository : IMusicPlayerRepository
+internal class MusicPlayerRepository : IMusicPlayerRepository
 {
-    private readonly ISessionFactoryProvider _sessionFactoryProvider;
+    private readonly ISessionProvider _sessionProvider;
 
     private readonly Dictionary<string, int> _countOverrides = new()
     {
         { "382248892101558274", 100 }
     };
 
-    public MusicPlayerRepository(ISessionFactoryProvider sessionFactoryProvider)
+    public MusicPlayerRepository(ISessionProvider sessionProvider)
     {
-        _sessionFactoryProvider = sessionFactoryProvider;
+        _sessionProvider = sessionProvider;
     }
 
     public async Task<bool> CanUserCreatePlaylistAsync(string userId)
     {
-        using (var session = _sessionFactoryProvider.OpenSession())
+        using (var session = _sessionProvider.OpenSession())
         {
             var query = session.Query<PlaylistEntity>()
                 .Where(playlist => playlist.UserId == userId);
@@ -43,7 +43,7 @@ public class MusicPlayerRepository : IMusicPlayerRepository
             PlaylistId = playlistData.PlaylistId,
             UserId = playlistData.UserId
         };
-        using (var session = _sessionFactoryProvider.OpenSession())
+        using (var session = _sessionProvider.OpenSession())
         {
             await session.SaveOrUpdateAsync(entity);
             await session.FlushAsync();
@@ -59,7 +59,7 @@ public class MusicPlayerRepository : IMusicPlayerRepository
             PlaylistId = track.PlaylistId,
             PlaylistItemId = track.PlaylistItemId
         };
-        using (var session = _sessionFactoryProvider.OpenSession())
+        using (var session = _sessionProvider.OpenSession())
         {
             await session.SaveOrUpdateAsync(entity);
             await session.FlushAsync();
@@ -68,7 +68,7 @@ public class MusicPlayerRepository : IMusicPlayerRepository
 
     public async Task<IEnumerable<PlaylistData>> RetrieveAllPLaylistsAsync()
     {
-        using (var session = _sessionFactoryProvider.OpenSession())
+        using (var session = _sessionProvider.OpenSession())
         {
             var query = session.Query<PlaylistEntity>();
             var entities = await query.ToListAsync();
@@ -78,7 +78,7 @@ public class MusicPlayerRepository : IMusicPlayerRepository
 
     public async Task<IEnumerable<PlaylistItemData>> RetrieveTracksForPlaylistAsync(PlaylistData playlistData)
     {
-        using (var session = _sessionFactoryProvider.OpenSession())
+        using (var session = _sessionProvider.OpenSession())
         {
             var query = session.Query<PlaylistItemEntity>()
                 .Where(entity => entity.PlaylistId == playlistData.PlaylistId);
@@ -89,7 +89,7 @@ public class MusicPlayerRepository : IMusicPlayerRepository
 
     public async Task<PlaylistData> RetrievePlaylistDataAsync(long playlistId)
     {
-        using (var session = _sessionFactoryProvider.OpenSession())
+        using (var session = _sessionProvider.OpenSession())
         {
             var query = session.Query<PlaylistEntity>()
                 .Where(playlist => playlist.PlaylistId == playlistId);
@@ -100,7 +100,7 @@ public class MusicPlayerRepository : IMusicPlayerRepository
 
     public async Task DeletePlaylistAsync(long playlistId)
     {
-        using (var session = _sessionFactoryProvider.OpenSession())
+        using (var session = _sessionProvider.OpenSession())
         {
             var playlist = await session.GetAsync<PlaylistEntity>(playlistId);
             var query = session.Query<PlaylistItemEntity>().Where(item => item.PlaylistId == playlistId);
@@ -108,6 +108,7 @@ public class MusicPlayerRepository : IMusicPlayerRepository
             {
                 await session.DeleteAsync(song);
             }
+
             await session.DeleteAsync(playlist);
             await session.FlushAsync();
         }
@@ -115,21 +116,11 @@ public class MusicPlayerRepository : IMusicPlayerRepository
 
     private PlaylistItemData MapTrackToData(PlaylistItemEntity entity)
     {
-        return new PlaylistItemData
-        {
-            Url = entity.Url,
-            PlaylistId = entity.PlaylistId,
-            PlaylistItemId = entity.PlaylistItemId
-        };
+        return new PlaylistItemData(entity.PlaylistItemId, entity.Url, entity.PlaylistId);
     }
 
     private PlaylistData MapPlaylistEntityToData(PlaylistEntity entity)
     {
-        return new PlaylistData
-        {
-            Title = entity.Title,
-            PlaylistId = entity.PlaylistId,
-            UserId = entity.UserId
-        };
+        return new PlaylistData(entity.PlaylistId, entity.UserId, entity.Title);
     }
 }

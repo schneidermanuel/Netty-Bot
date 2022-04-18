@@ -4,7 +4,7 @@ using DiscordBot.DataAccess.Modules.ZenQuote.BusinessLogic;
 
 namespace DiscordBot.DataAccess.Modules.ZenQuote.Repository;
 
-public interface IZenQuoteRepository
+internal interface IZenQuoteRepository
 {
     Task<IEnumerable<ZenQuoteRegistrationData>> LoadAllRegistrations();
     Task<string> RetrieveQuoteOfTheDayAsync();

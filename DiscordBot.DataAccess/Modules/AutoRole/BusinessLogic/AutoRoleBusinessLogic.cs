@@ -22,12 +22,7 @@ internal class AutoRoleBusinessLogic : IAutoRoleBusinessLogic
 
     public async Task SaveSetupAsync(AutoRoleSetup setup)
     {
-        var data = new AutoRoleSetupData
-        {
-            GuildId = setup.GuildId,
-            RoleId = setup.RoleId,
-            AutoroleSetupId = setup.AutoRoleSetupId
-        };
+        var data = new AutoRoleSetupData(setup.AutoRoleSetupId, setup.GuildId, setup.RoleId);
         await _repository.SaveSetupAsync(data);
     }
 
@@ -52,9 +47,9 @@ internal class AutoRoleBusinessLogic : IAutoRoleBusinessLogic
     {
         return new AutoRoleSetup
         {
-            GuildId = data.GuildId,
-            RoleId = data.RoleId,
-            AutoRoleSetupId = data.AutoroleSetupId
+            GuildId = ulong.Parse(data.GuildId),
+            RoleId = ulong.Parse(data.RoleId),
+            AutoRoleSetupId = data.Id
         };
     }
 }

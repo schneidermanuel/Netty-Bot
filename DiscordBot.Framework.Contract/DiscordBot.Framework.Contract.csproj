@@ -6,8 +6,10 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="6.3.0" />
-      <PackageReference Include="Discord.Net.Core" Version="3.3.2" />
+      <PackageReference Include="Discord.Net.Core" Version="3.5.0" />
+      <PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2658" />
       <PackageReference Include="MySql.Data" Version="8.0.28" />
+      <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>

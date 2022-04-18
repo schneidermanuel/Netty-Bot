@@ -11,11 +11,11 @@ using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.ZenQuote.Repository;
 
-public class ZenQuoteRepository : IZenQuoteRepository
+internal class ZenQuoteRepository : IZenQuoteRepository
 {
-    private readonly ISessionFactoryProvider _provider;
+    private readonly ISessionProvider _provider;
 
-    public ZenQuoteRepository(ISessionFactoryProvider provider)
+    public ZenQuoteRepository(ISessionProvider provider)
     {
         _provider = provider;
     }
@@ -45,8 +45,8 @@ public class ZenQuoteRepository : IZenQuoteRepository
         var entity = new ZenQuoteRegistrationEntity
         {
             Id = registration.Id,
-            ChannelId = registration.Channelid.ToString(),
-            GuildId = registration.GuildId.ToString()
+            ChannelId = registration.ChannelId,
+            GuildId = registration.GuildId
         };
         using (var session = _provider.OpenSession())
         {
@@ -67,11 +67,6 @@ public class ZenQuoteRepository : IZenQuoteRepository
 
     private ZenQuoteRegistrationData MapToData(ZenQuoteRegistrationEntity entity)
     {
-        return new ZenQuoteRegistrationData
-        {
-            Channelid = ulong.Parse(entity.ChannelId),
-            Id = entity.Id,
-            GuildId = ulong.Parse(entity.GuildId)
-        };
+        return new ZenQuoteRegistrationData(entity.Id, entity.GuildId, entity.ChannelId);
     }
 }

@@ -38,16 +38,21 @@ public class MusicManager
 
     public async Task PlayTrackAsync(IGuild guild, LavaTrack track, IVoiceChannel voiceChannel)
     {
+        if (!_node.IsConnected)
+        {
+            await _node.ConnectAsync();
+        }
+
         _playlistManager.AddSongToPlaylist(guild.Id, track);
         if (!_node.HasPlayer(guild))
         {
             await _node.JoinAsync(voiceChannel);
         }
 
-        var player = await _node.JoinAsync(voiceChannel);
+        var player = _node.GetPlayer(guild);
         if (!player.IsConnected)
         {
-            await _node.JoinAsync(voiceChannel);
+            player = await _node.JoinAsync(voiceChannel);
         }
 
         if (player.PlayerState != PlayerState.Playing)
@@ -82,7 +87,7 @@ public class MusicManager
 
 
         var player = _node.GetPlayer(guild);
-        var channel = (SocketVoiceChannel) player.VoiceChannel;
+        var channel = (SocketVoiceChannel)player.VoiceChannel;
         if (channel.Users.Count < 2)
         {
             _playlistManager.DeletePlaylist(guild.Id);
@@ -106,12 +111,8 @@ public class MusicManager
     public async Task ClearQueueAsync(IGuild guild)
     {
         _playlistManager.DeletePlaylist(guild.Id);
-        if (_node.HasPlayer(guild))
-        {
-            var player = _node.GetPlayer(guild);
-
-            await _node.LeaveAsync(player.VoiceChannel);
-        }
+        var player = _node.GetPlayer(guild);
+        await _node.LeaveAsync(player.VoiceChannel);
     }
 
     public async Task PauseAsync(IGuild guild)

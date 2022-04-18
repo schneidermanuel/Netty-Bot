@@ -4,7 +4,7 @@ using DiscordBot.DataAccess.Modules.GeburtstagList.BusinessLogic;
 
 namespace DiscordBot.DataAccess.Modules.GeburtstagList.Repository;
 
-public interface IGeburtstagListRepository
+internal interface IGeburtstagListRepository
 {
     Task<bool> HasGuildSetupGeburtstagChannelAsync(ulong guildId);
     Task<long> SaveBirthdayChannelAsync(BirthdayChannelData data);

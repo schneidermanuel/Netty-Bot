@@ -9,9 +9,9 @@ namespace DiscordBot.DataAccess.Modules.AutoRole.Repository;
 
 internal class AutoRoleRepository : IAutoRoleRepository
 {
-    private readonly ISessionFactoryProvider _provider;
+    private readonly ISessionProvider _provider;
 
-    public AutoRoleRepository(ISessionFactoryProvider provider)
+    public AutoRoleRepository(ISessionProvider provider)
     {
         _provider = provider;
     }
@@ -32,9 +32,9 @@ internal class AutoRoleRepository : IAutoRoleRepository
         {
             var entity = new AutoroleSetupEntity
             {
-                Id = data.AutoroleSetupId,
-                GuildId = data.GuildId.ToString(),
-                RoleId = data.RoleId.ToString()
+                Id = data.Id,
+                GuildId = data.GuildId,
+                RoleId = data.RoleId
             };
             await session.SaveOrUpdateAsync(entity);
             await session.FlushAsync();
@@ -74,11 +74,6 @@ internal class AutoRoleRepository : IAutoRoleRepository
 
     private AutoRoleSetupData MapEntityToData(AutoroleSetupEntity entity)
     {
-        return new AutoRoleSetupData
-        {
-            GuildId = ulong.Parse(entity.GuildId),
-            RoleId = ulong.Parse(entity.RoleId),
-            AutoroleSetupId = entity.Id
-        };
+        return new AutoRoleSetupData(entity.Id, entity.GuildId, entity.RoleId);
     }
 }

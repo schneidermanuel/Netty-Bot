@@ -1,9 +1,23 @@
 ﻿namespace DiscordBot.DataAccess.Modules.MusicPlayer.BusinessLogic;
 
-public class PlaylistData
+internal class PlaylistData
 {
-    public long PlaylistId { get; set; }
-    public string UserId { get; set; }
-    public string Title { get; set; }
+    public PlaylistData(long playlistId, string userId, string title)
+    {
+        PlaylistId = playlistId;
+        UserId = userId;
+        Title = title;
+    }
 
+    public PlaylistData(long playlistId, ulong userId, string title)
+    {
+        PlaylistId = playlistId;
+        UserId = userId.ToString();
+        Title = title;
+    }
+
+
+    public long PlaylistId { get; }
+    public string UserId { get; }
+    public string Title { get; }
 }

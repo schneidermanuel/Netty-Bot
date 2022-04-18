@@ -2,9 +2,27 @@
 
 internal class TwitchNotificationData
 {
-    public long Id { get; set; }
-    public ulong GuildId { get; set; }
-    public ulong ChannelId { get; set; }
-    public string Streamer { get; set; }
-    public string Message { get; set; }
+    public TwitchNotificationData(long id, string guildId, string channelId, string message, string streamer)
+    {
+        Id = id;
+        GuildId = guildId;
+        ChannelId = channelId;
+        Message = message;
+        Streamer = streamer;
+    }
+
+    public TwitchNotificationData(long id, ulong guildId, ulong channelId, string message, string streamer)
+    {
+        Id = id;
+        GuildId = guildId.ToString();
+        ChannelId = channelId.ToString();
+        Message = message;
+        Streamer = streamer;
+    }
+
+    public long Id { get; }
+    public string GuildId { get; }
+    public string ChannelId { get; }
+    public string Message { get; }
+    public string Streamer { get; }
 }

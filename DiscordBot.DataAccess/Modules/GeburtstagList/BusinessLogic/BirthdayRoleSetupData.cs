@@ -1,8 +1,23 @@
 ﻿namespace DiscordBot.DataAccess.Modules.GeburtstagList.BusinessLogic;
 
-public class BirthdayRoleSetupData
+internal class BirthdayRoleSetupData
 {
-    public long SetupId { get; set; }
-    public ulong GuildId { get; set; }
-    public ulong RoleId { get; set; }
+    public BirthdayRoleSetupData(long setupId, string guildId, string roleId)
+    {
+        SetupId = setupId;
+        GuildId = guildId;
+        RoleId = roleId;
+    }
+
+    public BirthdayRoleSetupData(long setupId, ulong guildId, ulong roleId)
+    {
+        SetupId = setupId;
+        GuildId = guildId.ToString();
+        RoleId = roleId.ToString();
+    }
+
+
+    public long SetupId { get; }
+    public string GuildId { get; }
+    public string RoleId { get; }
 }

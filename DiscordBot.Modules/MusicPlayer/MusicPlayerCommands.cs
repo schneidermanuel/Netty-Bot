@@ -8,7 +8,6 @@ using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MusicPlayer;
 using DiscordBot.Framework.Contract.Modularity;
 using Victoria;
-using Victoria.Responses.Search;
 
 namespace DiscordBot.Modules.MusicPlayer;
 
@@ -114,14 +113,43 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
     [Command("stop")]
     public async Task ClearCommand(ICommandContext context)
     {
-        if (!_lavaNode.HasPlayer(context.Guild))
+        try
         {
-            await context.Channel.SendMessageAsync("Aktuell spielt keine Musik");
-            return;
-        }
+            if (!_lavaNode.HasPlayer(context.Guild))
+            {
+                await context.Channel.SendMessageAsync("Aktuell spielt keine Musik");
+                return;
+            }
 
-        await _manager.ClearQueueAsync(context.Guild);
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+            try
+            {
+                await _lavaNode.GetPlayer(context.Guild).StopAsync();
+            }
+            catch (Exception)
+            {
+                //Ignored
+            }
+
+            await _manager.ClearQueueAsync(context.Guild);
+
+            await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            Console.WriteLine(e.StackTrace);
+        }
+    }
+
+    [Command("diagnostic")]
+    public async Task Reconnect(ICommandContext context)
+    {
+        await context.Channel.SendMessageAsync("Lavalink Connected: " + _lavaNode.IsConnected);
+        foreach (var player in _lavaNode.Players)
+        {
+            await context.Channel.SendMessageAsync(
+                $"Player for Guild: {player.VoiceChannel.Guild.Name}: {player.IsConnected}");
+        }
     }
 
     [Command("pause")]

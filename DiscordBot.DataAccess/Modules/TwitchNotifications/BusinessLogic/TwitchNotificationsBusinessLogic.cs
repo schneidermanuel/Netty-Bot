@@ -24,7 +24,6 @@ internal class TwitchNotificationsBusinessLogic : ITwitchNotificationsBusinessLo
         var data = MapToData(registration);
         var id = await _repository.SaveRegistrationAsync(data);
         registration.RegistrationId = id;
-
     }
 
     public async Task DeleteRegistrationAsync(string username, ulong guildId)
@@ -44,21 +43,15 @@ internal class TwitchNotificationsBusinessLogic : ITwitchNotificationsBusinessLo
         {
             Message = data.Message,
             Streamer = data.Streamer,
-            ChannelId = data.ChannelId,
-            GuildId = data.GuildId,
+            ChannelId = ulong.Parse(data.ChannelId),
+            GuildId = ulong.Parse(data.GuildId),
             RegistrationId = data.Id
         };
     }
 
     private TwitchNotificationData MapToData(TwitchNotificationRegistration registration)
     {
-        return new TwitchNotificationData
-        {
-            Id = registration.RegistrationId,
-            Message = registration.Message,
-            Streamer = registration.Streamer,
-            ChannelId = registration.ChannelId,
-            GuildId = registration.GuildId
-        };
+        return new TwitchNotificationData(registration.RegistrationId, registration.GuildId, registration.ChannelId,
+            registration.Message, registration.Streamer);
     }
 }

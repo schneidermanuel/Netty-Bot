@@ -12,7 +12,6 @@ using DiscordBot.Framework;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.TimedAction;
-using ZstdNet;
 
 namespace DiscordBot.MainBot;
 
@@ -42,7 +41,9 @@ public class BotManager
         _client.Log += Log;
         _client.MessageReceived += MessageRecieved;
         await _client.LoginAsync(TokenType.Bot, BotClientConstants.BotToken);
+        Console.WriteLine("Logged in");
         await _client.StartAsync();
+        Console.WriteLine("Startet System");
     }
 
     private async Task MessageRecieved(SocketMessage arg)
@@ -104,8 +105,21 @@ public class BotManager
         var postBootTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.PostBoot)
             .Select(x => x.Execute(_client));
         await Task.WhenAll(postBootTasks);
-        var thread = new Thread(DailyStuff);
-        thread.Start();
+        var dailyStuffThread = new Thread(DailyStuff);
+        var hourlyStuffThread = new Thread(HourlyStuff);
+        dailyStuffThread.Start();
+        hourlyStuffThread.Start();
+    }
+
+    private async void HourlyStuff()
+    {
+        var hourlyTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.Hourly).ToArray();
+        while (true)
+        {
+            await Task.Delay(new TimeSpan(1, 0, 0));
+            var tasks = hourlyTasks.Select(x => x.Execute(_client));
+            await Task.WhenAll(tasks);
+        }
     }
 
     private async void DailyStuff()

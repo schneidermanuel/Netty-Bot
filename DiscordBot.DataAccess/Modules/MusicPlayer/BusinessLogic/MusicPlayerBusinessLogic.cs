@@ -6,7 +6,7 @@ using DiscordBot.DataAccess.Modules.MusicPlayer.Repository;
 
 namespace DiscordBot.DataAccess.Modules.MusicPlayer.BusinessLogic;
 
-public class MusicPlayerBusinessLogic : IMusicPlayerBusinessLogic
+internal class MusicPlayerBusinessLogic : IMusicPlayerBusinessLogic
 {
     private readonly IMusicPlayerRepository _repository;
 
@@ -22,16 +22,10 @@ public class MusicPlayerBusinessLogic : IMusicPlayerBusinessLogic
 
     public async Task SavePlaylistAsync(Playlist playlist)
     {
-        var playlistData = new PlaylistData
-        {
-            Title = playlist.Title,
-            PlaylistId = playlist.PlaylistId,
-            UserId = playlist.AuthorId.ToString()
-        };
+        var playlistData = new PlaylistData(playlist.PlaylistId, playlist.AuthorId, playlist.Title);
         var playlistId = await _repository.SavePlaylistAsync(playlistData);
         var tracks = playlist.Tracks.Select(track =>
-                new PlaylistItemData
-                    { Url = track.Title, PlaylistId = playlistId, PlaylistItemId = track.PlaylistItemId })
+                new PlaylistItemData(track.PlaylistItemId, track.Title, playlistId))
             .ToList();
         foreach (var track in tracks)
         {

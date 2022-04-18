@@ -3,11 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
-using DiscordBot.DataAccess.Modules.ReactionRoles.Repository;
 
 namespace DiscordBot.DataAccess.Modules.ReactionRoles.BusinessLogic;
 
-public class ReactionRoleBusinessLogic : IReactionRoleBusinessLogic
+internal class ReactionRoleBusinessLogic : IReactionRoleBusinessLogic
 {
     private readonly IReactionRolesRepository _repository;
 
@@ -22,26 +21,18 @@ public class ReactionRoleBusinessLogic : IReactionRoleBusinessLogic
         return data.Select(x => new ReactionRole
         {
             Id = x.ReactionRoleId,
-            ChannelId = x.ChannelId,
-            GuildId = x.GuildId,
-            MessageId = x.MessageId,
-            RoleId = x.RoleId,
+            ChannelId = ulong.Parse(x.ChannelId),
+            GuildId = ulong.Parse(x.GuildId),
+            MessageId = ulong.Parse(x.MessageId),
+            RoleId = ulong.Parse(x.RoleId),
             Emote = x.IsEmoji ? new Emoji(x.EmojiId) : Emote.Parse(x.EmojiId)
         });
     }
 
     public async Task SaveReactionRoleAsync(ReactionRole reactionRole)
     {
-        var data = new ReactionRoleData
-        {
-            ChannelId = reactionRole.ChannelId,
-            EmojiId = reactionRole.Emote.ToString(),
-            GuildId = reactionRole.GuildId,
-            MessageId = reactionRole.MessageId,
-            RoleId = reactionRole.RoleId,
-            ReactionRoleId = reactionRole.Id,
-            IsEmoji = reactionRole.Emote is Emoji
-        };
+        var data = new ReactionRoleData(reactionRole.Id, reactionRole.GuildId, reactionRole.ChannelId,
+            reactionRole.MessageId, reactionRole.Emote.ToString(), reactionRole.RoleId, reactionRole.Emote is Emoji);
         await _repository.SaveReactionRoleAsync(data);
     }
 

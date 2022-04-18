@@ -4,16 +4,15 @@ using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
 using DiscordBot.DataAccess.Modules.TwitchNotifications.BusinessLogic;
 using DiscordBot.DataAccess.NHibernate;
-using MySql.Data.MySqlClient.Authentication;
 using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.TwitchNotifications.Repository;
 
 internal class TwitchNotificationsRepository : ITwitchNotificationsRepository
 {
-    private readonly ISessionFactoryProvider _provider;
+    private readonly ISessionProvider _provider;
 
-    public TwitchNotificationsRepository(ISessionFactoryProvider provider)
+    public TwitchNotificationsRepository(ISessionProvider provider)
     {
         _provider = provider;
     }
@@ -36,8 +35,8 @@ internal class TwitchNotificationsRepository : ITwitchNotificationsRepository
             Id = data.Id,
             Message = data.Message,
             Streamer = data.Streamer,
-            ChannelId = data.ChannelId.ToString(),
-            GuildId = data.GuildId.ToString()
+            ChannelId = data.ChannelId,
+            GuildId = data.GuildId
         };
         using (var session = _provider.OpenSession())
         {
@@ -68,20 +67,13 @@ internal class TwitchNotificationsRepository : ITwitchNotificationsRepository
         using (var session = _provider.OpenSession())
         {
             var query = session.Query<TwitchNotificationRegistrationEntity>();
-            var entites =  await query.ToListAsync();
+            var entites = await query.ToListAsync();
             return entites.Select(MapToData);
         }
     }
 
     private TwitchNotificationData MapToData(TwitchNotificationRegistrationEntity entity)
     {
-        return new TwitchNotificationData
-        {
-            Id = entity.Id,
-            Message = entity.Message,
-            Streamer = entity.Streamer,
-            ChannelId = ulong.Parse(entity.ChannelId),
-            GuildId = ulong.Parse(entity.GuildId)
-        };
+        return new TwitchNotificationData(entity.Id, entity.GuildId, entity.ChannelId, entity.Message, entity.Streamer);
     }
 }

@@ -6,7 +6,7 @@ using DiscordBot.DataAccess.Modules.ZenQuote.Repository;
 
 namespace DiscordBot.DataAccess.Modules.ZenQuote.BusinessLogic;
 
-public class ZenQuoteBusinessLogic : IZenQuoteBusinessLogic
+internal class ZenQuoteBusinessLogic : IZenQuoteBusinessLogic
 {
     private readonly IZenQuoteRepository _repository;
 
@@ -29,12 +29,7 @@ public class ZenQuoteBusinessLogic : IZenQuoteBusinessLogic
 
     public async Task SaveRegistrationAsync(ZenQuoteRegistration registration)
     {
-        var data = new ZenQuoteRegistrationData
-        {
-            Channelid = registration.Channelid,
-            Id = registration.Id,
-            GuildId = registration.GuildId
-        };
+        var data = new ZenQuoteRegistrationData(registration.Id, registration.GuildId, registration.Channelid);
         await _repository.SaveRegistrationAsync(data);
     }
 
@@ -47,9 +42,9 @@ public class ZenQuoteBusinessLogic : IZenQuoteBusinessLogic
     {
         return new ZenQuoteRegistration
         {
-            Channelid = data.Channelid,
+            Channelid = ulong.Parse(data.ChannelId),
             Id = data.Id,
-            GuildId = data.GuildId
+            GuildId = ulong.Parse(data.GuildId)
         };
     }
 }

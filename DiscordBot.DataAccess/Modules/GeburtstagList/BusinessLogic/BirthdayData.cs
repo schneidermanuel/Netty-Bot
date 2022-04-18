@@ -2,8 +2,21 @@ using System;
 
 namespace DiscordBot.DataAccess.Modules.GeburtstagList.BusinessLogic;
 
-public class BirthdayData
+internal class BirthdayData
 {
-    public ulong UserId { get; set; }
-    public DateTime Geburtsdatum { get; set; }
+    public BirthdayData(string userId, DateTime birthday)
+    {
+        UserId = userId;
+        Birthday = birthday;
+    }
+
+    public BirthdayData(ulong userId, DateTime birthday)
+    {
+        UserId = userId.ToString();
+        Birthday = birthday;
+    }
+
+    public string UserId { get; }
+
+    public DateTime Birthday { get; }
 }

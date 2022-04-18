@@ -41,12 +41,22 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         if (!_listening.Contains(id))
         {
             _client.ListenToVideoPlayback(id);
-            _client.Disconnect();
-            _client.Connect();
             _listening.Add(id);
+            Console.WriteLine("[Twitch] Listening to " + channelName);
         }
 
         return true;
+    }
+
+    public async Task ReconnectAsync()
+    {
+        _client.Disconnect();
+        foreach (var listening in _listening)
+        {
+            _client.ListenToVideoPlayback(listening);
+        }
+        _client.Connect();
+        await Task.CompletedTask;
     }
 
     private async void StreamUp(object sender, OnStreamUpArgs e)
@@ -59,14 +69,17 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
 
         var channel = data.Data.First();
         var userResponse = await _api.Helix.Users.GetUsersAsync(new List<string> { channel.BroadcasterId });
+        Console.WriteLine("STREAM UP: " + channel.BroadcasterName);
         if (!userResponse.Users.Any())
         {
             throw new InvalidOperationException();
         }
 
         var user = userResponse.Users.First();
-        
-        var thumbnail = $"https://static-cdn.jtvnw.net/previews-ttv/live_user_{channel.BroadcasterName.ToLower()}.jpg";
+
+        var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+        var thumbnail =
+            $"https://static-cdn.jtvnw.net/previews-ttv/live_user_{channel.BroadcasterName.ToLower()}-320x180.jpg?r={timestamp}";
         var information = new StreamerInformation
         {
             PlayingGame = channel.GameName,

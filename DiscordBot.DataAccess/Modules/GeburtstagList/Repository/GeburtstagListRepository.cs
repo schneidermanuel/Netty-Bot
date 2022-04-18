@@ -8,11 +8,11 @@ using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.GeburtstagList.Repository;
 
-public class GeburtstagListRepository : IGeburtstagListRepository
+internal class GeburtstagListRepository : IGeburtstagListRepository
 {
-    private readonly ISessionFactoryProvider _provider;
+    private readonly ISessionProvider _provider;
 
-    public GeburtstagListRepository(ISessionFactoryProvider provider)
+    public GeburtstagListRepository(ISessionProvider provider)
     {
         _provider = provider;
     }
@@ -32,20 +32,20 @@ public class GeburtstagListRepository : IGeburtstagListRepository
         var entity = new BirthdayChannelEntity
         {
             Id = data.Id,
-            ChannelId = data.ChannelId.ToString(),
-            GuildId = data.GuildId.ToString(),
-            JanMessageId = data.JanMessageId.ToString(),
-            FebMessageId = data.FebMessageId.ToString(),
-            MarMessageId = data.MarMessageId.ToString(),
-            AprMessageId = data.AprMessageId.ToString(),
-            MaiMessageId = data.MaiMessageId.ToString(),
-            JunMessageId = data.JunMessageId.ToString(),
-            JulMessageId = data.JulMessageId.ToString(),
-            AugMessageId = data.AugMessageId.ToString(),
-            SepMessageId = data.SepMessageId.ToString(),
-            OctMessageId = data.OctMessageId.ToString(),
-            NovMessageId = data.NovMessageId.ToString(),
-            DezMessageId = data.DezMessageId.ToString()
+            ChannelId = data.ChannelId,
+            GuildId = data.GuildId,
+            JanMessageId = data.JanMessageId,
+            FebMessageId = data.FebMessageId,
+            MarMessageId = data.MarMessageId,
+            AprMessageId = data.AprMessageId,
+            MaiMessageId = data.MaiMessageId,
+            JunMessageId = data.JunMessageId,
+            JulMessageId = data.JulMessageId,
+            AugMessageId = data.AugMessageId,
+            SepMessageId = data.SepMessageId,
+            OctMessageId = data.OctMessageId,
+            NovMessageId = data.NovMessageId,
+            DezMessageId = data.DezMessageId
         };
         using (var session = _provider.OpenSession())
         {
@@ -100,8 +100,8 @@ public class GeburtstagListRepository : IGeburtstagListRepository
         {
             var entity = new BirthdayEntity
             {
-                Birthday = data.Geburtsdatum,
-                UserId = data.UserId.ToString()
+                Birthday = data.Birthday,
+                UserId = data.UserId
             };
             await session.SaveAsync(entity);
             await session.FlushAsync();
@@ -124,8 +124,8 @@ public class GeburtstagListRepository : IGeburtstagListRepository
             var entity = new BirthdaySubChannelEntity
             {
                 Id = data.Id,
-                ChannelId = data.ChannelId.ToString(),
-                GuildId = data.GuildId.ToString()
+                ChannelId = data.ChannelId,
+                GuildId = data.GuildId
             };
             await session.SaveOrUpdateAsync(entity);
             await session.FlushAsync();
@@ -253,62 +253,41 @@ public class GeburtstagListRepository : IGeburtstagListRepository
 
     private BirthdayRoleSetupData MapSetupToData(BirthdayRoleSetupEntity entity)
     {
-        return new BirthdayRoleSetupData
-        {
-            GuildId = ulong.Parse(entity.GuildId),
-            RoleId = ulong.Parse(entity.RoleId),
-            SetupId = entity.SetupId
-        };
+        return new BirthdayRoleSetupData(entity.SetupId, entity.GuildId, entity.RoleId);
     }
 
     private BirthdayRoleAssotiationData MapAssotiationToData(BirthdayRoleAssotiationEntity entity)
     {
-        return new BirthdayRoleAssotiationData
-        {
-            AssotiationId = entity.AssotiationId,
-            GuildId = ulong.Parse(entity.GuildId),
-            UserId = ulong.Parse(entity.UserId)
-        };
+        return new BirthdayRoleAssotiationData(entity.AssotiationId, entity.GuildId, entity.UserId);
     }
 
     private BirthdaySubChannelData MapSubToData(BirthdaySubChannelEntity entity)
     {
-        return new BirthdaySubChannelData
-        {
-            Id = entity.Id,
-            ChannelId = ulong.Parse(entity.ChannelId),
-            GuildId = ulong.Parse(entity.GuildId)
-        };
+        return new BirthdaySubChannelData(entity.Id, entity.GuildId, entity.ChannelId);
     }
 
     private BirthdayData MapBirthdayToData(BirthdayEntity entity)
     {
-        return new BirthdayData
-        {
-            UserId = ulong.Parse(entity.UserId),
-            Geburtsdatum = entity.Birthday
-        };
+        return new BirthdayData(entity.UserId, entity.Birthday);
     }
 
     private BirthdayChannelData MapToData(BirthdayChannelEntity entity)
     {
-        return new BirthdayChannelData
-        {
-            Id = entity.Id,
-            ChannelId = ulong.Parse(entity.ChannelId),
-            GuildId = ulong.Parse(entity.GuildId),
-            JanMessageId = ulong.Parse(entity.JanMessageId),
-            FebMessageId = ulong.Parse(entity.FebMessageId),
-            MarMessageId = ulong.Parse(entity.MarMessageId),
-            AprMessageId = ulong.Parse(entity.AprMessageId),
-            MaiMessageId = ulong.Parse(entity.MaiMessageId),
-            JunMessageId = ulong.Parse(entity.JunMessageId),
-            JulMessageId = ulong.Parse(entity.JulMessageId),
-            AugMessageId = ulong.Parse(entity.AugMessageId),
-            SepMessageId = ulong.Parse(entity.SepMessageId),
-            OctMessageId = ulong.Parse(entity.OctMessageId),
-            NovMessageId = ulong.Parse(entity.NovMessageId),
-            DezMessageId = ulong.Parse(entity.DezMessageId),
-        };
+        return new BirthdayChannelData(
+            entity.Id,
+            entity.GuildId,
+            entity.ChannelId,
+            entity.JanMessageId,
+            entity.FebMessageId,
+            entity.MarMessageId,
+            entity.AprMessageId,
+            entity.MaiMessageId,
+            entity.JunMessageId,
+            entity.JulMessageId,
+            entity.AugMessageId,
+            entity.SepMessageId,
+            entity.OctMessageId,
+            entity.NovMessageId,
+            entity.DezMessageId);
     }
 }
