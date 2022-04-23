@@ -24,7 +24,7 @@ public class BirthdayListManager
         {
             var guild = client.GetGuild(channelSetup.GuildId);
             var channel = (SocketTextChannel)guild.GetChannel(channelSetup.ChannelId);
-            var birthdaysOnServer = GetBirthdaysFromServer(guild);
+            var birthdaysOnServer = await GetBirthdaysFromServer(guild);
 
             var janMsg = (IUserMessage)await channel.GetMessageAsync(channelSetup.JanMessageId);
             var janMsgContent = BuildMessageContent("Januar", birthdaysOnServer, 1);
@@ -67,7 +67,6 @@ public class BirthdayListManager
         {
             Console.WriteLine(
                 $"Geburtstagsaktualisierung für server {channelSetup.GuildId} nicht möglich, lösche aus DB");
-            await _businessLogic.DeleteBirthdayChannelAsync(channelSetup.Id);
         }
     }
 
@@ -81,9 +80,14 @@ public class BirthdayListManager
                 current + $"{birthday.Key}: {birthday.Value.Day:00}.{birthday.Value.Month:00}.\n");
     }
 
-    private Dictionary<string, DateTime> GetBirthdaysFromServer(SocketGuild guild)
+     private async Task<Dictionary<string, DateTime>> GetBirthdaysFromServer(SocketGuild guild)
     {
         var output = new Dictionary<string, DateTime>();
+        if (_birthdays == null)
+        {
+            _birthdays = await _businessLogic.GetAllGeburtstageAsync();
+
+        }
         foreach (var birthday in _birthdays.OrderBy(x => x.Geburtsdatum))
         {
             try
@@ -92,9 +96,9 @@ public class BirthdayListManager
                 var mention = user.Mention;
                 output.Add(mention, birthday.Geburtsdatum);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // ignored
+                Console.WriteLine(e);
             }
         }
 

@@ -112,6 +112,12 @@ public class MusicManager
     {
         _playlistManager.DeletePlaylist(guild.Id);
         var player = _node.GetPlayer(guild);
+        if (player.VoiceChannel == null)
+        {
+            await player.DisposeAsync();
+            return;
+        }
+
         await _node.LeaveAsync(player.VoiceChannel);
     }
 
@@ -153,5 +159,11 @@ public class MusicManager
     public int GetSongCount(IGuild contextGuild)
     {
         return _playlistManager.GetCountForGuildId(contextGuild.Id);
+    }
+
+    public async Task RestartAsync()
+    {
+        await _node.DisconnectAsync();
+        await _node.ConnectAsync();
     }
 }

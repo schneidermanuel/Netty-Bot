@@ -14,6 +14,6 @@ public class ModuleDataAccess : IModuleDataAccess
     public async Task<char> GetServerPrefixAsync(ulong guildId)
     {
         await Task.CompletedTask;
-        return '!';
+        return '.';
     }
 }
