@@ -161,9 +161,4 @@ public class MusicManager
         return _playlistManager.GetCountForGuildId(contextGuild.Id);
     }
 
-    public async Task RestartAsync()
-    {
-        await _node.DisconnectAsync();
-        await _node.ConnectAsync();
-    }
 }

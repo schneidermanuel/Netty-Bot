@@ -11,7 +11,6 @@ public class MusicPlayerModule : Module
         base.Load(builder);
         builder.RegisterType<MusicPlayerCommands>().As<IGuildModule>();
         builder.RegisterType<MusicBootStep>().As<ITimedAction>();
-        builder.RegisterType<RestartMusicPlayerTask>().As<ITimedAction>();
         builder.RegisterType<MusicManager>().SingleInstance().AsSelf();
     }
 }
