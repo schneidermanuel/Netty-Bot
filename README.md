@@ -1,38 +1,60 @@
 # DiscordBotBeta
 
-> Note: This Bot is currently in Beta state. Bugs may occur. 
+> Note: This Bot is currently in beta state. Bugs may and will occur.
 
-## Requirements
+## Donation
 
-To use this Bot, you first need to create an application [At the Discord API Portal](https://discord.com/developers/applications) and create an application. Make sure to enable '''Privileged Gateway Intents''' for your bot. 
+This Bot is completly free available for everyone to use. A fully public hosted Bot, including a web-based configuration frontend will be available once the bot is out of beta state. 
+Any donation is highly appreciated and helps keeping this project alive.
+You may donate [here](https://tipeeestream.com/brainyxs/donation)
 
-You need a Mysql Database. A init script for the Database will be added soon, till then, create all the neccessary table from hand by checking out the mapping files for the entities located at ```DiscordBot.DataAccess/Entities```
+## Add the Bot
 
-Finally, you need a Lavalink Server in order to use the Music Player Module. 
-Set the Port an IP Adress for this Server in ```Victoria/VictoriaModule.cs```
+A fully hosted bot including web will be available for free once this project leaves beta state.
 
-## Use the Bot
+### Self-Host this Bot
 
-Once you saticfied all the requirements, rename the config_example.xml to config.xml located in DiscordBot.MainBot. Add the connection string to your database and the bot token for your discord bot where noted and remove the XML comment. 
-Rename the hibernate_example.cfg.xml to hibernate.cfg.xml and pase in your sql connection string. 
+> If you wish, you may host this bot on your own. All the needed code is available.
 
-## Running the bot
+### Requirements
+
+To use this bot, you first need to create an application over [at the Discord API Portal](https://discord.com/developers/applications) and create an application. Make sure to enable ```Privileged Gateway Intents``` for your bot. 
+
+You will need a Mysql Database. A init script for the database will be added soon, till then, create all the neccessary table from hand by checking the mapping files for the entities located at ```DiscordBot.DataAccess/Entities```
+
+You must provide a hostname & port with port-forwarding configured to the system with the bot running for Youtube to send data to the rest api hosted in this project.
+
+Rename the ```config_example.xml``` located in the ```DiscordBot.MainBot```to ```config.xml``` and add all the keys for your bot. 
+This requires:
+
+- Discord bot Token
+- Twitch API Client ID & Client Secret
+- Hostname & Port for the server the bot is running on. This will host a REST API for Youtube to send data to, once a video is uploaded by a followed channel.
+- Lavalink Host & Port & Password & SSL Mode: You can either self-host your lavalink server or choose one of the many publicly available servers
+- Youtube API Key with Youtube Data V3 enabled
+
+Last, rename the hibernate_example.cfg.xml to hibernate.cfg.xml and pase in your sql connection string. 
+
+### Running the bot
 
 The bot can be run with the ```dotnet run``` command. 
-To skip all the daily actions, that run every day for the current day, please use the ```dotnet run SkipDaily``` command. 
+To skip all the daily actions, that run every day for the current day, please use the ```dotnet run SkipDaily``` command.
+This is recommended when testing the bot multiple times a day to not trigger those actions multiple times.  
 
-### Modules
+#### Extending the bot
 
-> For each functionality of the bot, there should be one folder located in DiscordBot.Modules with a Module.cs, which inherits from Autofac.Module and  registers all the types. 
+> For each feature of the bot, there should be one folder located in DiscordBot.Modules with a Module.cs, which inherits from Autofac.Module and  registers all the types. 
 > A more detailed explanation of how to create your own modules will be added soon. 
 
-#### Current Modules
+You may create pull requests.
 
-##### AutoRole
+## Current Modules
+
+### AutoRole
 
 > Automatically assigns a role to every user joining the server. 
 
-###### Commands: 
+#### Commands: 
 - autoRoleConfig list 
 > Prints out all the roles on the server that will be automatically assigned to new users. 
 - autoRoleConfig add <RoleID>
@@ -40,12 +62,12 @@ To skip all the daily actions, that run every day for the current day, please us
 - autoRoleConfig delete <RoleId>
 > Stops distributing a role
   
-##### BirthdayList
+### BirthdayList
 
 > Creates a List of all the members on the server with their birthdays. Optionally notifies the server on a birthday and assigns a role to everyone at their birthday. 
-> ATTENTION: This will stop working on BIIIG server, because of the message char limit. Will fix later. 
+> ATTENTION: This will stop working on BIIIG server, because of the message character limit. Will fix later. 
   
-###### Commands
+#### Commands
 - registerBirthday <dd.MM>
 > Adds your birthday to the database
 - registerBirthdayChannel
@@ -57,15 +79,12 @@ To skip all the daily actions, that run every day for the current day, please us
 - setBirthdayRole <RoleID>
 > Automatically distributes a role at a birhday
   
-##### Huebcraft
   
-> Private stuff - will be deleted when not used anymore. Just dont use it.
-  
-##### MusicPlayer
+### MusicPlayer
  
-> Plays Music in your VC
+> Plays music in a voice chat with the ability to create and use playlists.
   
-###### Commands
+#### Commands
 - play <NAME>
 - pause
 - resume
@@ -76,20 +95,42 @@ To skip all the daily actions, that run every day for the current day, please us
 - playlist <ID>
 - stop
   
-##### ReactionRoles
+### ReactionRoles
 
 > Assignes a role to everyone reacing to a message
   
-###### Commands
+#### Commands
 
 - registerReactionRole <Emote> <RoleID> <Message>
-> Writes <Message> in the Channel, reacted with <Emote> and distributes the <Role> when anyone reacts.
+> Sends <Message> in the channel, reactes with <Emote> and distributes the <Role> to anyone reacting.
   
-##### ZenQuote
+### ZenQuote
   
-> Sends a Quote in a channel every day. 
+> Sends a quote in a channel once a day. 
   
-###### Commands
+#### Commands
   
 - registerQuote
-- unregisterQuote
+- 
+
+### TwitchNotifications
+
+> Sends a notification in a channel when a twitch user starts a live stream
+
+#### Commands
+
+- registerTwitch <twitchUsername> <message>
+> Registers the current channel for notifications for the <twitchUsername>. The <message> paramter is optional.
+- unregisterTwitch <twitchUsername>
+> Removes a registration.
+
+### YoutubeNotifications
+
+> Sends a notification in a channel when a Youtube channel uploads a video
+
+#### Commands
+
+- registerYoutube <channelId> <message>
+> Registers the current channel for notifications for the <channelId>. The <message> paramter is optional.
+- unregisterYoutube <channelId>
+> Removes a registration.
