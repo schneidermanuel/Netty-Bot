@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
 
-namespace DiscordBot.Modules.AutoMod.Rules.Violation;
+namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
-internal class DeleteMessageAction : IRuleViolationAction
+public class DeleteMessageAction : IRuleViolationAction
 {
     public async Task Execute(ICommandContext context)
     {

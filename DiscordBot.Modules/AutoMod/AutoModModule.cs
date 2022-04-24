@@ -10,6 +10,7 @@ internal class AutoModModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         builder.RegisterType<AutoModChecker>().As<IGuildModule>();
+        builder.RegisterType<AutoModCommands>().As<IGuildModule>();
         builder.RegisterType<AutoModBootStep>().As<ITimedAction>();
         builder.RegisterType<AutoModManager>().SingleInstance();
         builder.RegisterType<EmoteSpamAutoModRule>().As<IGuildAutoModRule>().SingleInstance();

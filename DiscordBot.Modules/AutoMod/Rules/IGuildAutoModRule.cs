@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
-using DiscordBot.Modules.AutoMod.Rules.Violation;
+using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
 namespace DiscordBot.Modules.AutoMod.Rules;
 

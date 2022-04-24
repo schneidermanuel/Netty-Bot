@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using DiscordBot.Modules.AutoMod.Rules.Violation;
-
-namespace DiscordBot.DataAccess.Contract.AutoMod;
+﻿namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
 public static class ValidationHelper
 {

@@ -37,4 +37,44 @@ internal class AutoModManager
             await violation.Execute(context);
         }
     }
+
+    public bool ExistsRule(string module)
+    {
+        return _rules.Any(rule => rule.RuleIdentifier == module);
+    }
+
+    public bool IsRuleEnabledForGuild(string module, ulong guildId)
+    {
+        if (!ExistsRule(module))
+        {
+            return false;
+        }
+
+        var rule = _rules.Single(rule => rule.RuleIdentifier == module);
+        return rule.IsEnabledInGuild(guildId);
+    }
+
+    public async Task EnableRuleAsync(string module, ulong guildId)
+    {
+        if (!ExistsRule(module))
+        {
+            return;
+        }
+
+        var rule = _rules.Single(rule => rule.RuleIdentifier == module);
+        rule.RegisterGuild(guildId);
+        await _businessLogic.SetEnabled(module, guildId, true);
+    }
+
+    public async Task DisableRuleAsync(string module, ulong guildId)
+    {
+        if (!ExistsRule(module))
+        {
+            return;
+        }
+
+        var rule = _rules.Single(rule => rule.RuleIdentifier == module);
+        rule.UnregisterGuild(guildId);
+        await _businessLogic.SetEnabled(module, guildId, false);
+    }
 }

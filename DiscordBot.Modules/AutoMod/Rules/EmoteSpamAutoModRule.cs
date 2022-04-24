@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod;
-using DiscordBot.DataAccess.Modules.AutoMod.BusinessLogic;
+using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 using DiscordBot.Framework.Extentions;
-using DiscordBot.Modules.AutoMod.Rules.Violation;
 
 namespace DiscordBot.Modules.AutoMod.Rules;
 
