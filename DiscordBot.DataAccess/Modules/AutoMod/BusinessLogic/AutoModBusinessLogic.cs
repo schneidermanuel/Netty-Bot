@@ -42,6 +42,11 @@ internal class AutoModBusinessLogic : IAutoModBusinessLogic
         }
     }
 
+    public async Task SetValue(string module, ulong guildId, string key, string value)
+    {
+        await _repository.SetValue(module, guildId, key, value);
+    }
+
     private string MapBool(bool value)
     {
         return value ? "TRUE" : "FALSE";

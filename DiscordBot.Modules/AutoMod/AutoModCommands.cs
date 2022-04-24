@@ -1,18 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Modules.AutoMod.KeyValueValidationStrategies;
+using DiscordBot.Modules.AutoMod.Rules;
 
 namespace DiscordBot.Modules.AutoMod;
 
 internal class AutoModCommands : CommandModuleBase, IGuildModule
 {
+    private readonly IEnumerable<IKeyValueValidationStrategy> _strategies;
     private readonly AutoModManager _manager;
 
-    public AutoModCommands(IModuleDataAccess dataAccess, AutoModManager manager) : base(dataAccess)
+    public AutoModCommands(IModuleDataAccess dataAccess, AutoModManager manager,
+        IEnumerable<IKeyValueValidationStrategy> strategies) : base(dataAccess)
     {
+        _strategies = strategies;
         _manager = manager;
     }
 
@@ -41,7 +48,37 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
             case "disable":
                 await DisableModuleAsync(context);
                 break;
+            case "config":
+                await ConfigureModuleAsync(context);
+                break;
         }
+    }
+
+    private async Task ConfigureModuleAsync(ICommandContext context)
+    {
+        var module = await RequireString(context, 2);
+        await RequireExistingRule(context, module);
+        if (!_manager.IsRuleEnabledForGuild(module, context.Guild.Id))
+        {
+            await context.Channel.SendMessageAsync($"Die Regel '{module}' ist nicht aktiv");
+            return;
+        }
+
+        var key = await RequireString(context, 3);
+        var value = await RequireString(context, 4);
+
+        var type = _manager.GetValueTypeForRuleAndKey(module, key);
+        await ValidateKeyValuePair(type, module, key, value, context);
+
+        await _manager.SetValue(module, key, value, context.Guild.Id);
+        await context.Channel.SendMessageAsync("Der Wert wurde gespeichert!");
+    }
+
+    private async Task ValidateKeyValuePair(ConfigurationValueType type, string module, string key, string value,
+        ICommandContext context)
+    {
+        var strategy = _strategies.Single(strategy => strategy.IsResponsible(type));
+        await strategy.ExecuteAsync(module, key, value, context);
     }
 
     private async Task EnableModuleAsync(ICommandContext context)
@@ -70,7 +107,6 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
 
         await _manager.DisableRuleAsync(module, context.Guild.Id);
         await context.Channel.SendMessageAsync($"Die Regel '{module}' wurde deaktiviert");
-
     }
 
     private async Task RequireExistingRule(ICommandContext context, string rule)

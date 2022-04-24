@@ -13,4 +13,5 @@ internal interface IGuildAutoModRule
     void UnregisterGuild(ulong guildId);
     void SetValue(ulong guildId, string key, string value);
     Task InitializeAsync();
+    ConfigurationValueType GetValueTypeOfKey(string key);
 }

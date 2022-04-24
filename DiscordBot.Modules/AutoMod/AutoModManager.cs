@@ -77,4 +77,28 @@ internal class AutoModManager
         rule.UnregisterGuild(guildId);
         await _businessLogic.SetEnabled(module, guildId, false);
     }
+
+    public ConfigurationValueType GetValueTypeForRuleAndKey(string ruleKey, string key)
+    {
+        if (!ExistsRule(ruleKey))
+        {
+            return ConfigurationValueType.Unavailable;
+        }
+
+        var rule = _rules.Single(rule => rule.RuleIdentifier == ruleKey);
+        var valueType = rule.GetValueTypeOfKey(key);
+        return valueType;
+    }
+
+    public async Task SetValue(string module, string key, string value, ulong guildId)
+    {
+        if (!ExistsRule(module))
+        {
+            return;
+        }
+
+        var rule = _rules.Single(rule => rule.RuleIdentifier == module);
+        rule.SetValue(guildId, key, value);
+        await _businessLogic.SetValue(module, guildId, key, value);
+    }
 }

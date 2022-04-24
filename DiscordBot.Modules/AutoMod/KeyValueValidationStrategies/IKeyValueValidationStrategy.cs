@@ -1,0 +1,11 @@
+﻿using System.Threading.Tasks;
+using Discord.Commands;
+using DiscordBot.Modules.AutoMod.Rules;
+
+namespace DiscordBot.Modules.AutoMod.KeyValueValidationStrategies;
+
+public interface IKeyValueValidationStrategy
+{
+    bool IsResponsible(ConfigurationValueType type);
+    Task ExecuteAsync(string module, string key, string value, ICommandContext context);
+}

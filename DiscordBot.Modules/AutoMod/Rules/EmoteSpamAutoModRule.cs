@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -18,6 +19,12 @@ internal class EmoteSpamAutoModRule : IGuildAutoModRule
 
     private IList<ulong> _guilds;
     private Dictionary<ulong, GuildRuleConfiguration> _configs;
+
+    private Dictionary<string, ConfigurationValueType> _keys = new Dictionary<string, ConfigurationValueType>
+    {
+        { FreeEmoteKey, ConfigurationValueType.IntValueOnly },
+        { ValidationHelper.ActionKey, ConfigurationValueType.ActionValue }
+    };
 
     public EmoteSpamAutoModRule(IAutoModBusinessLogic businessLogic)
     {
@@ -43,6 +50,16 @@ internal class EmoteSpamAutoModRule : IGuildAutoModRule
                 _configs[enabledGuild].SetValue(keyValuePair.Key, keyValuePair.Value);
             }
         }
+    }
+
+    public ConfigurationValueType GetValueTypeOfKey(string key)
+    {
+        if (_keys.ContainsKey(key))
+        {
+            return _keys[key];
+        }
+
+        return ConfigurationValueType.Unavailable;
     }
 
     public IRuleViolationAction ExecuteRule(ICommandContext context)
