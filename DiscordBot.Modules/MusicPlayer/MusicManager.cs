@@ -50,11 +50,6 @@ public class MusicManager
         }
 
         var player = _node.GetPlayer(guild);
-        if (!player.IsConnected)
-        {
-            player = await _node.JoinAsync(voiceChannel);
-        }
-
         if (player.PlayerState != PlayerState.Playing)
         {
             await player.PlayAsync(_playlistManager.GetNextSong(guild.Id));
