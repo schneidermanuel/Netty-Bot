@@ -54,7 +54,7 @@ public class BotManager
             return;
         }
 
-        var botUser = context.Guild.GetUser(ClientId);
+        var botUser = context.Guild.GetUser(context.Client.Rest.CurrentUser.Id);
         if (!botUser.GuildPermissions.Administrator)
         {
             var prefix = await _dataAccess.GetServerPrefixAsync(context.Guild.Id);

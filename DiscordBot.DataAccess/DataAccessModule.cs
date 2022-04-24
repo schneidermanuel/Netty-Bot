@@ -1,5 +1,6 @@
 using Autofac;
 using DiscordBot.DataAccess.Contract;
+using DiscordBot.DataAccess.Modules.AutoMod;
 using DiscordBot.DataAccess.Modules.AutoRole;
 using DiscordBot.DataAccess.Modules.GeburtstagList;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
@@ -24,5 +25,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<AutoRoleModule>();
         builder.RegisterModule<TwitchNotificationsModule>();
         builder.RegisterModule<YoutubeNotificationModule>();
+        builder.RegisterModule<AutoModModule>();
     }
 }

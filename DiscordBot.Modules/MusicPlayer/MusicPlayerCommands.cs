@@ -41,13 +41,15 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
     [Command("play")]
     public async Task PlayCommand(ICommandContext context)
     {
+        var voiceState = context.User as IVoiceState;
         var songname = await RequireReminderArg(context);
-        if (!await PlaySongAsync(songname, context.Channel, context.Guild, context.User as IVoiceState)) return;
+        if (!await PlaySongAsync(songname, context.Channel, context.Guild, voiceState,
+                context.Client.CurrentUser.Id)) return;
         await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
     }
 
     private async Task<bool> PlaySongAsync(string songname, IMessageChannel messageChannel, IGuild guild,
-        IVoiceState voiceState)
+        IVoiceState voiceState, ulong clientId)
     {
         var searchSongTask = _lavaNode.SearchYouTubeAsync(songname);
         if (voiceState?.VoiceChannel == null)
@@ -66,6 +68,13 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         }
 
         await _manager.PlayTrackAsync(guild, track.Tracks.First(), channel);
+        var user = await guild.GetUserAsync(clientId);
+        if (user.VoiceChannel == null)
+        {
+            await voiceState.VoiceChannel.ConnectAsync(true, false, true);
+        }
+
+
         return true;
     }
 
@@ -248,7 +257,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var count = 0;
         foreach (var track in playlist.Tracks)
         {
-            if (!await PlaySongAsync(track.Title, context.Channel, context.Guild, voiceState))
+            if (!await PlaySongAsync(track.Title, context.Channel, context.Guild, voiceState, context.Client.CurrentUser.Id))
                 continue;
             count++;
         }

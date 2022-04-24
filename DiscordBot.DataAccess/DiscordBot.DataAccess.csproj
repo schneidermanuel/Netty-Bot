@@ -10,6 +10,7 @@
       <PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2658" />
       <PackageReference Include="MySql.Data" Version="8.0.28" />
       <PackageReference Include="NHibernate" Version="5.3.11" />
+      <PackageReference Include="Opus" Version="1.0.0" />
       <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
     </ItemGroup>
 
@@ -22,6 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Entities\AutoModConfigurationEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
       <EmbeddedResource Include="Entities\AutoroleSetupEntity.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>

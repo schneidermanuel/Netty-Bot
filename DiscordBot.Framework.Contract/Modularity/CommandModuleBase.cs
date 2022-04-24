@@ -22,7 +22,7 @@ public abstract class CommandModuleBase : IGuildModule
 
     public abstract string ModuleUniqueIdentifier { get; }
 
-    public async Task<bool> IsEnabled(ulong id)
+    protected async Task<bool> IsEnabled(ulong id)
     {
         return await _dataAccess.IsModuleEnabledForGuild(id, ModuleUniqueIdentifier);
     }
