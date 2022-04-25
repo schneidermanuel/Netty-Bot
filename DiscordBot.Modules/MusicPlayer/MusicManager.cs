@@ -109,7 +109,7 @@ public class MusicManager
         var player = _node.GetPlayer(guild);
         if (player.VoiceChannel == null)
         {
-            await player.DisposeAsync();
+            await player.StopAsync();
             return;
         }
 
@@ -155,5 +155,4 @@ public class MusicManager
     {
         return _playlistManager.GetCountForGuildId(contextGuild.Id);
     }
-
 }
