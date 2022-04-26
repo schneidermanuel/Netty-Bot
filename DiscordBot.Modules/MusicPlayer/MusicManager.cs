@@ -85,9 +85,8 @@ public class MusicManager
         var channel = (SocketVoiceChannel)player.VoiceChannel;
         if (channel.Users.Count < 2)
         {
-            _playlistManager.DeletePlaylist(guild.Id);
-            await player.VoiceChannel.DisconnectAsync();
-            await player.DisposeAsync();
+            await ClearQueueAsync(guild);
+            return;
         }
 
         await player.PlayAsync(nextSong);
@@ -107,12 +106,7 @@ public class MusicManager
     {
         _playlistManager.DeletePlaylist(guild.Id);
         var player = _node.GetPlayer(guild);
-        if (player.VoiceChannel == null)
-        {
-            await player.StopAsync();
-            return;
-        }
-
+        await player.StopAsync();
         await _node.LeaveAsync(player.VoiceChannel);
     }
 
