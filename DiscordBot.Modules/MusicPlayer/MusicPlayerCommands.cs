@@ -41,10 +41,17 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
     [Command("play")]
     public async Task PlayCommand(ICommandContext context)
     {
-        var voiceState = context.User as IVoiceState;
-        var songname = await RequireReminderArg(context);
-        if (!await PlaySongAsync(songname, context.Channel, context.Guild, voiceState)) return;
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        try
+        {
+            var voiceState = context.User as IVoiceState;
+            var songname = await RequireReminderArg(context);
+            if (!await PlaySongAsync(songname, context.Channel, context.Guild, voiceState)) return;
+            await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private async Task<bool> PlaySongAsync(string songname, IMessageChannel messageChannel, IGuild guild,
