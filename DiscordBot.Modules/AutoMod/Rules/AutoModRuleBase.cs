@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
+using MySqlX.XDevAPI.Common;
 
 namespace DiscordBot.Modules.AutoMod.Rules;
 
@@ -51,6 +52,13 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
         if (!_guilds.Contains(guildId))
         {
             _guilds.Add(guildId);
+        }
+
+        if (!Configs.ContainsKey(guildId))
+        {
+            var config = new GuildRuleConfiguration();
+            config.SetValue(ValidationHelper.ActionKey, ValidationHelper.DeleteMessageKey);
+            Configs.Add(guildId, config);
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod;
@@ -40,29 +41,45 @@ internal class CapsLockAutoModRule : AutoModRuleBase
         var allowedCapsCount = Configs[context.Guild.Id].GetValue(CapsCountKey).ToInt()
             .GetValueOrDefault(DefaultCapsLimit);
         var words = context.Message.Content.Split(' ', '\n');
-        var capsCount = CalculateRelevantCapsCount(words);
+        var relevantCapsCount = CalculateRelevantCapsCount(words);
+        var fullCapsCount = GetFullCapsCount(words);
 
-        var noCapsCount = words.Length - capsCount;
+        var noCapsCount = words.Length - relevantCapsCount;
         var wordsToIncrement = Configs[context.Guild.Id]
             .GetValue(WordsToIncrementLimitKey).ToInt().GetValueOrDefault(DefaultIncrementCount);
         var freeCapsCount = allowedCapsCount + noCapsCount / wordsToIncrement;
-        if (capsCount < freeCapsCount)
+
+        if (relevantCapsCount > freeCapsCount
+            || (words.Length < freeCapsCount
+                && noCapsCount < fullCapsCount
+                && words.Length > 1)
+            || (words.Length > freeCapsCount
+                && words.Length - 1 <= fullCapsCount
+                && words.Length > 1)
+            || (words.Length == 1
+                && relevantCapsCount == 1
+                && words[0].Length > 5))
         {
-            return new DoNothingAction();
+            var onlyEmotesAction =
+                ValidationHelper.MapValidation(Configs[context.Guild.Id].GetValue(ValidationHelper.ActionKey),
+                    "Zu viele Caps!");
+            return onlyEmotesAction;
         }
 
-        var onlyEmotesAction =
-            ValidationHelper.MapValidation(Configs[context.Guild.Id].GetValue(ValidationHelper.ActionKey),
-                "Zu viele Caps!");
-        return onlyEmotesAction;
+        return new DoNothingAction();
     }
 
-    private int CalculateRelevantCapsCount(string[] words)
+    private static int GetFullCapsCount(IEnumerable<string> words)
+    {
+        return words.Count(w => w.All(char.IsUpper));
+    }
+
+    private static int CalculateRelevantCapsCount(IEnumerable<string> words)
     {
         return words.Where(CountAsRelevantCaps).Count();
     }
 
-    private bool CountAsRelevantCaps(string word)
+    private static bool CountAsRelevantCaps(string word)
     {
         if (word.Length < 3)
         {

@@ -65,7 +65,7 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         }
 
         var key = await RequireString(context, 3);
-        var value = await RequireString(context, 4);
+        var value = await RequireReminderArg(context, 4);
 
         var type = _manager.GetValueTypeForRuleAndKey(module, key);
         await ValidateKeyValuePair(type, module, key, value, context);

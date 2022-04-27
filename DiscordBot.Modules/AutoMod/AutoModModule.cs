@@ -23,5 +23,6 @@ internal class AutoModModule : Module
         builder.RegisterType<UnavailableKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
         builder.RegisterType<IntValueKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
         builder.RegisterType<AnyValueKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
+        builder.RegisterType<ActionKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
     }
 }
