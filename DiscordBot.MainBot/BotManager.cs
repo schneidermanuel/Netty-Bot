@@ -101,7 +101,7 @@ public class BotManager
     {
         _client.Ready -= ClientReady;
         await _client.SetStatusAsync(UserStatus.Online);
-        await _client.SetActivityAsync(new Game("Hustler-Lifestyle"));
+        await _client.SetActivityAsync(new Game("Hosted with Love by BrainyXS"));
         var postBootTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.PostBoot)
             .Select(x => x.Execute(_client));
         await Task.WhenAll(postBootTasks);
