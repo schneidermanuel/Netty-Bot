@@ -109,7 +109,7 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         }
 
         var key = await RequireString(context, 3);
-        var value = await RequireReminderOrEmpty(context, 4);
+        var value = (await RequireReminderOrEmpty(context, 4)).Trim();
         if (string.IsNullOrEmpty(value))
         {
             value = _manager.GetConfigValue(module, context.Guild.Id, key);
