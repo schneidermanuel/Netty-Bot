@@ -149,4 +149,5 @@ public class MusicManager
     {
         return _playlistManager.GetCountForGuildId(contextGuild.Id);
     }
+
 }

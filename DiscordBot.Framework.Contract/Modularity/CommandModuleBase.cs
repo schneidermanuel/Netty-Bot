@@ -22,7 +22,7 @@ public abstract class CommandModuleBase : IGuildModule
 
     public abstract string ModuleUniqueIdentifier { get; }
 
-    public async Task<bool> IsEnabled(ulong id)
+    protected async Task<bool> IsEnabled(ulong id)
     {
         return await _dataAccess.IsModuleEnabledForGuild(id, ModuleUniqueIdentifier);
     }
@@ -129,7 +129,7 @@ public abstract class CommandModuleBase : IGuildModule
         await RequireArg(context, position);
         var args = context.Message.Content.Split(' ').Skip(position);
         var output = args.Aggregate(string.Empty, (current, arg) => current + $"{arg} ");
-        return output;
+        return output.Trim();
     }
 
     protected async Task<string> RequireReminderOrEmpty(ICommandContext context, int position = 1)

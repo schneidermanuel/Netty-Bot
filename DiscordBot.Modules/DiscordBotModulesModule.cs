@@ -1,4 +1,5 @@
 using Autofac;
+using DiscordBot.Modules.AutoMod;
 using DiscordBot.Modules.AutoRole;
 using DiscordBot.Modules.Basics;
 using DiscordBot.Modules.BirthdayList;
@@ -24,5 +25,6 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<TwitchNotificationsModule>();
         builder.RegisterModule<YoutubeNotificationsModule>();
         builder.RegisterModule<AutoRoleModule>();
+        builder.RegisterModule<AutoModModule>();
     }
 }

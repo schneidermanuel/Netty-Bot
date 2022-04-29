@@ -1,4 +1,4 @@
-﻿namespace DiscordBot.DataAccess.Modules.AutoRole;
+﻿namespace DiscordBot.DataAccess.Modules.AutoRole.BusinessLogic;
 
 internal class AutoRoleSetupData
 {

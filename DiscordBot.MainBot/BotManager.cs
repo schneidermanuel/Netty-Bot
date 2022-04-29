@@ -73,7 +73,7 @@ public class BotManager
             {
                 if (await module.CanExecuteAsync(context.Guild.Id, context))
                 {
-                    await module.ExecuteAsync(context);
+                    _ = Task.Run(() => module.ExecuteAsync(context));
                 }
             }
             catch (InvalidOperationException)
