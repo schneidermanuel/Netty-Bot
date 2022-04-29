@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
+using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Modules.AutoMod.KeyValueValidationStrategies;
 using DiscordBot.Modules.AutoMod.Rules;
@@ -51,7 +52,51 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
             case "config":
                 await ConfigureModuleAsync(context);
                 break;
+            case "list":
+                await ListModulesAsync(context);
+                break;
+            case "list-configs":
+                await ListConfigsAsync(context);
+                break;
         }
+    }
+
+    private async Task ListConfigsAsync(ICommandContext context)
+    {
+        var module = await RequireString(context, 2);
+        var configs = _manager.GetAvailableConfigs(module);
+        if (configs == null)
+        {
+            await context.Channel.SendMessageAsync($"Die Regel {module} existiert nicht");
+            return;
+        }
+
+        var content = configs.Aggregate(string.Empty, (current, config) => current + $"{config.Key}: {config.Value}\n");
+        var embedBuilder = new EmbedBuilder();
+        embedBuilder.WithDescription(content);
+        embedBuilder.WithTitle($"Verfügbare AutoMod-Einstellungen für {module}");
+        embedBuilder.WithColor(Color.DarkBlue);
+        embedBuilder.WithCurrentTimestamp();
+        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+
+    }
+
+    private async Task ListModulesAsync(ICommandContext context)
+    {
+        var modules = _manager.GetModules(context.Guild.Id);
+        var content = string.Empty;
+        foreach (var module in modules)
+        {
+            var activity = module.Value ? "Aktiv" : "Inaktiv";
+            content += $"{module.Key}: {activity}\n";
+        }
+
+        var embedBuilder = new EmbedBuilder();
+        embedBuilder.WithDescription(content);
+        embedBuilder.WithTitle("Verfügbare AutoMod-Einstellungen");
+        embedBuilder.WithColor(Color.DarkBlue);
+        embedBuilder.WithCurrentTimestamp();
+        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }
 
     private async Task ConfigureModuleAsync(ICommandContext context)

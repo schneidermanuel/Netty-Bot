@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
@@ -14,4 +15,5 @@ internal interface IGuildAutoModRule
     void SetValue(ulong guildId, string key, string value);
     Task InitializeAsync();
     ConfigurationValueType GetValueTypeOfKey(string key);
+    Dictionary<string, string> GetConfigurations();
 }

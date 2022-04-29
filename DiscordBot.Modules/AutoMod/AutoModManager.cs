@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod;
+using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 using DiscordBot.Modules.AutoMod.Rules;
 
 namespace DiscordBot.Modules.AutoMod;
@@ -100,5 +102,16 @@ internal class AutoModManager
         var rule = _rules.Single(rule => rule.RuleIdentifier == module);
         rule.SetValue(guildId, key, value);
         await _businessLogic.SetValue(module, guildId, key, value);
+    }
+
+    public Dictionary<string, bool> GetModules(ulong guildId)
+    {
+        return _rules.ToDictionary(rule => rule.RuleIdentifier, rule => rule.IsEnabledInGuild(guildId));
+    }
+
+    public Dictionary<string, string> GetAvailableConfigs(string module)
+    {
+        var rule = _rules.SingleOrDefault(rule => rule.RuleIdentifier == module);
+        return rule?.GetConfigurations();
     }
 }

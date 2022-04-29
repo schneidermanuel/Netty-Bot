@@ -1,4 +1,4 @@
-﻿namespace DiscordBot.Modules.AutoMod.Rules;
+﻿namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
 public enum ConfigurationValueType
 {

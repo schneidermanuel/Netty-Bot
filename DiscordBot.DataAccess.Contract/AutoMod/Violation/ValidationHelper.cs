@@ -1,4 +1,6 @@
-﻿namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
+﻿using System;
+
+namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
 public static class ValidationHelper
 {
@@ -22,6 +24,25 @@ public static class ValidationHelper
                 return new DeleteAndNotifyAction(reason);
             default:
                 return new DoNothingAction();
+        }
+    }
+
+    public static string MapValueTypeToString(ConfigurationValueType type)
+    {
+        switch (type)
+        {
+            case ConfigurationValueType.Unavailable:
+                return "Nicht Verfügbar";
+            case ConfigurationValueType.BoolValueOnly:
+                return "TRUE / FALSE";
+            case ConfigurationValueType.IntValueOnly:
+                return "Positive Ganzzahl";
+            case ConfigurationValueType.AnyValue:
+                return "Freitext";
+            case ConfigurationValueType.ActionValue:
+                return $"{DoNothingKey} / {DeleteMessageKey} / {DeleteAndNotifyKey} / {WarnUserKey}";
+            default:
+                throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
     }
 }

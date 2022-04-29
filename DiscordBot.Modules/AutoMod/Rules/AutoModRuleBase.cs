@@ -30,6 +30,11 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
             : ConfigurationValueType.Unavailable;
     }
 
+    public Dictionary<string, string> GetConfigurations()
+    {
+        return _keys.ToDictionary(key => key.Key, key => ValidationHelper.MapValueTypeToString(key.Value));
+    }
+
     public void SetValue(ulong guildId, string key, string value)
     {
         if (!Configs.ContainsKey(guildId))
