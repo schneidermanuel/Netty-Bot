@@ -33,7 +33,7 @@ internal class CapsLockAutoModRule : AutoModRuleBase
 
     public override IRuleViolationAction ExecuteRule(ICommandContext context)
     {
-        if (!_guilds.Contains(context.Guild.Id))
+        if (!Guilds.Contains(context.Guild.Id))
         {
             return new DoNothingAction();
         }

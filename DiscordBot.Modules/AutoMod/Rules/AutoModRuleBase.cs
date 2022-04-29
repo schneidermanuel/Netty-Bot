@@ -11,7 +11,7 @@ namespace DiscordBot.Modules.AutoMod.Rules;
 internal abstract class AutoModRuleBase : IGuildAutoModRule
 {
     private readonly IAutoModBusinessLogic _businessLogic;
-    protected IList<ulong> _guilds { get; set; }
+    protected IList<ulong> Guilds { get; set; }
     protected Dictionary<ulong, GuildRuleConfiguration> Configs { get; set; }
     protected abstract Dictionary<string, ConfigurationValueType> _keys { get; }
     public abstract string RuleIdentifier { get; }
@@ -21,6 +21,7 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
     {
         _businessLogic = businessLogic;
         Configs = new Dictionary<ulong, GuildRuleConfiguration>();
+        Guilds = new List<ulong>();
     }
 
     public ConfigurationValueType GetValueTypeOfKey(string key)
@@ -49,14 +50,14 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
 
     public bool IsEnabledInGuild(ulong guildId)
     {
-        return _guilds.Contains(guildId);
+        return Guilds.Contains(guildId);
     }
 
     public void RegisterGuild(ulong guildId)
     {
-        if (!_guilds.Contains(guildId))
+        if (!Guilds.Contains(guildId))
         {
-            _guilds.Add(guildId);
+            Guilds.Add(guildId);
         }
 
         if (!Configs.ContainsKey(guildId))
@@ -69,17 +70,17 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
 
     public void UnregisterGuild(ulong guildId)
     {
-        if (_guilds.Contains(guildId))
+        if (Guilds.Contains(guildId))
         {
-            _guilds.Remove(guildId);
+            Guilds.Remove(guildId);
         }
     }
 
     public async Task InitializeAsync()
     {
         var guilds = await _businessLogic.GetGuildIdsWithModuleEnabled(RuleIdentifier);
-        _guilds = guilds.ToList();
-        foreach (var enabledGuild in _guilds)
+        Guilds = guilds.ToList();
+        foreach (var enabledGuild in Guilds)
         {
             var keyValuePairs = await _businessLogic.GetConfigurationsForGuildAndRule(enabledGuild, RuleIdentifier);
             foreach (var keyValuePair in keyValuePairs)
