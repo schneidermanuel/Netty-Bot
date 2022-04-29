@@ -4,7 +4,12 @@ namespace DiscordBot.Modules.AutoMod.Rules;
 
 internal class GuildRuleConfiguration
 {
-    public Dictionary<string, string> Configs = new();
+    public Dictionary<string, string> Configs;
+
+    public GuildRuleConfiguration()
+    {
+        Configs = new Dictionary<string, string>();
+    }
 
     public void SetValue(string key, string value)
     {

@@ -78,7 +78,6 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithColor(Color.DarkBlue);
         embedBuilder.WithCurrentTimestamp();
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
-
     }
 
     private async Task ListModulesAsync(ICommandContext context)
@@ -110,7 +109,20 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         }
 
         var key = await RequireString(context, 3);
-        var value = await RequireReminderArg(context, 4);
+        var value = await RequireReminderOrEmpty(context, 4);
+        if (string.IsNullOrEmpty(value))
+        {
+            value = _manager.GetConfigValue(module, context.Guild.Id, key);
+            if (value == null)
+            {
+                await context.Channel.SendMessageAsync($"Die Konfiguration '{key}' existiert in der Regel '{module}' nicht");
+            }
+            else
+            {
+                await context.Channel.SendMessageAsync($"Der Wert '{module}:{key}' ist aktuell auf '{value}' gesetzt");
+            }
+            return;
+        }
 
         var type = _manager.GetValueTypeForRuleAndKey(module, key);
         await ValidateKeyValuePair(type, module, key, value, context);

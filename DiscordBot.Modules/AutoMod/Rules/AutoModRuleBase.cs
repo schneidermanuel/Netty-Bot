@@ -36,6 +36,17 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
         return _keys.ToDictionary(key => key.Key, key => ValidationHelper.MapValueTypeToString(key.Value));
     }
 
+    public string GetValue(ulong guildId, string key)
+    {
+        if (Configs.ContainsKey(guildId))
+        {
+            var config = Configs[guildId];
+            return config.GetValue(key);
+        }
+
+        return null;
+    }
+
     public void SetValue(ulong guildId, string key, string value)
     {
         if (!Configs.ContainsKey(guildId))
