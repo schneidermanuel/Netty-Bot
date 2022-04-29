@@ -115,7 +115,7 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
             value = _manager.GetConfigValue(module, context.Guild.Id, key);
             if (value == null)
             {
-                await context.Channel.SendMessageAsync($"Die Konfiguration '{key}' existiert in der Regel '{module}' nicht");
+                await context.Channel.SendMessageAsync($"Die Konfiguration '{key}' ist in der Regel '{module}' nicht gesetzt.");
             }
             else
             {
