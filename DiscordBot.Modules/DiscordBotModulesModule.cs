@@ -4,6 +4,7 @@ using DiscordBot.Modules.AutoRole;
 using DiscordBot.Modules.Basics;
 using DiscordBot.Modules.BirthdayList;
 using DiscordBot.Modules.Huebcraft;
+using DiscordBot.Modules.MkCalculator;
 using DiscordBot.Modules.MusicPlayer;
 using DiscordBot.Modules.ReactionRoles;
 using DiscordBot.Modules.TwitchNotifications;
@@ -26,5 +27,6 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<YoutubeNotificationsModule>();
         builder.RegisterModule<AutoRoleModule>();
         builder.RegisterModule<AutoModModule>();
+        builder.RegisterModule<MkCalculatorModule>();
     }
 }
