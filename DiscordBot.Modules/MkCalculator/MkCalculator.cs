@@ -28,7 +28,7 @@ internal class MkCalculator : IMkCalculator
     {
         var teamPoints = places.Sum(place => ScorePointLookup[place]);
         var enemyPoints = TotalScore - teamPoints;
-        var difference = Math.Abs(TotalScore - enemyPoints);
+        var difference = Math.Abs(teamPoints - enemyPoints);
         return new MkResult
         {
             Difference = difference,

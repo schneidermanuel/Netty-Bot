@@ -33,6 +33,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         }
 
         var result = _calculator.Calculate(places);
+        
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();
@@ -40,7 +41,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithThumbnailUrl(
             "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
         embedBuilder.WithDescription(
-            $"Team - Difference  Enemy\n{result.Points} - {result.Difference} - {result.EnemyPoints}");
+            $"Team - Difference - Enemy\n{result.Points} - {result.Difference} - {result.EnemyPoints}");
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }
 
