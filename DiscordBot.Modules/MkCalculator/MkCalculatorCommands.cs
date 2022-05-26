@@ -24,7 +24,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         return await IsEnabled(id);
     }
 
-    [Command("mkRace")]
+    [Command("race")]
     public async Task CalculateAsync(ICommandContext context)
     {
         await RequireArg(context, 6, "Bitte geben Sie 6 Zahlen ein");
@@ -50,7 +50,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }
 
-    [Command("mkFinish")]
+    [Command("mkcomplete")]
     public async Task FinishAsync(ICommandContext context)
     {
         var result = _manager.GetFinalResult(context.Guild.Id);

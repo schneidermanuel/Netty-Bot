@@ -38,7 +38,7 @@ public abstract class CommandModuleBase : IGuildModule
         {
             var attribute = (CommandAttribute)methodInfo.GetCustomAttribute(typeof(CommandAttribute));
             Debug.Assert(attribute != null, nameof(attribute) + " != null");
-            _commandMethods.Add(attribute.Text, methodInfo);
+            _commandMethods.Add(attribute.Text.ToLower(), methodInfo);
         }
     }
 
@@ -60,7 +60,7 @@ public abstract class CommandModuleBase : IGuildModule
         }
 
         var baseCommand = message.Remove(0, 1).Split(' ')[0];
-        if (!_commandMethods.ContainsKey(baseCommand))
+        if (!_commandMethods.ContainsKey(baseCommand.ToLower()))
         {
             return;
         }
@@ -138,7 +138,7 @@ public abstract class CommandModuleBase : IGuildModule
         var output = args.Aggregate(string.Empty, (current, arg) => current + $"{arg} ");
         return await Task.FromResult(output);
     }
-    
+
     protected int RequireIntArgOrDefault(ICommandContext context, int position = 1, int defaultValue = 0)
     {
         var args = context.Message.Content.Split(' ').Skip(position);
