@@ -59,8 +59,8 @@ public abstract class CommandModuleBase : IGuildModule
             return;
         }
 
-        var baseCommand = message.Remove(0, 1).Split(' ')[0];
-        if (!_commandMethods.ContainsKey(baseCommand.ToLower()))
+        var baseCommand = message.Remove(0, 1).Split(' ')[0].ToLower();
+        if (!_commandMethods.ContainsKey(baseCommand))
         {
             return;
         }
