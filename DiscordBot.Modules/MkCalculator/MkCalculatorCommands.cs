@@ -96,6 +96,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         builder.AddField("Kart", wr.Kart, true);
         builder.AddField("Tires", wr.Tires, true);
         builder.AddField("Glider", wr.Gilder, true);
+        builder.WithUrl(wr.VideoUrl);
 
         await context.Channel.SendMessageAsync("", false, builder.Build());
     }

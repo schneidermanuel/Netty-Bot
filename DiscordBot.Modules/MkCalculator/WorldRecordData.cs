@@ -14,6 +14,7 @@ internal class WorldRecordData
     public string Tires { get; }
     public string Gilder { get; }
     public string Trackname { get; }
+    public string VideoUrl { get; }
 
     public WorldRecordData(string date,
         string time,
@@ -25,8 +26,9 @@ internal class WorldRecordData
         string character,
         string kart,
         string tires,
-        string gilder, 
-        string trackname)
+        string gilder,
+        string trackname, 
+        string videoUrl)
     {
         Date = date;
         Time = time;
@@ -40,5 +42,6 @@ internal class WorldRecordData
         Tires = tires;
         Gilder = gilder;
         Trackname = trackname;
+        VideoUrl = videoUrl;
     }
 }
