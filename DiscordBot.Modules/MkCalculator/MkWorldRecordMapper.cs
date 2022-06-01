@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DiscordBot.Modules.MkCalculator;
 
@@ -20,7 +21,7 @@ internal class MkWorldRecordMapper : IMkWorldRecordMapper
         { "MW", "Mount+Wario" },
         { "CC", "Cloudtop+Cruise" },
         { "BDD", "Bone-Dry+Dunes" },
-        { "BS", "Bowser%27s+Castle" },
+        { "BC", "Bowser%27s+Castle" },
         { "RR", "Rainbow+Road" },
         { "rMMM", "Wii+Moo+Moo+Meadows" },
         { "rMC", "GBA+Mario+Circuit" },
@@ -67,11 +68,7 @@ internal class MkWorldRecordMapper : IMkWorldRecordMapper
 
     public string GetNameByShortForm(string shortform)
     {
-        if (!_map.ContainsKey(shortform))
-        {
-            return null;
-        }
-
-        return _map[shortform];
+        var pair = _map.SingleOrDefault(map => map.Key.ToLower() == shortform.ToLower());
+        return pair.Equals(default(KeyValuePair<string, string>)) ? null : pair.Value;
     }
 }
