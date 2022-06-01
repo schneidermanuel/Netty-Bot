@@ -35,7 +35,7 @@ internal class MkWorldRecordMapper : IMkWorldRecordMapper
         { "rMP", "3DS+Music+Park" },
         { "rYV", "N64+Yoshi+Valley" },
         { "rTTC", "DS+Tick-Tock+Clock" },
-        { "rPPS", "Piranha+Plant+Slide" },
+        { "rPPS", "3DS+Piranha+Plant+Slide" },
         { "rGV", "Wii+Grumble+Volcano" },
         { "rRRd", "N64+Rainbow+Road" },
         { "dYC", "GCN+Yoshi+Circuit" },
