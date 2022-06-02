@@ -53,7 +53,15 @@ internal class MkWorldRecordLoader : IMkWorldRecordLoader
             var kart = infos.Skip(11).First().InnerText;
             var tires = infos.Skip(12).First().InnerText;
             var gilder = infos.Skip(13).First().InnerText;
-            var videoUrl = Regex.Replace(Regex.Replace(infos.Skip(1).First().InnerHtml, "<.*href=\"", ""), "\".*", "");
+            string videoUrl;
+            try
+            {
+                videoUrl = Regex.Replace(Regex.Replace(infos.Skip(1).First().InnerHtml, "<.*href=\"", ""), "\".*", "");
+            }
+            catch (Exception)
+            {
+                videoUrl = null;
+            }
             return new WorldRecordData(date, time, player, nation, lap1, lap2, lap3, character, kart, tires, gilder, trackname.Replace("+", " ").Replace("%27", "'"), videoUrl);
         }
         catch (Exception)
