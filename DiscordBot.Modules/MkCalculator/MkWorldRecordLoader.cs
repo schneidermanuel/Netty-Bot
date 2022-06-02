@@ -62,7 +62,14 @@ internal class MkWorldRecordLoader : IMkWorldRecordLoader
             {
                 videoUrl = null;
             }
-            return new WorldRecordData(date, time, player, nation, lap1, lap2, lap3, character, kart, tires, gilder, trackname.Replace("+", " ").Replace("%27", "'"), videoUrl);
+
+            if (!string.IsNullOrEmpty(videoUrl) && !videoUrl.StartsWith("https://"))
+            {
+                videoUrl = null;
+            }
+
+            return new WorldRecordData(date, time, player, nation, lap1, lap2, lap3, character, kart, tires, gilder,
+                trackname.Replace("+", " ").Replace("%27", "'"), videoUrl);
         }
         catch (Exception)
         {
