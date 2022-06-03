@@ -53,6 +53,13 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }
 
+    [Command("mkdisplay")]
+    public async Task MkDisplayAsync(ICommandContext context)
+    {
+        await context.Channel.SendMessageAsync(
+            "https://mk-leaderboard.netty-bot.com?key=" + context.Channel.Id);
+    }
+
     [Command("mkcomplete")]
     public async Task FinishAsync(ICommandContext context)
     {
