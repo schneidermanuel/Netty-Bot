@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.TimedAction;
 
 namespace DiscordBot.Modules.MkCalculator;
 
@@ -14,5 +16,6 @@ internal class MkCalculatorModule : Module
         builder.RegisterType<MkManager>().AsSelf().SingleInstance();
         builder.RegisterType<MkWorldRecordMapper>().As<IMkWorldRecordMapper>();
         builder.RegisterType<MkWorldRecordLoader>().As<IMkWorldRecordLoader>();
+        builder.RegisterType<MkBootStep>().As<ITimedAction>();
     }
 }

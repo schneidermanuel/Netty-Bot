@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DiscordBot.Modules.MkCalculator;
+namespace DiscordBot.DataAccess.Contract.MkCalculator;
 
-internal class MkResult
+public class MkResult
 {
     public int Points { get; set; }
     public int Difference => Math.Abs(Points - EnemyPoints);

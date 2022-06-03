@@ -39,8 +39,8 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         }
 
         var result = _calculator.Calculate(places);
-        _manager.RegisterResult(result, context.Guild.Id);
-        var sumResult = _manager.GetFinalResult(context.Guild.Id);
+        _manager.RegisterResult(result, context.User.Id);
+        var sumResult = _manager.GetFinalResult(context.User.Id);
 
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
@@ -56,7 +56,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
     [Command("mkcomplete")]
     public async Task FinishAsync(ICommandContext context)
     {
-        var result = _manager.GetFinalResult(context.Guild.Id);
+        var result = _manager.GetFinalResult(context.User.Id);
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();
@@ -66,7 +66,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithDescription(
             $"Team - Difference - Enemy\n{result.Points} - {result.Difference} - {result.EnemyPoints}");
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
-        _manager.EndGame(context.Guild.Id);
+        _manager.EndGame(context.User.Id);
     }
 
     [Command("mkwr")]
