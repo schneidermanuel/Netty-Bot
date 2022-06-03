@@ -73,7 +73,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithDescription(
             $"Team - Difference - Enemy\n{result.Points} - {result.Difference} - {result.EnemyPoints}");
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
-        _manager.EndGame(context.User.Id);
+        _manager.EndGame(context.Channel.Id);
     }
 
     [Command("mkwr")]
