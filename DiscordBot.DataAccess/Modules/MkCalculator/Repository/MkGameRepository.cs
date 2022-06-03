@@ -30,11 +30,11 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    public async Task ClearAsync(string userId)
+    public async Task ClearAsync(string channelId)
     {
         using (var session = _provider.OpenSession())
         {
-            var entities = session.Query<MarioKartRunnningGameEntity>().Where(entity => entity.UserId == userId);
+            var entities = session.Query<MarioKartRunnningGameEntity>().Where(entity => entity.ChannelId == channelId);
             foreach (var entity in entities)
             {
                 await session.DeleteAsync(entity);
@@ -48,8 +48,8 @@ internal class MkGameRepository : IMkGameRepository
     {
         using (var session = _provider.OpenSession())
         {
-            var query = session.Query<MarioKartRunnningGameEntity>().Where(entity => entity.UserId == data.UserId);
-            var entity = await query.FirstOrDefaultAsync() ?? await CreateNewGameAsync(data.UserId);
+            var query = session.Query<MarioKartRunnningGameEntity>().Where(entity => entity.ChannelId == data.ChannelId);
+            var entity = await query.FirstOrDefaultAsync() ?? await CreateNewGameAsync(data.ChannelId);
             entity.EnemyPoints = data.EnemyPoints;
             entity.TeamPoints = data.TeamPoints;
             await session.SaveOrUpdateAsync(entity);
@@ -57,12 +57,12 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    private async Task<MarioKartRunnningGameEntity> CreateNewGameAsync(string userId)
+    private async Task<MarioKartRunnningGameEntity> CreateNewGameAsync(string channelId)
     {
         using (var session = _provider.OpenSession())
         {
             var existingGamesQuery =
-                session.Query<MarioKartRunnningGameEntity>().Where(entity => entity.UserId == userId);
+                session.Query<MarioKartRunnningGameEntity>().Where(entity => entity.ChannelId == channelId);
             foreach (var existingGame in existingGamesQuery)
             {
                 await session.DeleteAsync(existingGame);
@@ -73,7 +73,7 @@ internal class MkGameRepository : IMkGameRepository
 
         return new MarioKartRunnningGameEntity
         {
-            UserId = userId
+            ChannelId = channelId
         };
     }
 }

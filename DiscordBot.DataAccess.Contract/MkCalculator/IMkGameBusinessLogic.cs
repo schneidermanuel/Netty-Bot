@@ -5,6 +5,6 @@ namespace DiscordBot.DataAccess.Contract.MkCalculator;
 public interface IMkGameBusinessLogic
 {
     Task ClearAllAsync();
-    Task ClearAsync(ulong userId);
-    Task SaveOrUpdate(ulong userId, MkResult gameToSave);
+    Task ClearAsync(ulong channelId);
+    Task SaveOrUpdate(ulong channelId, MkResult gameToSave);
 }

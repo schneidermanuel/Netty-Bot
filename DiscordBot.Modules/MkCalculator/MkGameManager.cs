@@ -13,38 +13,38 @@ internal class MkManager
         _businessLogic = businessLogic;
     }
     
-    public void RegisterResult(MkResult result, ulong userId)
+    public void RegisterResult(MkResult result, ulong channel)
     {
-        if (!_runningGames.ContainsKey(userId))
+        if (!_runningGames.ContainsKey(channel))
         {
-            _runningGames.Add(userId, result);
-            _businessLogic.SaveOrUpdate(userId, result);
+            _runningGames.Add(channel, result);
+            _businessLogic.SaveOrUpdate(channel, result);
             return;
         }
 
-        var game = _runningGames[userId];
+        var game = _runningGames[channel];
         game.Points += result.Points;
         game.EnemyPoints += result.EnemyPoints;
-        _businessLogic.SaveOrUpdate(userId, game);
+        _businessLogic.SaveOrUpdate(channel, game);
     }
     
-    public MkResult GetFinalResult(ulong userId)
+    public MkResult GetFinalResult(ulong channelId)
     {
-        if (!_runningGames.ContainsKey(userId))
+        if (!_runningGames.ContainsKey(channelId))
         {
             return null;
         }
 
-        var game = _runningGames[userId];
+        var game = _runningGames[channelId];
         return game;
     }
 
-    public void EndGame(ulong userId)
+    public void EndGame(ulong channelId)
     {
-        if (_runningGames.ContainsKey(userId))
+        if (_runningGames.ContainsKey(channelId))
         {
-            _runningGames.Remove(userId);
-            _businessLogic.ClearAsync(userId);
+            _runningGames.Remove(channelId);
+            _businessLogic.ClearAsync(channelId);
         }
     }
 }

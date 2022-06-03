@@ -5,7 +5,7 @@
         <id name="GameId" column="gameId" type="Int64">
             <generator class="increment"/>
         </id>
-        <property name="UserId" type="String" column="userId"/>
+        <property name="ChannelId" type="String" column="channelId"/>
         <property name="TeamPoints" type="int" column="teamPoints"/>
         <property name="EnemyPoints" type="int" column="enemyPoints"/>
     </class>

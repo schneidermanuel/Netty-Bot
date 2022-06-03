@@ -39,8 +39,8 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         }
 
         var result = _calculator.Calculate(places);
-        _manager.RegisterResult(result, context.User.Id);
-        var sumResult = _manager.GetFinalResult(context.User.Id);
+        _manager.RegisterResult(result, context.Channel.Id);
+        var sumResult = _manager.GetFinalResult(context.Channel.Id);
 
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
@@ -56,7 +56,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
     [Command("mkcomplete")]
     public async Task FinishAsync(ICommandContext context)
     {
-        var result = _manager.GetFinalResult(context.User.Id);
+        var result = _manager.GetFinalResult(context.Channel.Id);
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();

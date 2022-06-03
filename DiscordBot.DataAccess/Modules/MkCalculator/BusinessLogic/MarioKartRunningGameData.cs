@@ -5,7 +5,7 @@ namespace DiscordBot.DataAccess.Modules.MkCalculator.BusinessLogic;
 internal class MarioKartRunningGameData
 {
     public long GameId { get; }
-    public string UserId { get; }
+    public string ChannelId { get; }
     public int TeamPoints { get; }
     public int EnemyPoints { get; }
     public int Difference { get; }
@@ -14,16 +14,16 @@ internal class MarioKartRunningGameData
     public MarioKartRunningGameData(long gameId, ulong userId, int teamPoints, int enemyPoints)
     {
         GameId = gameId;
-        UserId = userId.ToString();
+        ChannelId = userId.ToString();
         TeamPoints = teamPoints;
         EnemyPoints = enemyPoints;
         Difference = Math.Abs(teamPoints - enemyPoints);
     }
 
-    public MarioKartRunningGameData(long gameId, string userId, int teamPoints, int enemyPoints)
+    public MarioKartRunningGameData(long gameId, string channelId, int teamPoints, int enemyPoints)
     {
         GameId = gameId;
-        UserId = userId;
+        ChannelId = channelId;
         TeamPoints = teamPoints;
         EnemyPoints = enemyPoints;
         Difference = Math.Abs(teamPoints - enemyPoints);

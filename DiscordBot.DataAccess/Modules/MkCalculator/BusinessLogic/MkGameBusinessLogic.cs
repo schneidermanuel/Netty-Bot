@@ -17,14 +17,14 @@ internal class MkGameBusinessLogic : IMkGameBusinessLogic
         await _repository.ClearAllAsync();
     }
 
-    public async Task ClearAsync(ulong userId)
+    public async Task ClearAsync(ulong channelId)
     {
-        await _repository.ClearAsync(userId.ToString());
+        await _repository.ClearAsync(channelId.ToString());
     }
     
-    public async Task SaveOrUpdate(ulong userId, MkResult gameToSave)
+    public async Task SaveOrUpdate(ulong channelId, MkResult gameToSave)
     {
-        await _repository.SaveOrUpdate(MapToData(userId, gameToSave));
+        await _repository.SaveOrUpdate(MapToData(channelId, gameToSave));
     }
 
     private MarioKartRunningGameData MapToData(ulong userId, MkResult gameToSave)
