@@ -1,3 +1,4 @@
+using System.Net.Security;
 using Autofac;
 using DiscordBot.Modules.AutoMod;
 using DiscordBot.Modules.AutoRole;
@@ -7,6 +8,7 @@ using DiscordBot.Modules.Huebcraft;
 using DiscordBot.Modules.MkCalculator;
 using DiscordBot.Modules.MusicPlayer;
 using DiscordBot.Modules.ReactionRoles;
+using DiscordBot.Modules.ServerCounter;
 using DiscordBot.Modules.TwitchNotifications;
 using DiscordBot.Modules.YoutubeNotifications;
 using DiscordBot.Modules.ZenQuote;
@@ -28,5 +30,6 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<AutoRoleModule>();
         builder.RegisterModule<AutoModModule>();
         builder.RegisterModule<MkCalculatorModule>();
+        builder.RegisterModule<ServerCoutnerModule>();
     }
 }
