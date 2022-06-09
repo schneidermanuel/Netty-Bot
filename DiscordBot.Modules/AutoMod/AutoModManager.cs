@@ -118,7 +118,7 @@ internal class AutoModManager
     public string GetConfigValue(string module, ulong guildId, string key)
     {
         var rule = _rules.SingleOrDefault(rule => rule.RuleIdentifier == module);
-        return rule?.GetValue(guildId, key);
+        return rule?.GetConfig(guildId, key);
 
     }
 }

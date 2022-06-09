@@ -18,6 +18,7 @@ internal class AutoModModule : Module
 
         builder.RegisterType<EmoteSpamAutoModRule>().As<IGuildAutoModRule>().SingleInstance();
         builder.RegisterType<CapsLockAutoModRule>().As<IGuildAutoModRule>().SingleInstance();
+        builder.RegisterType<SpamAutoModRule>().As<IGuildAutoModRule>().SingleInstance();
 
         builder.RegisterType<BoolValueKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
         builder.RegisterType<UnavailableKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();

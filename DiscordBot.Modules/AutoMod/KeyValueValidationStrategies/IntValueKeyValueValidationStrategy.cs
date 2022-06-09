@@ -28,5 +28,13 @@ internal class IntValueKeyValueValidationStrategy : IKeyValueValidationStrategy
                 $"Der Wert '{key}' muss für die Regel '{module}' eine Positive Zahl sein.");
             throw new ArgumentException();
         }
+
+        if (result > 100)
+        {
+            await context.Channel.SendMessageAsync(
+                $"Der gesetzte Wert für '{key}' ist für die Regel '{module}' zu gross.");
+            throw new ArgumentException();
+
+        }
     }
 }

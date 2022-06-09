@@ -43,16 +43,14 @@ internal class EmoteSpamAutoModRule : AutoModRuleBase
         }
 
         var onlyEmotesAction =
-            ValidationHelper.MapValidation(Configs[context.Guild.Id].GetValue(ValidationHelper.ActionKey),
+            ValidationHelper.MapValidation(GetConfig(context.Guild.Id, ValidationHelper.ActionKey),
                 "Zu viele Emotes!");
         return onlyEmotesAction;
     }
 
     private bool DoesMessageViolateRule(ulong guildId, int wordCount, int emoteCount)
     {
-        var config = Configs[guildId];
-
-        var freeEmoteCount = config.GetValue(FreeEmoteKey).ToInt().GetValueOrDefault(FreeEmoteDefaultCount);
+        var freeEmoteCount = GetConfig(guildId, FreeEmoteKey).ToInt().GetValueOrDefault(FreeEmoteDefaultCount);
         if (emoteCount > freeEmoteCount && emoteCount > wordCount - wordCount)
         {
             return true;

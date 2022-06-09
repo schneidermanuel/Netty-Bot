@@ -16,5 +16,5 @@ internal interface IGuildAutoModRule
     Task InitializeAsync();
     ConfigurationValueType GetValueTypeOfKey(string key);
     Dictionary<string, string> GetConfigurations();
-    string GetValue(ulong guildId, string key);
+    string GetConfig(ulong guildId, string key);
 }
