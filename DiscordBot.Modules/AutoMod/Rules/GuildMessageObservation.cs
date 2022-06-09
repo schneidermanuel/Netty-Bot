@@ -17,7 +17,7 @@ internal class GuildMessageObservation
         if (_userObservations.ContainsKey(userId))
         {
             var userObservation = _userObservations[userId];
-            if (userObservation.LastMessage > DateTime.Now.AddSeconds(-1 * resetTime))
+            if (userObservation.LastMessage < DateTime.Now.AddSeconds(-1 * resetTime))
             {
                 userObservation.MessageCount = 0;
             }

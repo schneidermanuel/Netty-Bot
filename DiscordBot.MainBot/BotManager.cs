@@ -116,9 +116,9 @@ public class BotManager
         var hourlyTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.Hourly).ToArray();
         while (true)
         {
-            await Task.Delay(new TimeSpan(1, 0, 0));
             var tasks = hourlyTasks.Select(x => x.Execute(_client));
             await Task.WhenAll(tasks);
+            await Task.Delay(new TimeSpan(1, 0, 0));
         }
     }
 
