@@ -70,11 +70,29 @@ namespace DiscordBot.Modules.ZenQuote {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Zitate sind bereits aktiviert..
+        /// </summary>
+        internal static string Error_QuotesAlreadyEnabled {
+            get {
+                return ResourceManager.GetString("Error_QuotesAlreadyEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zitate deaktiviert..
         /// </summary>
         internal static string Message_QuoteDisabled {
             get {
                 return ResourceManager.GetString("Message_QuoteDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hier werden nun tägliche Zitate versendet..
+        /// </summary>
+        internal static string Message_QuoteEnabled {
+            get {
+                return ResourceManager.GetString("Message_QuoteEnabled", resourceCulture);
             }
         }
     }

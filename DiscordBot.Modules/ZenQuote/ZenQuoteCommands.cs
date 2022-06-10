@@ -40,7 +40,7 @@ public class ZenQuoteCommands : CommandModuleBase, IGuildModule
         var registrations = await _businessLogic.LoadAllRegistrations();
         if (registrations.Any(reg => reg.Channelid == context.Channel.Id && reg.GuildId == context.Guild.Id))
         {
-            await context.Channel.SendMessageAsync("Auf diesem Kanal werden bereits tägliche Zitate versendet. ");
+            await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyEnabled)));
             return;
         }
         var channelId = context.Channel.Id;
@@ -52,7 +52,7 @@ public class ZenQuoteCommands : CommandModuleBase, IGuildModule
             GuildId = guildId
         };
         await _businessLogic.SaveRegistrationAsync(registration);
-        await context.Channel.SendMessageAsync("Auf diesem Kanal werden nun tägliche Motivationszitate versendet!");
+        await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteEnabled)));
     }
 
     [Command("unregisterQuote")]

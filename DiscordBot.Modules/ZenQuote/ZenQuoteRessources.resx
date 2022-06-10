@@ -24,4 +24,10 @@
     <data name="Error_QuotesAlreadyDisabled" xml:space="preserve">
         <value>Auf diesem Kanal werden aktuell keine Zitate versendet.</value>
     </data>
+    <data name="Message_QuoteEnabled" xml:space="preserve">
+        <value>Hier werden nun tägliche Zitate versendet.</value>
+    </data>
+    <data name="Error_QuotesAlreadyEnabled" xml:space="preserve">
+        <value>Zitate sind bereits aktiviert.</value>
+    </data>
 </root>
