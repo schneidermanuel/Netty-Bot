@@ -54,6 +54,7 @@ internal class ConfigurationCommands : CommandModuleBase, IGuildModule
     [Command("prefix")]
     public async Task ChangePrefixAsync(ICommandContext context)
     {
+        await RequirePermissionAsync(context, GuildPermission.Administrator);
         await RequireArg(context, 1, Localize(nameof(ConfigurationRessources.Error_NoPrefix)));
         var prefix = await RequireString(context);
         if (prefix.Length != 1)
