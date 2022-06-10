@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,24 +12,24 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_InvalidAction" xml:space="preserve">
-        <value>'{0}' ist keine Gültige Aktion!\nVerfügbar: add, list, delete"</value>
+        <value>'{0}' is not a valid action!\nAvailable: add, list, delete</value>
     </data>
     <data name="Error_InvalidRole" xml:space="preserve">
-        <value>Die Rolle '{0}' wird nicht automatisch verteilt oder ist nicht vorhanden</value>
+        <value>The role '{0}' is not selcted for automatic assignement</value>
     </data>
     <data name="Title_AutomaticDistributedRoles" xml:space="preserve">
-        <value>Automatisch verteilte Rollen auf dem Server</value>
+        <value>Automatically assigning the following roles</value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>Die Rolle '{0}' wurde nicht gefunden. Bitte ID verwenden</value>
+        <value>The role '{0}' could not be found. Please use the id</value>
     </data>
     <data name="Error_PermissionTooHigh" xml:space="preserve">
-        <value>Diese Rolle hat Administratorrechte und wird nicht automatisch verteilt.</value>
+        <value>This role has administrator privileges and won't be assigned.</value>
     </data>
     <data name="Message_NewAutoRole" xml:space="preserve">
-        <value>Die Rolle wird nun automatisch verteilt</value>
+        <value>This role will now be assigned automatically</value>
     </data>
     <data name="Message_DeletedRegistration" xml:space="preserve">
-        <value>Automatisches Verteilen beendet</value>
+        <value>Stopped distribution</value>
     </data>
 </root>

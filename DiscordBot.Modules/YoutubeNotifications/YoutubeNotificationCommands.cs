@@ -51,20 +51,20 @@ internal class YoutubeNotificationCommands : CommandModuleBase, IGuildModule
             await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(youtubeChannelId, guildId);
         if (isAlreadyRegistered)
         {
-            await context.Channel.SendMessageAsync("Diese Registrierung ist auf dem Server bereits vorhanden.");
+            await context.Channel.SendMessageAsync(Localize(nameof(YoutubeNotificationRessources.Error_AlreadyRegistered)));
             return;
         }
 
         var username = _manager.GetUsernameById(youtubeChannelId);
         if (username == null)
         {
-            await context.Channel.SendMessageAsync("Dieser Youtube-Kanal existiert nicht.");
+            await context.Channel.SendMessageAsync(Localize(nameof(YoutubeNotificationRessources.Error_InvalidChannel)));
             return;
         }
 
         if (string.IsNullOrEmpty(message))
         {
-            message = $"{username} hat soeben ein neues Youtube Video hochgeladen!";
+            message = string.Format(Localize(nameof(YoutubeNotificationRessources.Message_NewVideo)), username);
         }
 
 
@@ -78,7 +78,7 @@ internal class YoutubeNotificationCommands : CommandModuleBase, IGuildModule
         var id = await _businessLogic.SaveRegistrationAsync(registration);
         registration.RegistrationId = id;
         await _manager.RegisterChannelAsync(registration);
-        await context.Channel.SendMessageAsync("Registrierung erfolgreich!");
+        await context.Channel.SendMessageAsync(Localize(nameof(YoutubeNotificationRessources.Message_RegistrationSuccess)));
     }
 
     [Command("unregisterYoutube")]
@@ -90,12 +90,12 @@ internal class YoutubeNotificationCommands : CommandModuleBase, IGuildModule
             await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(youtubeChannelId, guildId);
         if (!isAlreadyRegistered)
         {
-            await context.Channel.SendMessageAsync("Diese Registrierung existiert nicht.");
+            await context.Channel.SendMessageAsync(Localize(nameof(YoutubeNotificationRessources.Error_InvalidRegistration)));
             return;
         }
 
         await _businessLogic.DeleteRegistrationAsync(youtubeChannelId, guildId);
-        await context.Channel.SendMessageAsync("Registrierung gelöscht.");
+        await context.Channel.SendMessageAsync(Localize(nameof(YoutubeNotificationRessources.Message_UnregistrationSuccss)));
         _manager.RemoveRegistration(youtubeChannelId, guildId);
     }
 }

@@ -59,5 +59,23 @@ namespace DiscordBot.Modules.ReactionRoles {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keine Rolle mit der Id &apos;{0}&apos; gefunden.
+        /// </summary>
+        internal static string Error_InvalidRole {
+            get {
+                return ResourceManager.GetString("Error_InvalidRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht].
+        /// </summary>
+        internal static string Error_SyntaxError {
+            get {
+                return ResourceManager.GetString("Error_SyntaxError", resourceCulture);
+            }
+        }
     }
 }

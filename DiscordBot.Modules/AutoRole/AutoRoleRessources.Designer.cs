@@ -59,5 +59,68 @@ namespace DiscordBot.Modules.AutoRole {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; ist keine Gültige Aktion!\nVerfügbar: add, list, delete&quot;.
+        /// </summary>
+        internal static string Error_InvalidAction {
+            get {
+                return ResourceManager.GetString("Error_InvalidAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wird nicht automatisch verteilt oder ist nicht vorhanden.
+        /// </summary>
+        internal static string Error_InvalidRole {
+            get {
+                return ResourceManager.GetString("Error_InvalidRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diese Rolle hat Administratorrechte und wird nicht automatisch verteilt..
+        /// </summary>
+        internal static string Error_PermissionTooHigh {
+            get {
+                return ResourceManager.GetString("Error_PermissionTooHigh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wurde nicht gefunden. Bitte ID verwenden.
+        /// </summary>
+        internal static string Error_RoleNotFound {
+            get {
+                return ResourceManager.GetString("Error_RoleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatisches Verteilen beendet.
+        /// </summary>
+        internal static string Message_DeletedRegistration {
+            get {
+                return ResourceManager.GetString("Message_DeletedRegistration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Rolle wird nun automatisch verteilt.
+        /// </summary>
+        internal static string Message_NewAutoRole {
+            get {
+                return ResourceManager.GetString("Message_NewAutoRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatisch verteilte Rollen auf dem Server.
+        /// </summary>
+        internal static string Title_AutomaticDistributedRoles {
+            get {
+                return ResourceManager.GetString("Title_AutomaticDistributedRoles", resourceCulture);
+            }
+        }
     }
 }

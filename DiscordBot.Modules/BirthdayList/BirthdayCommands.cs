@@ -43,7 +43,7 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
         var hasUserBirthdayRegistered = await _businessLogic.HasUserRegisteredBirthday(context.User.Id);
         if (hasUserBirthdayRegistered)
         {
-            await context.Channel.SendMessageAsync("Dein Geburtstag ist bereits in der Datenbank vorhanden. ");
+            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_BirthdayAlreadySaved)));
             return;
         }
 
@@ -60,13 +60,12 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
                 UserId = context.User.Id
             };
             await _businessLogic.SaveBirthdayAsync(registration);
-            await context.Channel.SendMessageAsync("Geburtstag registriert!");
+            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Message_BirthdaySaved)));
             await _manager.RefreshAllBirthdayChannel((DiscordSocketClient)context.Client);
         }
         catch (Exception)
         {
-            await context.Channel.SendMessageAsync(
-                $"Bitte den Geburtstag im Format {prefix}registerBirthday dd.MM");
+            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BirthdayListRessources.Error_InvalidFormat)), prefix));
         }
     }
 
@@ -78,25 +77,24 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
         var hasGuildChannel = await _businessLogic.HasGuildSetupGeburtstagChannelAsync(context.Guild.Id);
         if (hasGuildChannel)
         {
-            await context.Channel.SendMessageAsync(
-                "Auf diesem Server ist bereits eine Geburtstagsliste vorhanden. ");
+            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_BirthdaylistAlreadyPresent)));
             return;
         }
 
         var channel = (ISocketMessageChannel)context.Channel;
-        await channel.SendMessageAsync("**🍰GEBURTSTAGSLISTE🍰**");
-        var janMsg = await channel.SendMessageAsync("Januar:");
-        var febMsg = await channel.SendMessageAsync("Februar:");
-        var marMsg = await channel.SendMessageAsync("März:");
-        var aprMsg = await channel.SendMessageAsync("April:");
-        var maiMsg = await channel.SendMessageAsync("Mai:");
-        var junMsg = await channel.SendMessageAsync("Juni:");
-        var julMsg = await channel.SendMessageAsync("Juli:");
-        var augMsg = await channel.SendMessageAsync("August:");
-        var sepMsg = await channel.SendMessageAsync("September:");
-        var octMsg = await channel.SendMessageAsync("Oktober:");
-        var novMsg = await channel.SendMessageAsync("Novemver:");
-        var dezMsg = await channel.SendMessageAsync("Dezember:");
+        await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Title_Birthdaylist)));
+        var janMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_1)));
+        var febMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_2)));
+        var marMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_3)));
+        var aprMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_4)));
+        var maiMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_5)));
+        var junMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_6)));
+        var julMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_7)));
+        var augMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_8)));
+        var sepMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_9)));
+        var octMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_10)));
+        var novMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_11)));
+        var dezMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_12)));
         var birthdayChannel = new BirthdayChannel
         {
             Id = 0,
@@ -131,7 +129,7 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
         var isChannelSubbed = await _businessLogic.IsChannelSubbedAsync(guildId, channel.Id);
         if (!isChannelSubbed)
         {
-            await context.Channel.SendMessageAsync("Kanal ist nicht registriert. ");
+            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_NotificationsNotEnabled)));
             return;
         }
 
@@ -148,8 +146,7 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
         var guildId = context.Guild.Id;
         if (allSubbedChannel.Any(sub => sub.GuildId == guildId))
         {
-            await context.Channel.SendMessageAsync(
-                "Auf diesem Server sind bereits Geburtstagsbenachrichtigungen aktiv.");
+            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_NotificationsAlreadyEnabled)));
             return;
         }
 
@@ -160,7 +157,7 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
             GuildId = guildId
         };
         await _businessLogic.SaveBirthdaySubAsync(sub);
-        await context.Channel.SendMessageAsync("Geburtstagsbenachrichtigungen wurden für diesen Kanal aktiviert!");
+        await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Message_BirthdayNotificationsEnabled)));
     }
 
     [Command("setBirthdayRole")]
@@ -172,20 +169,18 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
 
         if (!await _businessLogic.HasGuildSetupGeburtstagChannelAsync(context.Guild.Id))
         {
-            await context.Channel.SendMessageAsync("Für diesen Server ist kein Geburtstagskanal eingetragen.");
+            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_NoBirthdayChannel)));
             return;
         }
 
         var role = context.Guild.GetRole(roleId);
         if (role == null)
         {
-            await context.Channel.SendMessageAsync(
-                $"Für die ID '{roleId}' wurde keine Rolle auf dem Server '{context.Guild.Name}' gefunden");
+            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BirthdayListRessources.Error_RoleNotFound)), roleId));
             return;
         }
 
         await _businessLogic.CreateOrUpdateBirthdayRoleAsync(context.Guild.Id, roleId);
-        await context.Channel.SendMessageAsync(
-            $"Die Rolle '{role.Name}' wird nun an Geburtstagen automatisch verteilt!\nDie Rolle wird jeweils um 05:00 MEZ verteilt und entfernt.");
+        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BirthdayListRessources.Message_BirthdayRoleSuccess)), role.Name));
     }
 }

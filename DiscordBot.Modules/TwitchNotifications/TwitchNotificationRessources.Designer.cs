@@ -59,5 +59,50 @@ namespace DiscordBot.Modules.TwitchNotifications {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Für diesen Streamer sind Benachrichtigungen bereits aktiviert.
+        /// </summary>
+        internal static string Error_AlreadyRegistered {
+            get {
+                return ResourceManager.GetString("Error_AlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diese Registrierung existiert nicht.
+        /// </summary>
+        internal static string Error_RegistrationInvalid {
+            get {
+                return ResourceManager.GetString("Error_RegistrationInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hat einen Livestream gestartet.
+        /// </summary>
+        internal static string Message_NewStream {
+            get {
+                return ResourceManager.GetString("Message_NewStream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registration erfolgreich.
+        /// </summary>
+        internal static string Message_RegistrationSuccess {
+            get {
+                return ResourceManager.GetString("Message_RegistrationSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registration gelöscht.
+        /// </summary>
+        internal static string Message_UnregistrationSucess {
+            get {
+                return ResourceManager.GetString("Message_UnregistrationSucess", resourceCulture);
+            }
+        }
     }
 }

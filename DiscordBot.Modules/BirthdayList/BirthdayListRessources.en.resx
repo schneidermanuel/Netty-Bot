@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,72 +12,72 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_BirthdayAlreadySaved" xml:space="preserve">
-        <value>Dein Geburtstag ist bereits gespeichert</value>
+        <value>Your birthday was already saved</value>
     </data>
     <data name="Message_BirthdaySaved" xml:space="preserve">
-        <value>Dein Geburtstag wurde gespeichert</value>
+        <value>You birthday was saved</value>
     </data>
     <data name="Error_InvalidFormat" xml:space="preserve">
-        <value>Bitte den Geburtstag im Format {0}registerBirthday dd.MM</value>
+        <value>Please use the format {0}registerBirthday dd.MM</value>
     </data>
     <data name="Error_BirthdaylistAlreadyPresent" xml:space="preserve">
-        <value>Auf diesem Server ist bereits eine Geburtstagsliste vorhanden. </value>
+        <value>There is already an acrive birthday list on this server.</value>
     </data>
     <data name="Title_Birthdaylist" xml:space="preserve">
-        <value>**🍰GEBURTSTAGSLISTE🍰**</value>
+        <value>**🍰BIRTHDAYLIST🍰**</value>
     </data>
     <data name="Month_1" xml:space="preserve">
-        <value>Januar:</value>
+        <value>Januray:</value>
+    </data>
+    <data name="Month_12" xml:space="preserve">
+        <value>December:</value>
+    </data>
+    <data name="Month_11" xml:space="preserve">
+        <value>November:</value>
+    </data>
+    <data name="Month_10" xml:space="preserve">
+        <value>October:</value>
     </data>
     <data name="Month_2" xml:space="preserve">
-        <value>Februar:</value>
+        <value>February:</value>
     </data>
     <data name="Month_3" xml:space="preserve">
-        <value>März:</value>
+        <value>March:</value>
     </data>
     <data name="Month_4" xml:space="preserve">
-        <value>April:</value>
+        <value>Avril:</value>
     </data>
     <data name="Month_5" xml:space="preserve">
-        <value>Mai: </value>
+        <value>May:</value>
     </data>
     <data name="Month_6" xml:space="preserve">
-        <value>Juni:</value>
+        <value>June:</value>
     </data>
     <data name="Month_7" xml:space="preserve">
-        <value>Juli:</value>
+        <value>July:</value>
     </data>
     <data name="Month_8" xml:space="preserve">
         <value>August:</value>
     </data>
     <data name="Month_9" xml:space="preserve">
-        <value>September</value>
-    </data>
-    <data name="Month_10" xml:space="preserve">
-        <value>Oktober:</value>
-    </data>
-    <data name="Month_11" xml:space="preserve">
-        <value>November:</value>
-    </data>
-    <data name="Month_12" xml:space="preserve">
-        <value>Dezember</value>
+        <value>September:</value>
     </data>
     <data name="Error_NotificationsAlreadyEnabled" xml:space="preserve">
-        <value>Auf diesem Server sind bereits Geburtstagsbenachrichtigungen aktiv</value>
+        <value>Notifications for birthdays are already enabled</value>
     </data>
     <data name="Error_NotificationsNotEnabled" xml:space="preserve">
-        <value>Geburtstagsbenachrichtigungen sind hier nicht aktiv</value>
+        <value>Birthdaynotificatios are not enabled</value>
     </data>
     <data name="Message_BirthdayNotificationsEnabled" xml:space="preserve">
-        <value>Geburtstagsbenachrichtigungen wurden für diesen Kanal aktiviert!</value>
+        <value>Enabled notifications for birthdays on this channel</value>
     </data>
     <data name="Error_NoBirthdayChannel" xml:space="preserve">
-        <value>Es wurde kein Geburtstagslistenkanal gesetzt. </value>
+        <value>No channel with a birthday list was created</value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>Die Rolle '{0}' wurde nicht gefunden. Bitte ID verwenden</value>
+        <value>The role '{0}' could not be found. Please use the id</value>
     </data>
     <data name="Message_BirthdayRoleSuccess" xml:space="preserve">
-        <value>Die Rolle '{0}' wird nun an Geburtstagen automatisch verteilt!\nDie Rolle wird jeweils um 05:00 MEZ verteilt und entfernt.</value>
+        <value>The role '{0}' will be assigned automatically at birthdays. \nplease note: The role will be assinged and revoked at 05:00 CET.</value>
     </data>
 </root>

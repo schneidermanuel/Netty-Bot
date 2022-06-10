@@ -53,8 +53,7 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
                 await _manager.RefreshSetupsAsync();
                 break;
             default:
-                await context.Channel.SendMessageAsync(
-                    $"'{method}' ist keine Gültige Aktion!\nVerfügbar: add, list, delete");
+                await context.Channel.SendMessageAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_InvalidAction)), method));
                 break;
         }
     }
@@ -65,13 +64,13 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
         var setups = (await _businessLogic.RetrieveAllSetupsForGuildAsync(context.Guild.Id)).ToArray();
         if (setups.All(setup => setup.RoleId != roleId))
         {
-            await context.Channel.SendMessageAsync(
-                $"Die Rolle '{roleId}' wird nicht automatisch verteilt oder ist nicht vorhanden");
+            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_InvalidRole)), roleId));
             return;
         }
 
         var setupToDelete = setups.Single(setup => setup.RoleId == roleId);
         await _businessLogic.DeleteSetupAsync(setupToDelete.AutoRoleSetupId);
+        await context.Channel.SendMessageAsync(Localize(nameof(AutoRoleRessources.Message_DeletedRegistration)));
     }
 
     private async Task ListAutoRolesAsync(ICommandContext context)
@@ -83,7 +82,7 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
 
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithDescription(output);
-        embedBuilder.WithTitle("Automatisch verteilte Rollen auf dem Server");
+        embedBuilder.WithTitle(Localize(nameof(AutoRoleRessources.Title_AutomaticDistributedRoles)));
         embedBuilder.WithCurrentTimestamp();
         embedBuilder.WithColor(Color.Blue);
         var embed = embedBuilder.Build();
@@ -96,14 +95,13 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
         var role = context.Guild.GetRole(roleId);
         if (role == null)
         {
-            await context.Channel.SendMessageAsync(
-                $"Zu der Id '{roleId}' wurde keine Rolle auf dem Server '{context.Guild.Name}' gefunden.");
+            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_RoleNotFound)), roleId));
             return;
         }
 
         if (role.Permissions.Administrator)
         {
-            await context.Channel.SendMessageAsync("Diese Rolle hat Administratorrechte und wird nicht automatisch verteilt.");
+            await context.Channel.SendMessageAsync(Localize(nameof(AutoRoleRessources.Error_PermissionTooHigh)));
             return;
         }
         var guildId = context.Guild.Id;
@@ -111,8 +109,7 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
         var canCreateSetup = await _businessLogic.CanCreateAutoRoleAsync(guildId, roleId);
         if (!canCreateSetup)
         {
-            await context.Channel.SendMessageAsync(
-                "Diese Rolle wird auf diesem Server bereits automatisch verteilt");
+            await context.Channel.SendMessageAsync(Localize(nameof(AutoRoleRessources.Message_NewAutoRole)));
             return;
         }
 

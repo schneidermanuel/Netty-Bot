@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,42 +12,42 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_Enter6Numbers" xml:space="preserve">
-        <value>Bitte 6 Zahlen eingeben</value>
+        <value>Please enter 6 numbers</value>
     </data>
     <data name="Message_RaceResult" xml:space="preserve">
-        <value>Team - Unterschied - Gegner\nDiese Runde: {0} - {1} - {2}\nTotal: {3} - {4} - {5}</value>
+        <value>Team - Difference - Opponent\nThis Round: {0} - {1} - {2}\nTotal: {3} - {4} - {5}</value>
     </data>
     <data name="Message_FinalResult" xml:space="preserve">
-        <value>Team - Unterschied - Gegner\n{0} - {1} - {2}</value>
+        <value>Team - Difference - Opponent\n{0} - {1} - {2}</value>
     </data>
     <data name="Error_MkwrSyntax" xml:space="preserve">
-        <value>Bitte geben Sie Strecke und die CC an! (!mkwr  MKS 150)</value>
+        <value>Bitte enter Track and CC! (!mkwr  MKS 150)</value>
     </data>
     <data name="Error_CannotParseInformation" xml:space="preserve">
-        <value>Fehler bei der Datenübertragung</value>
+        <value>Connection error</value>
     </data>
     <data name="WR_Title" xml:space="preserve">
-        <value>Weltrekord: {0} - {1} - {2}</value>
+        <value>World record: {0} - {1} - {2}</value>
     </data>
     <data name="WR_Lap1" xml:space="preserve">
-        <value>Runde 1</value>
+        <value>Lap 1</value>
     </data>
     <data name="WR_Lap2" xml:space="preserve">
-        <value>Runde 2</value>
+        <value>Lap 2</value>
     </data>
     <data name="WR_Lap3" xml:space="preserve">
-        <value>Runde 3</value>
+        <value>Lap3</value>
     </data>
     <data name="WR_Char" xml:space="preserve">
         <value>Charakter</value>
+    </data>
+    <data name="WR_Glider" xml:space="preserve">
+        <value>Glider</value>
     </data>
     <data name="WR_Kart" xml:space="preserve">
         <value>Kart</value>
     </data>
     <data name="WR_Tires" xml:space="preserve">
-        <value>Reifen</value>
-    </data>
-    <data name="WR_Glider" xml:space="preserve">
-        <value>Gleiter</value>
+        <value>Tires</value>
     </data>
 </root>

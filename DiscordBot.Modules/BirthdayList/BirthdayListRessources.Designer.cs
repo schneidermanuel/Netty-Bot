@@ -59,5 +59,212 @@ namespace DiscordBot.Modules.BirthdayList {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dein Geburtstag ist bereits gespeichert.
+        /// </summary>
+        internal static string Error_BirthdayAlreadySaved {
+            get {
+                return ResourceManager.GetString("Error_BirthdayAlreadySaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auf diesem Server ist bereits eine Geburtstagsliste vorhanden. .
+        /// </summary>
+        internal static string Error_BirthdaylistAlreadyPresent {
+            get {
+                return ResourceManager.GetString("Error_BirthdaylistAlreadyPresent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bitte den Geburtstag im Format {0}registerBirthday dd.MM.
+        /// </summary>
+        internal static string Error_InvalidFormat {
+            get {
+                return ResourceManager.GetString("Error_InvalidFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Es wurde kein Geburtstagslistenkanal gesetzt. .
+        /// </summary>
+        internal static string Error_NoBirthdayChannel {
+            get {
+                return ResourceManager.GetString("Error_NoBirthdayChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auf diesem Server sind bereits Geburtstagsbenachrichtigungen aktiv.
+        /// </summary>
+        internal static string Error_NotificationsAlreadyEnabled {
+            get {
+                return ResourceManager.GetString("Error_NotificationsAlreadyEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Geburtstagsbenachrichtigungen sind hier nicht aktiv.
+        /// </summary>
+        internal static string Error_NotificationsNotEnabled {
+            get {
+                return ResourceManager.GetString("Error_NotificationsNotEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wurde nicht gefunden. Bitte ID verwenden.
+        /// </summary>
+        internal static string Error_RoleNotFound {
+            get {
+                return ResourceManager.GetString("Error_RoleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Geburtstagsbenachrichtigungen wurden für diesen Kanal aktiviert!.
+        /// </summary>
+        internal static string Message_BirthdayNotificationsEnabled {
+            get {
+                return ResourceManager.GetString("Message_BirthdayNotificationsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wird nun an Geburtstagen automatisch verteilt!\nDie Rolle wird jeweils um 05:00 MEZ verteilt und entfernt..
+        /// </summary>
+        internal static string Message_BirthdayRoleSuccess {
+            get {
+                return ResourceManager.GetString("Message_BirthdayRoleSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dein Geburtstag wurde gespeichert.
+        /// </summary>
+        internal static string Message_BirthdaySaved {
+            get {
+                return ResourceManager.GetString("Message_BirthdaySaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Januar:.
+        /// </summary>
+        internal static string Month_1 {
+            get {
+                return ResourceManager.GetString("Month_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oktober:.
+        /// </summary>
+        internal static string Month_10 {
+            get {
+                return ResourceManager.GetString("Month_10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to November:.
+        /// </summary>
+        internal static string Month_11 {
+            get {
+                return ResourceManager.GetString("Month_11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dezember.
+        /// </summary>
+        internal static string Month_12 {
+            get {
+                return ResourceManager.GetString("Month_12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Februar:.
+        /// </summary>
+        internal static string Month_2 {
+            get {
+                return ResourceManager.GetString("Month_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to März:.
+        /// </summary>
+        internal static string Month_3 {
+            get {
+                return ResourceManager.GetString("Month_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to April:.
+        /// </summary>
+        internal static string Month_4 {
+            get {
+                return ResourceManager.GetString("Month_4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mai: .
+        /// </summary>
+        internal static string Month_5 {
+            get {
+                return ResourceManager.GetString("Month_5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Juni:.
+        /// </summary>
+        internal static string Month_6 {
+            get {
+                return ResourceManager.GetString("Month_6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Juli:.
+        /// </summary>
+        internal static string Month_7 {
+            get {
+                return ResourceManager.GetString("Month_7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to August:.
+        /// </summary>
+        internal static string Month_8 {
+            get {
+                return ResourceManager.GetString("Month_8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to September.
+        /// </summary>
+        internal static string Month_9 {
+            get {
+                return ResourceManager.GetString("Month_9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to **🍰GEBURTSTAGSLISTE🍰**.
+        /// </summary>
+        internal static string Title_Birthdaylist {
+            get {
+                return ResourceManager.GetString("Title_Birthdaylist", resourceCulture);
+            }
+        }
     }
 }

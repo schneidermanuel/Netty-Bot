@@ -59,5 +59,113 @@ namespace DiscordBot.Modules.MusicPlayer {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diese Seite existiert nicht.
+        /// </summary>
+        internal static string Error_InvlaidPage {
+            get {
+                return ResourceManager.GetString("Error_InvlaidPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Du musst in einem Sprachkanal sein.
+        /// </summary>
+        internal static string Error_MustBeInVoice {
+            get {
+                return ResourceManager.GetString("Error_MustBeInVoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aktuell spielt keine Musik.
+        /// </summary>
+        internal static string Error_NoMusic {
+            get {
+                return ResourceManager.GetString("Error_NoMusic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlist nicht gefunden. Bitte ID verwenden..
+        /// </summary>
+        internal static string Error_PlaylistNotFound {
+            get {
+                return ResourceManager.GetString("Error_PlaylistNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Playlist &apos;{0}&apos; gehört dir nicht.
+        /// </summary>
+        internal static string Error_PlaylistNotOwned {
+            get {
+                return ResourceManager.GetString("Error_PlaylistNotOwned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kein Song mit dem Namen &apos;{0}&apos; gefunden.
+        /// </summary>
+        internal static string Error_SongNotFound {
+            get {
+                return ResourceManager.GetString("Error_SongNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Du hast bereits die maximale Anzahl an Playlists erstellt. Bitte bestehende löschen..
+        /// </summary>
+        internal static string Error_TooManyPlaylists {
+            get {
+                return ResourceManager.GetString("Error_TooManyPlaylists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1} (von {2})\n.
+        /// </summary>
+        internal static string Line_Playlist {
+            get {
+                return ResourceManager.GetString("Line_Playlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlist erstellt.
+        /// </summary>
+        internal static string Message_PlaylistCreated {
+            get {
+                return ResourceManager.GetString("Message_PlaylistCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlist &quot;{0}&quot; geladen ({1}/{2} erfolgreich).
+        /// </summary>
+        internal static string Message_PlaylistLoaded {
+            get {
+                return ResourceManager.GetString("Message_PlaylistLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playlists auf {0} (Seite {1}).
+        /// </summary>
+        internal static string Title_Playlists {
+            get {
+                return ResourceManager.GetString("Title_Playlists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Songs in der Warteschlange (Seite {1}/{2}).
+        /// </summary>
+        internal static string Title_QueueTitle {
+            get {
+                return ResourceManager.GetString("Title_QueueTitle", resourceCulture);
+            }
+        }
     }
 }

@@ -40,15 +40,14 @@ internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
         var isAlreadyRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, guildId);
         if (isAlreadyRegistered)
         {
-            await context.Channel.SendMessageAsync(
-                $"Auf diesem Server werden bereits Benachrichtigungen für '{username}' versendet");
+            await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
             return;
         }
 
         var message = await RequireReminderOrEmpty(context, 2);
         if (string.IsNullOrEmpty(message.Trim()))
         {
-            message = $"{username} hat gerade einen Livestream auf Twitch gestartet!";
+            message = string.Format(Localize(nameof(TwitchNotificationRessources.Message_NewStream)), username);
         }
 
         var registration = new TwitchNotificationRegistration
@@ -59,7 +58,7 @@ internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
             GuildId = guildId
         };
         await _businessLogic.SaveRegistrationAsync(registration);
-        await context.Channel.SendMessageAsync("Registrierung erfolgreich");
+        await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
         await _manager.AddUserAsync(registration);
     }
 
@@ -70,13 +69,12 @@ internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
         var isRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, context.Guild.Id);
         if (!isRegistered)
         {
-            await context.Channel.SendMessageAsync(
-                $"Hier werden aktuell keine Benachrichtigungen für '{username}' versendet");
+            await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Error_RegistrationInvalid)));
             return;
         }
 
         await _businessLogic.DeleteRegistrationAsync(username, context.Guild.Id);
-        await context.Channel.SendMessageAsync("Benachrichtigungen ausgeschaltet");
+        await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Message_UnregistrationSucess)));
         _manager.RemoveUser(username, context.Guild.Id);
     }
 

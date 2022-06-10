@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,18 +12,18 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_AlreadyRegistered" xml:space="preserve">
-        <value>Für diesen Streamer sind Benachrichtigungen bereits aktiviert</value>
+        <value>Notifications are already enabled for this streamer</value>
     </data>
     <data name="Message_NewStream" xml:space="preserve">
-        <value>{0} hat einen Livestream gestartet</value>
+        <value>{0} just started a live stream</value>
     </data>
     <data name="Message_RegistrationSuccess" xml:space="preserve">
-        <value>Registration erfolgreich</value>
+        <value>Registration successful</value>
     </data>
     <data name="Message_UnregistrationSucess" xml:space="preserve">
-        <value>Registration gelöscht</value>
+        <value>Registration deleted</value>
     </data>
     <data name="Error_RegistrationInvalid" xml:space="preserve">
-        <value>Diese Registrierung existiert nicht</value>
+        <value>This registration does not exist</value>
     </data>
 </root>

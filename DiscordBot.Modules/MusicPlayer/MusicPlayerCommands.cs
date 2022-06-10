@@ -61,7 +61,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var searchSongTask = _lavaNode.SearchYouTubeAsync(songname);
         if (voiceState?.VoiceChannel == null)
         {
-            await messageChannel.SendMessageAsync("Du musst in einem Sprachkanal sein");
+            await messageChannel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_MustBeInVoice)));
             return false;
         }
 
@@ -70,7 +70,8 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var track = await searchSongTask;
         if (!track.Tracks.Any())
         {
-            await messageChannel.SendMessageAsync($"Kein Song für die Suche '{songname}' gefunden");
+            await messageChannel.SendMessageAsync(
+                string.Format(Localize(nameof(MusicPlayerRessources.Error_SongNotFound)), songname));
             return false;
         }
 
@@ -85,7 +86,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
     {
         if (!_lavaNode.HasPlayer(context.Guild))
         {
-            await context.Channel.SendMessageAsync("Aktuell spielt keine Musik");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
@@ -100,14 +101,14 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var songCount = _manager.GetSongCount(context.Guild);
         if (songCount == 0)
         {
-            await context.Channel.SendMessageAsync("Aktuell wird keine Musik gespielt");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
         var pageCount = (songCount / 10) + 1;
         if (skipPages > pageCount)
         {
-            await context.Channel.SendMessageAsync("Die Seite existiert nicht. ");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_InvlaidPage)));
             return;
         }
 
@@ -116,7 +117,8 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithColor(Color.Blue);
         embedBuilder.WithDescription(songs);
         embedBuilder.WithCurrentTimestamp();
-        embedBuilder.WithTitle($"Currently Playing {songCount} Songs: (Page {skipPages + 1}/{pageCount})");
+        embedBuilder.WithTitle(string.Format(Localize(nameof(MusicPlayerRessources.Title_QueueTitle)), songCount,
+            skipPages + 1, pageCount));
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }
 
@@ -127,7 +129,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         {
             if (!_lavaNode.HasPlayer(context.Guild))
             {
-                await context.Channel.SendMessageAsync("Aktuell spielt keine Musik");
+                await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
                 return;
             }
 
@@ -151,23 +153,12 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         }
     }
 
-    [Command("diagnostic")]
-    public async Task Reconnect(ICommandContext context)
-    {
-        await context.Channel.SendMessageAsync("Lavalink Connected: " + _lavaNode.IsConnected);
-        foreach (var player in _lavaNode.Players)
-        {
-            await context.Channel.SendMessageAsync(
-                $"Player for Guild: {player.VoiceChannel.Guild.Name}: {player.IsConnected}");
-        }
-    }
-
     [Command("pause")]
     public async Task PauseCommand(ICommandContext context)
     {
         if (!_lavaNode.HasPlayer(context.Guild))
         {
-            await context.Channel.SendMessageAsync("Aktuell spielt keine Musik");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
@@ -180,7 +171,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
     {
         if (!_lavaNode.HasPlayer(context.Guild))
         {
-            await context.Channel.SendMessageAsync("Aktuell spielt keine Musik");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
@@ -195,15 +186,14 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var canUserCreatePlaylist = await _businessLogic.CanUserCreatePlaylistAsync(userId);
         if (!canUserCreatePlaylist)
         {
-            await context.Channel.SendMessageAsync(
-                "Du hast bereits die maximale Anzahl an Playlists erstellt. Bitte bestehende löschen...");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_TooManyPlaylists)));
             return;
         }
 
         var title = await RequireReminderArg(context);
         var playlist = _manager.CreatePlaylist(title, context.Guild.Id, userId);
         await _businessLogic.SavePlaylistAsync(playlist);
-        await context.Channel.SendMessageAsync("Playlist erstellt!");
+        await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Message_PlaylistCreated)));
     }
 
     [Command("playlists")]
@@ -225,13 +215,15 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         foreach (var playlist in playlistsWithUserOnServer.Skip(skipPages * 10).Take(10))
         {
             var owner = await context.Guild.GetUserAsync(playlist.AuthorId);
-            output += $"{playlist.PlaylistId}: {playlist.Title} (by {owner.Username})\n";
+            output += string.Format(Localize(nameof(MusicPlayerRessources.Line_Playlist)), playlist.PlaylistId,
+                playlist.Title, owner.Username);
         }
 
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Blue);
         embedBuilder.WithCurrentTimestamp();
-        embedBuilder.WithTitle($"Playlists on {context.Guild.Name} (Page {skipPages + 1})");
+        embedBuilder.WithTitle(string.Format(Localize(nameof(MusicPlayerRessources.Title_Playlists)),
+            context.Guild.Name, skipPages + 1));
         embedBuilder.WithDescription(output);
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }
@@ -242,7 +234,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var voiceState = context.User as IVoiceState;
         if (voiceState?.VoiceChannel == null)
         {
-            await context.Channel.SendMessageAsync("Du musst in einem Sprachkanal sein");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_MustBeInVoice)));
             return;
         }
 
@@ -251,7 +243,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var playlist = await _businessLogic.RetrieveSinglePlaylistAsync(playlistId);
         if (playlist == null)
         {
-            await context.Channel.SendMessageAsync("Playlist nicht gefunden");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_PlaylistNotFound)));
             return;
         }
 
@@ -264,8 +256,9 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         }
 
         await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
-        await context.Channel.SendMessageAsync(
-            $"Playlist \"{playlist.Title}\" geladen ({count}/{playlist.Tracks.Count} erfolgreich)");
+        await context.Channel.SendMessageAsync(string.Format(
+            Localize(nameof(MusicPlayerRessources.Message_PlaylistLoaded)), playlist.Title, count,
+            playlist.Tracks.Count));
     }
 
     [Command("deletePlaylist")]
@@ -276,13 +269,14 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var playlist = await _businessLogic.RetrieveSinglePlaylistAsync(playlistId);
         if (playlist == null)
         {
-            await context.Channel.SendMessageAsync($"Die Playlist '{playlistId}' wurde nicht gefunden");
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_PlaylistNotFound)));
             return;
         }
 
         if (playlist.AuthorId != context.User.Id)
         {
-            await context.Channel.SendMessageAsync($"Die Playlist '{playlist.Title}' gehört dir nicht.");
+            await context.Channel.SendMessageAsync(
+                string.Format(Localize(nameof(MusicPlayerRessources.Error_PlaylistNotOwned)), playlist.Title));
             return;
         }
 
@@ -295,20 +289,5 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
     {
         _manager.ShufflePlaylist(context.Guild);
         await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
-    }
-
-    [Command("reconnectMusicSystem")]
-    public async Task ReconnectAsync(ICommandContext context)
-    {
-        await RequirePermissionAsync(context, GuildPermission.Administrator);
-        var voiceState = context.User as IVoiceState;
-        if (voiceState != null)
-        {
-            await voiceState.VoiceChannel.DisconnectAsync();
-        }
-
-        await _lavaNode.DisconnectAsync();
-        await _lavaNode.ConnectAsync();
-        await context.Channel.SendMessageAsync("Reconnected");
     }
 }

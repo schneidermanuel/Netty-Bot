@@ -40,14 +40,14 @@ public class ReactionRoleCommands : CommandModuleBase, IGuildModule
     public async Task RegisterReactionRole(ICommandContext context)
     {
         var prefix = await _dataAccess.GetServerPrefixAsync(context.Guild.Id);
-        await RequireArg(context, 3, $"Syntaxfehler: {prefix}registerReactionRole [Emote] [Rollen-Id] [Nachricht]");
+        await RequireArg(context, 3, string.Format(Localize(nameof(ReactionRoleRessources.Error_SyntaxError)), prefix));
         var emote = GetEmote(await RequireString(context));
         var roleId = await RequireUlongAsync(context, 2);
 
         var role = context.Guild.GetRole(roleId);
         if (role == null)
         {
-            await context.Channel.SendMessageAsync($"Keine Rolle mit der ID '{roleId}' gefunden");
+            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(ReactionRoleRessources.Error_InvalidRole)), roleId));
             return;
         }
 

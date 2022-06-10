@@ -59,5 +59,59 @@ namespace DiscordBot.Modules.YoutubeNotifications {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Für diesen Kanal sind Benachrichtigungen bereits aktiv. .
+        /// </summary>
+        internal static string Error_AlreadyRegistered {
+            get {
+                return ResourceManager.GetString("Error_AlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dieser Youtube-Kanal existiert nicht. Bitte Kanal-Id verwenden. .
+        /// </summary>
+        internal static string Error_InvalidChannel {
+            get {
+                return ResourceManager.GetString("Error_InvalidChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diese Registrierung existiert nicht.
+        /// </summary>
+        internal static string Error_InvalidRegistration {
+            get {
+                return ResourceManager.GetString("Error_InvalidRegistration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} hat soeben ein neues Video hochgeladen.
+        /// </summary>
+        internal static string Message_NewVideo {
+            get {
+                return ResourceManager.GetString("Message_NewVideo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registration erfolgreich.
+        /// </summary>
+        internal static string Message_RegistrationSuccess {
+            get {
+                return ResourceManager.GetString("Message_RegistrationSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registrierung gelöscht.
+        /// </summary>
+        internal static string Message_UnregistrationSuccss {
+            get {
+                return ResourceManager.GetString("Message_UnregistrationSuccss", resourceCulture);
+            }
+        }
     }
 }

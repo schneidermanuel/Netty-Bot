@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,39 +12,39 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_MustBeInVoice" xml:space="preserve">
-        <value>Du musst in einem Sprachkanal sein</value>
+        <value>You first need to join a voice channel</value>
     </data>
     <data name="Error_SongNotFound" xml:space="preserve">
-        <value>Kein Song mit dem Namen '{0}' gefunden</value>
+        <value>Cannot find a song by the name '{0}'</value>
     </data>
     <data name="Error_NoMusic" xml:space="preserve">
-        <value>Aktuell spielt keine Musik</value>
+        <value>We do not play music at the moment</value>
     </data>
     <data name="Error_InvlaidPage" xml:space="preserve">
-        <value>Diese Seite existiert nicht</value>
+        <value>This page does not exist</value>
     </data>
     <data name="Title_QueueTitle" xml:space="preserve">
-        <value>{0} Songs in der Warteschlange (Seite {1}/{2})</value>
+        <value>Currently Playing {0} Songs: (Page {1}/{2})</value>
     </data>
     <data name="Error_TooManyPlaylists" xml:space="preserve">
-        <value>Du hast bereits die maximale Anzahl an Playlists erstellt. Bitte bestehende löschen.</value>
+        <value>You have reached the limit for playlists. Please delete existing.</value>
     </data>
     <data name="Message_PlaylistCreated" xml:space="preserve">
-        <value>Playlist erstellt</value>
+        <value>Playlist created</value>
     </data>
     <data name="Line_Playlist" xml:space="preserve">
-        <value>{0}: {1} (von {2})\n</value>
+        <value>{0}: {1} (by {2})\n</value>
     </data>
     <data name="Title_Playlists" xml:space="preserve">
-        <value>Playlists auf {0} (Seite {1})</value>
+        <value>Playlists on {0} (Page {1})</value>
     </data>
     <data name="Error_PlaylistNotFound" xml:space="preserve">
-        <value>Playlist nicht gefunden. Bitte ID verwenden.</value>
+        <value>Playlist not found. Please use ID</value>
     </data>
     <data name="Message_PlaylistLoaded" xml:space="preserve">
-        <value>Playlist "{0}" geladen ({1}/{2} erfolgreich)</value>
+        <value>Playlist "{0}" loaded ({1}/{2} successful)</value>
     </data>
     <data name="Error_PlaylistNotOwned" xml:space="preserve">
-        <value>Die Playlist '{0}' gehört dir nicht</value>
+        <value>The playlist '{0}' does not belong to you</value>
     </data>
 </root>

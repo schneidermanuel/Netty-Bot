@@ -35,10 +35,11 @@ internal class ConfigurationCommands : CommandModuleBase, IGuildModule
     [Command("language")]
     public async Task ChangeLanguageAsync(ICommandContext context)
     {
+        await RequireArg(context, 1, "Supported Languages: \nGerman - de\nEnglish - en");
         var language = await RequireString(context);
         if (!_languages.Contains(language))
         {
-            await context.Channel.SendMessageAsync("Language not supported");
+            await context.Channel.SendMessageAsync("Language not supported\n\n");
             return;
         }
         await context.Message.AddReactionAsync(Emoji.Parse("🤝"));

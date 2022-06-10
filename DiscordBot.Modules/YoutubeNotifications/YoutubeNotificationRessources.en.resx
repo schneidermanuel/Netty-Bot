@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,21 +12,21 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_AlreadyRegistered" xml:space="preserve">
-        <value>Für diesen Kanal sind Benachrichtigungen bereits aktiv. </value>
+        <value>Notification for this channel are already enabled.</value>
     </data>
     <data name="Error_InvalidChannel" xml:space="preserve">
-        <value>Dieser Youtube-Kanal existiert nicht. Bitte Kanal-Id verwenden. </value>
+        <value>This youtube channel does not exist. Please use the correct channel id.</value>
     </data>
     <data name="Message_RegistrationSuccess" xml:space="preserve">
-        <value>Registration erfolgreich</value>
+        <value>Registration sucessful</value>
     </data>
     <data name="Message_NewVideo" xml:space="preserve">
-        <value>{0} hat soeben ein neues Video hochgeladen</value>
+        <value>{0} uploaded a video</value>
     </data>
     <data name="Error_InvalidRegistration" xml:space="preserve">
-        <value>Diese Registrierung existiert nicht</value>
+        <value>This registration does not exist</value>
     </data>
     <data name="Message_UnregistrationSuccss" xml:space="preserve">
-        <value>Registrierung gelöscht</value>
+        <value>Registration removed</value>
     </data>
 </root>

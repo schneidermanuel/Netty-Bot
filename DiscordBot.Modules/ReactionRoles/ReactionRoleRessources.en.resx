@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,9 +12,9 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_SyntaxError" xml:space="preserve">
-        <value>Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht]</value>
+        <value>Syntax error: {0}registerReactionRole [emote] [roleId] [message]</value>
     </data>
     <data name="Error_InvalidRole" xml:space="preserve">
-        <value>Keine Rolle mit der Id '{0}' gefunden</value>
+        <value>Cannot find a role with the id '{0}'</value>
     </data>
 </root>
