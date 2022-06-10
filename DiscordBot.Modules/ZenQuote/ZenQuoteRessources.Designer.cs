@@ -61,7 +61,7 @@ namespace DiscordBot.Modules.ZenQuote {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auf diesem Kanal werden aktuell keine Zitate versendet..
+        ///   Looks up a localized string similar to Zitate sind hier bereits deaktiviert..
         /// </summary>
         internal static string Error_QuotesAlreadyDisabled {
             get {
@@ -70,7 +70,7 @@ namespace DiscordBot.Modules.ZenQuote {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Zitate sind bereits aktiviert..
+        ///   Looks up a localized string similar to Zitate sind hier bereits aktiviert..
         /// </summary>
         internal static string Error_QuotesAlreadyEnabled {
             get {
@@ -79,7 +79,7 @@ namespace DiscordBot.Modules.ZenQuote {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Zitate deaktiviert..
+        ///   Looks up a localized string similar to Tägliche Zitate deaktiviert..
         /// </summary>
         internal static string Message_QuoteDisabled {
             get {
@@ -88,7 +88,7 @@ namespace DiscordBot.Modules.ZenQuote {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hier werden nun tägliche Zitate versendet..
+        ///   Looks up a localized string similar to Tägliche Zitate aktiviert..
         /// </summary>
         internal static string Message_QuoteEnabled {
             get {

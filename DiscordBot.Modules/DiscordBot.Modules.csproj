@@ -29,10 +29,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="ZenQuote\ZenQuoteRessources.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>ZenQuoteRessources.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
       <EmbeddedResource Update="AutoMod\AutoModRessources.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>AutoModRessources.Designer.cs</LastGenOutput>
@@ -65,14 +61,13 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>YoutubeNotificationRessources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="ZenQuote\ZenQuoteRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ZenQuoteRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="ZenQuote\ZenQuoteRessources.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>ZenQuoteRessources.resx</DependentUpon>
-      </Compile>
       <Compile Update="AutoMod\AutoModRessources.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -112,6 +107,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>YoutubeNotificationRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="ZenQuote\ZenQuoteRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ZenQuoteRessources.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 
