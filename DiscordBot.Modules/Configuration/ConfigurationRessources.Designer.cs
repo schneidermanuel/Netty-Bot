@@ -70,7 +70,7 @@ namespace DiscordBot.Modules.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Der Prefix würde geändert.
+        ///   Looks up a localized string similar to Der Prefix wurde geändert.
         /// </summary>
         internal static string Message_PrefixChanged {
             get {

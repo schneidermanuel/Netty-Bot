@@ -22,6 +22,6 @@
         <value>Bitte ein Zeichen als Prefix mitgeben</value>
     </data>
     <data name="Message_PrefixChanged" xml:space="preserve">
-        <value>Der Prefix würde geändert</value>
+        <value>Der Prefix wurde geändert</value>
     </data>
 </root>
