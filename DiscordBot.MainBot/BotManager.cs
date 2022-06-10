@@ -53,20 +53,7 @@ public class BotManager
         {
             return;
         }
-
-        var botUser = context.Guild.GetUser(_client.CurrentUser.Id);
-        if (!botUser.GuildPermissions.Administrator)
-        {
-            var prefix = await _dataAccess.GetServerPrefixAsync(context.Guild.Id);
-            if (context.Message.Content.StartsWith(prefix))
-            {
-                await context.Channel.SendMessageAsync(
-                    "BrainyXS ist leider zu Faul, die Berechtigungen des Bots zu überprüfen. Bitte geben Sie den Bot Administrator-Rechte, damit mein Code auch funktioniert. Danke");
-            }
-
-            return;
-        }
-
+        
         foreach (var module in _modules)
         {
             await module.InitializeAsync(context);

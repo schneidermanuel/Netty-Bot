@@ -42,7 +42,7 @@ Total: {3} - {4} - {5}</value>
         <value>Lap 3</value>
     </data>
     <data name="WR_Char" xml:space="preserve">
-        <value>Charakter</value>
+        <value>Carakter</value>
     </data>
     <data name="WR_Glider" xml:space="preserve">
         <value>Glider</value>

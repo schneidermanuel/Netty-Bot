@@ -3,6 +3,7 @@ using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Modules.AutoMod;
 using DiscordBot.DataAccess.Modules.AutoRole;
 using DiscordBot.DataAccess.Modules.GeburtstagList;
+using DiscordBot.DataAccess.Modules.GuildConfig;
 using DiscordBot.DataAccess.Modules.MkCalculator;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
 using DiscordBot.DataAccess.Modules.ReactionRoles;
@@ -30,5 +31,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<AutoModModule>();
         builder.RegisterModule<MkCalculatorModule>();
         builder.RegisterModule<UserConfigurationModule>();
+        builder.RegisterModule<GuildConfigModule>();
     }
 }

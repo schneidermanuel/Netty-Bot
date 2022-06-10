@@ -69,6 +69,10 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>MarioKartRessources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="Configuration\ConfigurationRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ConfigurationRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -121,6 +125,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>MarioKartRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Configuration\ConfigurationRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ConfigurationRessources.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 
