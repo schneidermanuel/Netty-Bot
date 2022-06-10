@@ -84,7 +84,7 @@ public abstract class CommandModuleBase : IGuildModule
         var args = context.Message.Content.Split(' ').Skip(1);
         if (args.Count() < count)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(BaseRessources.Error_ArgumentCount), typeof(BaseRessources)));
+            await context.Channel.SendMessageAsync(errorMessage ?? Localize(nameof(BaseRessources.Error_ArgumentCount), typeof(BaseRessources)));
             throw new ArgumentException(errorMessage ??
                                         $"{ModuleUniqueIdentifier}: Require Args: {count}, found {context.Message.Content}");
         }
