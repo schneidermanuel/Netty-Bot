@@ -7,6 +7,7 @@ using DiscordBot.DataAccess.Modules.MkCalculator;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
 using DiscordBot.DataAccess.Modules.ReactionRoles;
 using DiscordBot.DataAccess.Modules.TwitchNotifications;
+using DiscordBot.DataAccess.Modules.UserConfiguration;
 using DiscordBot.DataAccess.Modules.YoutubeNotifications;
 using DiscordBot.DataAccess.Modules.ZenQuote;
 using DiscordBot.DataAccess.NHibernate;
@@ -28,5 +29,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<YoutubeNotificationModule>();
         builder.RegisterModule<AutoModModule>();
         builder.RegisterModule<MkCalculatorModule>();
+        builder.RegisterModule<UserConfigurationModule>();
     }
 }

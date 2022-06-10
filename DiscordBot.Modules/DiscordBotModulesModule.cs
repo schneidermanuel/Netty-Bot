@@ -2,6 +2,7 @@ using Autofac;
 using DiscordBot.Modules.AutoMod;
 using DiscordBot.Modules.AutoRole;
 using DiscordBot.Modules.BirthdayList;
+using DiscordBot.Modules.Configuration;
 using DiscordBot.Modules.Huebcraft;
 using DiscordBot.Modules.MarioKart;
 using DiscordBot.Modules.MusicPlayer;
@@ -28,5 +29,6 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<AutoModModule>();
         builder.RegisterModule<MkCalculatorModule>();
         builder.RegisterModule<ServerCoutnerModule>();
+        builder.RegisterModule<ConfigurationModule>();
     }
 }

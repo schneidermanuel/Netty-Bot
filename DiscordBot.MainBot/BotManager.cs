@@ -69,6 +69,7 @@ public class BotManager
 
         foreach (var module in _modules)
         {
+            await module.InitializeAsync(context);
             try
             {
                 if (await module.CanExecuteAsync(context.Guild.Id, context))

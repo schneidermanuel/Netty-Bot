@@ -6,5 +6,6 @@ namespace DiscordBot.DataAccess.Contract
     {
         Task<bool> IsModuleEnabledForGuild(ulong guildId, string moduleUniqueKey);
         Task<char> GetServerPrefixAsync(ulong guildId);
+        Task<string> GetUserLanguageAsync(ulong userId);
     }
 }

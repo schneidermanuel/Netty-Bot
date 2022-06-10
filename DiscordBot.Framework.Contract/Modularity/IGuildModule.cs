@@ -5,7 +5,8 @@ namespace DiscordBot.Framework.Contract.Modularity;
 
 public interface IGuildModule
 {
-    public Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext);
-    public Task ExecuteAsync(ICommandContext context);
-    public string ModuleUniqueIdentifier { get; }
+    Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext);
+    Task ExecuteAsync(ICommandContext context);
+    string ModuleUniqueIdentifier { get; }
+    Task InitializeAsync(SocketCommandContext context);
 }

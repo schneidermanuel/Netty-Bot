@@ -29,6 +29,15 @@ public abstract class CommandModuleBase : IGuildModule
         return await _dataAccess.IsModuleEnabledForGuild(id, ModuleUniqueIdentifier);
     }
 
+    private SocketCommandContext _context;
+    private string _language = string.Empty;
+
+    public async Task InitializeAsync(SocketCommandContext context)
+    {
+        _context = context;
+        _language = await _dataAccess.GetUserLanguageAsync(context.User.Id);
+    }
+
     public abstract Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext);
 
     private void BuildCommandInfos()
@@ -46,7 +55,7 @@ public abstract class CommandModuleBase : IGuildModule
 
     public abstract Task ExecuteAsync(ICommandContext context);
 
-    public async Task ExecuteCommandsAsync(ICommandContext context)
+    protected async Task ExecuteCommandsAsync(ICommandContext context)
     {
         if (_commandMethods == null)
         {
@@ -68,7 +77,7 @@ public abstract class CommandModuleBase : IGuildModule
         }
 
         var method = _commandMethods[baseCommand];
-        method.Invoke(this, new[] { context });
+        method.Invoke(this, new object[] { context });
         Console.WriteLine("Invoking " + method.Name);
     }
 
@@ -166,10 +175,11 @@ public abstract class CommandModuleBase : IGuildModule
 
     protected string Localize(string ressource)
     {
+        var language = _language;
         lock (RessourceType)
         {
             var cultureProperty = RessourceType.GetProperty("Culture", BindingFlags.NonPublic | BindingFlags.Static);
-            cultureProperty?.SetValue(null, new CultureInfo("de"));
+            cultureProperty?.SetValue(null, new CultureInfo(language));
             return RessourceType.GetProperty(ressource, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
                 ?.ToString();
         }
