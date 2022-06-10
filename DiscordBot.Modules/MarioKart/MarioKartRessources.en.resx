@@ -24,7 +24,7 @@ Total: {3} - {4} - {5}</value>
 {0} - {1} - {2}</value>
     </data>
     <data name="Error_MkwrSyntax" xml:space="preserve">
-        <value>Bitte enter Track and CC! (!mkwr  MKS 150)</value>
+        <value>Please enter Track and CC! (!mkwr  MKS 150)</value>
     </data>
     <data name="Error_CannotParseInformation" xml:space="preserve">
         <value>Connection error</value>
@@ -39,7 +39,7 @@ Total: {3} - {4} - {5}</value>
         <value>Lap 2</value>
     </data>
     <data name="WR_Lap3" xml:space="preserve">
-        <value>Lap3</value>
+        <value>Lap 3</value>
     </data>
     <data name="WR_Char" xml:space="preserve">
         <value>Charakter</value>
