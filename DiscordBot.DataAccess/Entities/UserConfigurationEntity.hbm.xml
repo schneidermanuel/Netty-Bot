@@ -2,7 +2,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
                    namespace="DiscordBot.DataAccess.Entities">
     <class name="UserConfigurationEntity" table="userConfiguration">
-        <id name="Id" column="configurationId" type="Int64">
+        <id name="Id" column="configId" type="Int64">
             <generator class="increment"/>
         </id>
         <property name="UserId" type="String" column="userId"/>
