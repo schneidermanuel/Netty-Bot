@@ -3,7 +3,7 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.MkCalculator;
 using DiscordBot.Framework.Contract.TimedAction;
 
-namespace DiscordBot.Modules.MkCalculator;
+namespace DiscordBot.Modules.MarioKart;
 
 internal class MkBootStep : ITimedAction
 {

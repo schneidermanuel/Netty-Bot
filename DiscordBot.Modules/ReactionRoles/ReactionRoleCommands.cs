@@ -22,6 +22,7 @@ public class ReactionRoleCommands : CommandModuleBase, IGuildModule
         _businessLogic = businessLogic;
     }
 
+    protected override Type RessourceType => typeof(ReactionRoleRessources);
     public override string ModuleUniqueIdentifier => "REACTION_ROLE";
 
     public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)

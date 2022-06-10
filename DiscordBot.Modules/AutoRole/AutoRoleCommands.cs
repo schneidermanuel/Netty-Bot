@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -124,5 +125,6 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
         await _businessLogic.SaveSetupAsync(setup);
     }
 
+    protected override Type RessourceType => typeof(AutoRoleRessources);
     public override string ModuleUniqueIdentifier => "AUTOROLE";
 }

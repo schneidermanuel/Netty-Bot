@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -17,6 +18,7 @@ public class ZenQuoteCommands : CommandModuleBase, IGuildModule
         _businessLogic = businessLogic;
     }
 
+    protected override Type RessourceType => typeof(ZenQuoteRessources);
     public override string ModuleUniqueIdentifier => "ZENQUOTE";
 
     public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
@@ -41,7 +43,6 @@ public class ZenQuoteCommands : CommandModuleBase, IGuildModule
             await context.Channel.SendMessageAsync("Auf diesem Kanal werden bereits tägliche Zitate versendet. ");
             return;
         }
-
         var channelId = context.Channel.Id;
         var guildId = context.Guild.Id;
         var registration = new ZenQuoteRegistration
@@ -63,11 +64,11 @@ public class ZenQuoteCommands : CommandModuleBase, IGuildModule
                                                        reg.Channelid == context.Channel.Id).ToList();
         if (!regForChannel.Any())
         {
-            await context.Channel.SendMessageAsync("Auf diesem Kanal werden keine Zitate versendet.");
+            await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyDisabled)));
             return;
         }
 
         await _businessLogic.RemoveRegistrationAsync(regForChannel.Single().Id);
-        await context.Channel.SendMessageAsync("Ok, ab nun werden hier keine Zitate mehr versendet. ");
+        await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteDisabled)));
     }
 }

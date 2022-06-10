@@ -24,6 +24,7 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
         _manager = manager;
     }
 
+    protected override Type RessourceType => typeof(BirthdayListRessources);
     public override string ModuleUniqueIdentifier => "BIRTHDAYLIST";
 
     public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)

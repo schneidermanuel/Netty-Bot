@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -26,6 +27,7 @@ public class HuebcraftCommands : CommandModuleBase, IGuildModule
         await ExecuteCommandsAsync(context);
     }
 
+    protected override Type RessourceType => null;
     public override string ModuleUniqueIdentifier => "HUEBCRAFT";
 
     [Command("bewerbung")]

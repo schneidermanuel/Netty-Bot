@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
@@ -79,5 +80,6 @@ internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
         _manager.RemoveUser(username, context.Guild.Id);
     }
 
+    protected override Type RessourceType => typeof(TwitchNotificationRessources);
     public override string ModuleUniqueIdentifier => "TWITCH_NOTIFICATION";
 }

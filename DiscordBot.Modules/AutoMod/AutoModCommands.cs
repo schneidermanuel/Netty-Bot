@@ -35,6 +35,7 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         await ExecuteCommandsAsync(context);
     }
 
+    protected override Type RessourceType => typeof(AutoModRessources);
     public override string ModuleUniqueIdentifier => "AUTOMOD";
 
     [Command("autoMod")]

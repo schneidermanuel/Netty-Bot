@@ -1,4 +1,4 @@
-﻿namespace DiscordBot.Modules.MkCalculator;
+﻿namespace DiscordBot.Modules.MarioKart;
 
 internal interface IMkWorldRecordMapper
 {

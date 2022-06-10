@@ -28,4 +28,91 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="ZenQuote\ZenQuoteRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ZenQuoteRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="AutoMod\AutoModRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>AutoModRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="AutoRole\AutoRoleRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>AutoRoleRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BirthdayList\BirthdayListRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>BirthdayListRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="MkCalculator\MarioKartRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>MarioKartRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="MusicPlayer\MusicPlayerRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>MusicPlayerRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="ReactionRoles\ReactionRoleRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ReactionRoleRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="TwitchNotifications\TwitchNotificationRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>TwitchNotificationRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="YoutubeNotifications\YoutubeNotificationRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>YoutubeNotificationRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="ZenQuote\ZenQuoteRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ZenQuoteRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="AutoMod\AutoModRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AutoModRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="AutoRole\AutoRoleRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AutoRoleRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BirthdayList\BirthdayListRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>BirthdayListRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="MkCalculator\MarioKartRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>MarioKartRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="MusicPlayer\MusicPlayerRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>MusicPlayerRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="ReactionRoles\ReactionRoleRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ReactionRoleRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="TwitchNotifications\TwitchNotificationRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>TwitchNotificationRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="YoutubeNotifications\YoutubeNotificationRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>YoutubeNotificationRessources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

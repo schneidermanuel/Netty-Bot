@@ -1,9 +1,8 @@
 ﻿using Autofac;
-using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.TimedAction;
 
-namespace DiscordBot.Modules.MkCalculator;
+namespace DiscordBot.Modules.MarioKart;
 
 internal class MkCalculatorModule : Module
 {

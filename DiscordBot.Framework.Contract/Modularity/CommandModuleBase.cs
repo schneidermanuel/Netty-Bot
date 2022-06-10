@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ public abstract class CommandModuleBase : IGuildModule
 {
     private IDictionary<string, MethodInfo> _commandMethods;
     private readonly IModuleDataAccess _dataAccess;
+    protected abstract Type RessourceType { get; }
 
     protected CommandModuleBase(IModuleDataAccess dataAccess)
     {
@@ -160,5 +162,12 @@ public abstract class CommandModuleBase : IGuildModule
             throw new InvalidOperationException(
                 $"{ModuleUniqueIdentifier}: Keine Berechtigung in '{context.Guild.Name}'");
         }
+    }
+
+    protected string Localize(string ressource)
+    {
+        var cultureProperty = RessourceType.GetProperty("Culture");
+        cultureProperty?.SetValue(null, new CultureInfo("de"));
+        return RessourceType.GetProperty(ressource)?.GetValue(null)?.ToString();
     }
 }

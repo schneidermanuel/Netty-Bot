@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DiscordBot.Modules.MkCalculator;
+namespace DiscordBot.Modules.MarioKart;
 
 internal class MkWorldRecordMapper : IMkWorldRecordMapper
 {

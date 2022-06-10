@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DiscordBot.Modules.MkCalculator;
+namespace DiscordBot.Modules.MarioKart;
 
 internal interface IMkWorldRecordLoader
 {

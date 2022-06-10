@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 
-namespace DiscordBot.Modules.MkCalculator;
+namespace DiscordBot.Modules.MarioKart;
 
 internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
 {
@@ -116,5 +117,6 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         await ExecuteCommandsAsync(context);
     }
 
+    protected override Type RessourceType => typeof(MarioKartRessources);
     public override string ModuleUniqueIdentifier => "MK CALC";
 }

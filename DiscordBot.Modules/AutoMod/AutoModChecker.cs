@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
@@ -28,5 +29,6 @@ internal class AutoModChecker : CommandModuleBase, IGuildModule
         }
     }
 
+    protected override Type RessourceType => typeof(AutoModRessources);
     public override string ModuleUniqueIdentifier => "AUTOMOD_EXECUTOR";
 }

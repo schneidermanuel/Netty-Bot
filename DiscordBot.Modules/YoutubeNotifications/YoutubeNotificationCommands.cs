@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
@@ -35,6 +36,7 @@ internal class YoutubeNotificationCommands : CommandModuleBase, IGuildModule
         await ExecuteCommandsAsync(context);
     }
 
+    protected override Type RessourceType => typeof(YoutubeNotificationRessources);
     public override string ModuleUniqueIdentifier => "YOUTUBE_NOTIFICATIONS";
 
     [Command("registerYoutube")]

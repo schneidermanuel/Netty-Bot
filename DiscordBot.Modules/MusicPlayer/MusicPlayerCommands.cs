@@ -26,6 +26,7 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         _businessLogic = businessLogic;
     }
 
+    protected override Type RessourceType => typeof(MusicPlayerRessources);
     public override string ModuleUniqueIdentifier => "MUSIC_PLAYER";
 
     public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
