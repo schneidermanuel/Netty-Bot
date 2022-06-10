@@ -5,20 +5,19 @@ namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
 public class DeleteAndNotifyAction : IRuleViolationAction
 {
-    private string _reason;
 
     public DeleteAndNotifyAction(string reason)
     {
-        _reason = reason;
+        Reason = reason;
     }
-
-    public async Task Execute(ICommandContext context)
+    public async Task Execute(ICommandContext context, string reason)
     {
         await context.Message.DeleteAsync();
-        var message = await context.Channel.SendMessageAsync($"{context.User.Mention}: {_reason}");
+        var message = await context.Channel.SendMessageAsync($"{context.User.Mention}: {reason}");
         await Task.Delay(5000);
         await message.DeleteAsync();
     }
 
     public int Priority => 4;
+    public string Reason { get; }
 }

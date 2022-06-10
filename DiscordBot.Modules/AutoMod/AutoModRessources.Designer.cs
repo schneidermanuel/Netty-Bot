@@ -59,5 +59,140 @@ namespace DiscordBot.Modules.AutoMod {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Konfiguration &apos;{0}&apos; ist in der Regel &apos;{1}&apos; nicht gesetzt.
+        /// </summary>
+        internal static string Error_ConfigUnset {
+            get {
+                return ResourceManager.GetString("Error_ConfigUnset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diese Regel ist bereits aktiv.
+        /// </summary>
+        internal static string Error_RuleAlreadyActive {
+            get {
+                return ResourceManager.GetString("Error_RuleAlreadyActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Regel &apos;{0}&apos; existiert nicht.
+        /// </summary>
+        internal static string Error_RuleDoesNotExist {
+            get {
+                return ResourceManager.GetString("Error_RuleDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Regel &apos;{0}&apos; ist nicht aktiv.
+        /// </summary>
+        internal static string Error_RuleNotActive {
+            get {
+                return ResourceManager.GetString("Error_RuleNotActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aktiv.
+        /// </summary>
+        internal static string Identifier_Active {
+            get {
+                return ResourceManager.GetString("Identifier_Active", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inaktiv.
+        /// </summary>
+        internal static string Identifier_Inactive {
+            get {
+                return ResourceManager.GetString("Identifier_Inactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Regel wurde aktiviert.
+        /// </summary>
+        internal static string Message_RuleActivated {
+            get {
+                return ResourceManager.GetString("Message_RuleActivated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Die Regel wurde deaktiviert.
+        /// </summary>
+        internal static string Message_RuleDisabled {
+            get {
+                return ResourceManager.GetString("Message_RuleDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Der Wert wurde aktualisiert.
+        /// </summary>
+        internal static string Message_SavedValue {
+            get {
+                return ResourceManager.GetString("Message_SavedValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Der Wert &apos;{0}:{1}&apos; ist aktuell auf &apos;{2}&apos; gesetzt.
+        /// </summary>
+        internal static string Message_SetValue {
+            get {
+                return ResourceManager.GetString("Message_SetValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verfügbare AutoMod-Regeln.
+        /// </summary>
+        internal static string Title_AvailableRules {
+            get {
+                return ResourceManager.GetString("Title_AvailableRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verfügbare Automod-Einstellungen für &apos;{0}&apos;.
+        /// </summary>
+        internal static string Title_PossibleConfigs {
+            get {
+                return ResourceManager.GetString("Title_PossibleConfigs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: Du schreibst zu schnell.
+        /// </summary>
+        internal static string Validation_Spamming {
+            get {
+                return ResourceManager.GetString("Validation_Spamming", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: Zu viele Caps.
+        /// </summary>
+        internal static string Validation_TooManyCaps {
+            get {
+                return ResourceManager.GetString("Validation_TooManyCaps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: Zu viele Emotes.
+        /// </summary>
+        internal static string Validation_TooManyEmotes {
+            get {
+                return ResourceManager.GetString("Validation_TooManyEmotes", resourceCulture);
+            }
+        }
     }
 }

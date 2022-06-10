@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -19,48 +12,48 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_RuleDoesNotExist" xml:space="preserve">
-        <value>Die Regel '{0}' existiert nicht</value>
+        <value>The rule '{0}' does not exist</value>
     </data>
     <data name="Title_PossibleConfigs" xml:space="preserve">
-        <value>Verfügbare Automod-Einstellungen für '{0}'</value>
+        <value>Available configurations for '{0}'</value>
     </data>
     <data name="Identifier_Active" xml:space="preserve">
-        <value>Aktiv</value>
+        <value>Active</value>
     </data>
     <data name="Identifier_Inactive" xml:space="preserve">
-        <value>Inaktiv</value>
+        <value>Inactive</value>
     </data>
     <data name="Title_AvailableRules" xml:space="preserve">
-        <value>Verfügbare AutoMod-Regeln</value>
+        <value>Available auto-mod rules</value>
     </data>
     <data name="Error_RuleNotActive" xml:space="preserve">
-        <value>Die Regel '{0}' ist nicht aktiv</value>
+        <value>The rule '{0}' is currently disabled</value>
     </data>
     <data name="Error_ConfigUnset" xml:space="preserve">
-        <value>Die Konfiguration '{0}' ist in der Regel '{1}' nicht gesetzt</value>
+        <value>The value '{0}' is not configured for the rule '{1}'</value>
     </data>
     <data name="Message_SetValue" xml:space="preserve">
-        <value>Der Wert '{0}:{1}' ist aktuell auf '{2}' gesetzt</value>
+        <value>The current value of '{0}:{1}' is '{2}'</value>
     </data>
     <data name="Message_SavedValue" xml:space="preserve">
-        <value>Der Wert wurde aktualisiert</value>
+        <value>Configuration has been set</value>
     </data>
     <data name="Error_RuleAlreadyActive" xml:space="preserve">
-        <value>Diese Regel ist bereits aktiv</value>
+        <value>This rule is already enabled</value>
     </data>
     <data name="Message_RuleActivated" xml:space="preserve">
-        <value>Die Regel wurde aktiviert</value>
+        <value>The rule has been activated</value>
     </data>
     <data name="Message_RuleDisabled" xml:space="preserve">
-        <value>Die Regel wurde deaktiviert</value>
+        <value>The rule has been disabled</value>
     </data>
     <data name="Validation_TooManyCaps" xml:space="preserve">
-        <value>{0}: Zu viele Caps</value>
+        <value>{0}: Too many caps</value>
     </data>
     <data name="Validation_TooManyEmotes" xml:space="preserve">
-        <value>{0}: Zu viele Emotes</value>
+        <value>{0}: Too many emotes</value>
     </data>
     <data name="Validation_Spamming" xml:space="preserve">
-        <value>{0}: Du schreibst zu schnell</value>
+        <value>{0}: You are sending messages too quickly</value>
     </data>
 </root>

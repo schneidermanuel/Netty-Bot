@@ -5,6 +5,8 @@ namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
 public interface IRuleViolationAction
 {
-    Task Execute(ICommandContext context);
+    Task Execute(ICommandContext context, string reason);
     int Priority { get; }
+    string Reason { get; }
+    
 }

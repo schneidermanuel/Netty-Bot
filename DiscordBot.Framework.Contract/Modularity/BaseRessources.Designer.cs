@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DiscordBot.Modules.AutoRole {
+namespace DiscordBot.Framework.Contract.Modularity {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace DiscordBot.Modules.AutoRole {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class AutoRoleRessources {
+    internal class BaseRessources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal AutoRoleRessources() {
+        internal BaseRessources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace DiscordBot.Modules.AutoRole {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DiscordBot.Modules.AutoRole.AutoRoleRessources", typeof(AutoRoleRessources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DiscordBot.Framework.Contract.Modularity.BaseRessources", typeof(BaseRessources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,66 +61,20 @@ namespace DiscordBot.Modules.AutoRole {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; ist keine Gültige Aktion!
-        ///Verfügbar: add, list, delete&quot;.
+        ///   Looks up a localized string similar to Es wurden nicht genug Argumente mitgegeben.
         /// </summary>
-        internal static string Error_InvalidAction {
+        internal static string Error_ArgumentCount {
             get {
-                return ResourceManager.GetString("Error_InvalidAction", resourceCulture);
+                return ResourceManager.GetString("Error_ArgumentCount", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wird nicht automatisch verteilt oder ist nicht vorhanden.
+        ///   Looks up a localized string similar to Der Ausdruck &apos;{0}&apos; konnte nicht konvertiert werden. Erwartet: Zahl.
         /// </summary>
-        internal static string Error_InvalidRole {
+        internal static string Error_NotAnInt {
             get {
-                return ResourceManager.GetString("Error_InvalidRole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Diese Rolle hat Administratorrechte und wird nicht automatisch verteilt..
-        /// </summary>
-        internal static string Error_PermissionTooHigh {
-            get {
-                return ResourceManager.GetString("Error_PermissionTooHigh", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wurde nicht gefunden. Bitte ID verwenden.
-        /// </summary>
-        internal static string Error_RoleNotFound {
-            get {
-                return ResourceManager.GetString("Error_RoleNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatisches Verteilen beendet.
-        /// </summary>
-        internal static string Message_DeletedRegistration {
-            get {
-                return ResourceManager.GetString("Message_DeletedRegistration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Die Rolle wird nun automatisch verteilt.
-        /// </summary>
-        internal static string Message_NewAutoRole {
-            get {
-                return ResourceManager.GetString("Message_NewAutoRole", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Automatisch verteilte Rollen auf dem Server.
-        /// </summary>
-        internal static string Title_AutomaticDistributedRoles {
-            get {
-                return ResourceManager.GetString("Title_AutomaticDistributedRoles", resourceCulture);
+                return ResourceManager.GetString("Error_NotAnInt", resourceCulture);
             }
         }
     }

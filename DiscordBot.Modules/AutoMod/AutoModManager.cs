@@ -28,16 +28,13 @@ internal class AutoModManager
         }
     }
 
-    public async Task ProcessMessage(ICommandContext context)
+    public async Task<IRuleViolationAction> ProcessMessage(ICommandContext context)
     {
         var rulesToTest = _rules.Where(rule => rule.IsEnabledInGuild(context.Guild.Id));
         var violation = rulesToTest
             .Select(rule => rule.ExecuteRule(context))
             .MaxBy(rule => rule.Priority);
-        if (violation != null)
-        {
-            await violation.Execute(context);
-        }
+        return violation;
     }
 
     public bool ExistsRule(string module)

@@ -5,19 +5,19 @@ namespace DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
 public class WarnUserAction : IRuleViolationAction
 {
-    private string _reason;
 
     public WarnUserAction(string reason)
     {
-        _reason = reason;
+        Reason = reason;
     }
 
-    public async Task Execute(ICommandContext context)
+    public async Task Execute(ICommandContext context, string reason)
     {
-        await context.Channel.SendMessageAsync(_reason);
+        await context.Channel.SendMessageAsync(reason);
         await context.Message.DeleteAsync();
-        // TODO: WARN
+
     }
 
     public int Priority => 10;
+    public string Reason { get; }
 }

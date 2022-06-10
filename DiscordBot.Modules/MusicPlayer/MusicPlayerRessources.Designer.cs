@@ -124,7 +124,8 @@ namespace DiscordBot.Modules.MusicPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}: {1} (von {2})\n.
+        ///   Looks up a localized string similar to {0}: {1} (von {2})
+        ///.
         /// </summary>
         internal static string Line_Playlist {
             get {

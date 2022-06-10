@@ -44,8 +44,7 @@ internal class SpamAutoModRule : AutoModRuleBase
         var maxMessageCount = GetConfig(guildId, MsgInTime).ToInt().GetValueOrDefault(DefaultMessageCount);
         if (messageCount >= maxMessageCount)
         {
-            return ValidationHelper.MapValidation(GetConfig(context.Guild.Id, ValidationHelper.ActionKey),
-                $"{context.User.Mention}: Du scheribst zu schnell! ");
+            return ValidationHelper.MapValidation(GetConfig(context.Guild.Id, ValidationHelper.ActionKey), nameof(AutoModRessources.Validation_Spamming));
         }
 
         return new DoNothingAction();

@@ -133,7 +133,8 @@ namespace DiscordBot.Modules.BirthdayList {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wird nun an Geburtstagen automatisch verteilt!\nDie Rolle wird jeweils um 05:00 MEZ verteilt und entfernt..
+        ///   Looks up a localized string similar to Die Rolle &apos;{0}&apos; wird nun an Geburtstagen automatisch verteilt!
+        ///Die Rolle wird jeweils um 05:00 MEZ verteilt und entfernt..
         /// </summary>
         internal static string Message_BirthdayRoleSuccess {
             get {

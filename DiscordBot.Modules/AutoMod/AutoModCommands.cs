@@ -8,7 +8,6 @@ using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Modules.AutoMod.KeyValueValidationStrategies;
-using DiscordBot.Modules.AutoMod.Rules;
 
 namespace DiscordBot.Modules.AutoMod;
 
@@ -68,14 +67,15 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         var configs = _manager.GetAvailableConfigs(module);
         if (configs == null)
         {
-            await context.Channel.SendMessageAsync($"Die Regel {module} existiert nicht");
+            await context.Channel.SendMessageAsync(
+                string.Format(Localize(nameof(AutoModRessources.Error_RuleDoesNotExist)), module));
             return;
         }
 
         var content = configs.Aggregate(string.Empty, (current, config) => current + $"{config.Key}: {config.Value}\n");
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithDescription(content);
-        embedBuilder.WithTitle($"Verfügbare AutoMod-Einstellungen für {module}");
+        embedBuilder.WithTitle(string.Format(Localize(nameof(AutoModRessources.Title_PossibleConfigs)), module));
         embedBuilder.WithColor(Color.DarkBlue);
         embedBuilder.WithCurrentTimestamp();
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
@@ -87,13 +87,15 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         var content = string.Empty;
         foreach (var module in modules)
         {
-            var activity = module.Value ? "Aktiv" : "Inaktiv";
+            var activity = module.Value
+                ? Localize(nameof(AutoModRessources.Identifier_Active))
+                : Localize(nameof(AutoModRessources.Identifier_Inactive));
             content += $"{module.Key}: {activity}\n";
         }
 
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithDescription(content);
-        embedBuilder.WithTitle("Verfügbare AutoMod-Einstellungen");
+        embedBuilder.WithTitle(Localize(nameof(AutoModRessources.Title_AvailableRules)));
         embedBuilder.WithColor(Color.DarkBlue);
         embedBuilder.WithCurrentTimestamp();
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
@@ -105,7 +107,8 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         await RequireExistingRule(context, module);
         if (!_manager.IsRuleEnabledForGuild(module, context.Guild.Id))
         {
-            await context.Channel.SendMessageAsync($"Die Regel '{module}' ist nicht aktiv");
+            await context.Channel.SendMessageAsync(
+                string.Format(Localize(nameof(AutoModRessources.Error_RuleNotActive)), module));
             return;
         }
 
@@ -116,12 +119,15 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
             value = _manager.GetConfigValue(module, context.Guild.Id, key);
             if (value == null)
             {
-                await context.Channel.SendMessageAsync($"Die Konfiguration '{key}' ist in der Regel '{module}' nicht gesetzt.");
+                await context.Channel.SendMessageAsync(
+                    string.Format(Localize(nameof(AutoModRessources.Error_ConfigUnset)), key, module));
             }
             else
             {
-                await context.Channel.SendMessageAsync($"Der Wert '{module}:{key}' ist aktuell auf '{value}' gesetzt");
+                await context.Channel.SendMessageAsync(
+                    string.Format(Localize(nameof(AutoModRessources.Message_SetValue)), module, key, value));
             }
+
             return;
         }
 
@@ -129,7 +135,7 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         await ValidateKeyValuePair(type, module, key, value, context);
 
         await _manager.SetValue(module, key, value, context.Guild.Id);
-        await context.Channel.SendMessageAsync("Der Wert wurde gespeichert!");
+        await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Message_SetValue)));
     }
 
     private async Task ValidateKeyValuePair(ConfigurationValueType type, string module, string key, string value,
@@ -145,12 +151,12 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         await RequireExistingRule(context, module);
         if (_manager.IsRuleEnabledForGuild(module, context.Guild.Id))
         {
-            await context.Channel.SendMessageAsync("Diese Regel ist bereits aktiv");
+            await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Error_RuleAlreadyActive)));
             return;
         }
 
         await _manager.EnableRuleAsync(module, context.Guild.Id);
-        await context.Channel.SendMessageAsync($"Die Regel '{module}' wurde aktiviert");
+        await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Message_RuleActivated)));
     }
 
     private async Task DisableModuleAsync(ICommandContext context)
@@ -159,19 +165,19 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         await RequireExistingRule(context, module);
         if (!_manager.IsRuleEnabledForGuild(module, context.Guild.Id))
         {
-            await context.Channel.SendMessageAsync("Diese Regel ist bereits inaktiv");
+            await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Error_RuleNotActive)));
             return;
         }
 
         await _manager.DisableRuleAsync(module, context.Guild.Id);
-        await context.Channel.SendMessageAsync($"Die Regel '{module}' wurde deaktiviert");
+        await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Identifier_Inactive)));
     }
 
     private async Task RequireExistingRule(ICommandContext context, string rule)
     {
         if (!_manager.ExistsRule(rule))
         {
-            await context.Channel.SendMessageAsync("Diese Regel existiert nicht");
+            await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Error_RuleDoesNotExist)));
             throw new ArgumentException();
         }
     }

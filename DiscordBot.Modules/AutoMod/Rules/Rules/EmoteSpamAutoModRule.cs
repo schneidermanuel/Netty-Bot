@@ -43,8 +43,7 @@ internal class EmoteSpamAutoModRule : AutoModRuleBase
         }
 
         var onlyEmotesAction =
-            ValidationHelper.MapValidation(GetConfig(context.Guild.Id, ValidationHelper.ActionKey),
-                "Zu viele Emotes!");
+            ValidationHelper.MapValidation(GetConfig(context.Guild.Id, ValidationHelper.ActionKey), nameof(AutoModRessources.Validation_TooManyEmotes));
         return onlyEmotesAction;
     }
 

@@ -78,6 +78,7 @@
         <value>The role '{0}' could not be found. Please use the id</value>
     </data>
     <data name="Message_BirthdayRoleSuccess" xml:space="preserve">
-        <value>The role '{0}' will be assigned automatically at birthdays. \nplease note: The role will be assinged and revoked at 05:00 CET.</value>
+        <value>The role '{0}' will be assigned automatically at birthdays. 
+please note: The role will be assinged and revoked at 05:00 CET.</value>
     </data>
 </root>

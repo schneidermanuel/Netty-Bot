@@ -29,12 +29,10 @@ public abstract class CommandModuleBase : IGuildModule
         return await _dataAccess.IsModuleEnabledForGuild(id, ModuleUniqueIdentifier);
     }
 
-    private SocketCommandContext _context;
     private string _language = string.Empty;
 
     public async Task InitializeAsync(SocketCommandContext context)
     {
-        _context = context;
         _language = await _dataAccess.GetUserLanguageAsync(context.User.Id);
     }
 
@@ -86,7 +84,7 @@ public abstract class CommandModuleBase : IGuildModule
         var args = context.Message.Content.Split(' ').Skip(1);
         if (args.Count() < count)
         {
-            await context.Channel.SendMessageAsync("Es wurden nicht genügende Argumente mitgegeben. ");
+            await context.Channel.SendMessageAsync(Localize(nameof(BaseRessources.Error_ArgumentCount), typeof(BaseRessources)));
             throw new ArgumentException(errorMessage ??
                                         $"{ModuleUniqueIdentifier}: Require Args: {count}, found {context.Message.Content}");
         }
@@ -95,43 +93,40 @@ public abstract class CommandModuleBase : IGuildModule
     protected async Task<int> RequireIntArg(ICommandContext context, int position = 1)
     {
         await RequireArg(context, position);
-        var args = context.Message.Content.Split(' ').Skip(position).First();
-        if (int.TryParse(args, out var result))
+        var arg = context.Message.Content.Split(' ').Skip(position).First();
+        if (int.TryParse(arg, out var result))
         {
             return result;
         }
 
-        await context.Channel.SendMessageAsync(
-            $"Der Ausdruck '{args}' konnte nicht konvertiert werden. Erwartet: Zahl");
-        throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Int Arg: {args}");
+        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
+        throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Int Arg: {arg}");
     }
 
     protected async Task<long> RequireLongArg(ICommandContext context, int position = 1)
     {
         await RequireArg(context, position);
-        var args = context.Message.Content.Split(' ').Skip(position).First();
-        if (long.TryParse(args, out var result))
+        var arg = context.Message.Content.Split(' ').Skip(position).First();
+        if (long.TryParse(arg, out var result))
         {
             return result;
         }
 
-        await context.Channel.SendMessageAsync(
-            $"Der Ausdruck '{args}' konnte nicht konvertiert werden. Erwartet: Zahl");
-        throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Long Arg: {args}");
+        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
+        throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Long Arg: {arg}");
     }
 
     protected async Task<ulong> RequireUlongAsync(ICommandContext context, int position = 1)
     {
         await RequireArg(context, position);
-        var args = context.Message.Content.Split(' ').Skip(position).First();
-        if (ulong.TryParse(args, out var result))
+        var arg = context.Message.Content.Split(' ').Skip(position).First();
+        if (ulong.TryParse(arg, out var result))
         {
             return result;
         }
 
-        await context.Channel.SendMessageAsync(
-            $"Der Ausdruck '{args}' konnte nicht konvertiert werden. Erwartet: Zahl");
-        throw new ArgumentException($"{ModuleUniqueIdentifier}: Required ULong Arg: {args}");
+        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
+        throw new ArgumentException($"{ModuleUniqueIdentifier}: Required ULong Arg: {arg}");
     }
 
 
@@ -173,14 +168,15 @@ public abstract class CommandModuleBase : IGuildModule
         }
     }
 
-    protected string Localize(string ressource)
+    protected string Localize(string ressource, Type ressourceType = null)
     {
+        ressourceType ??= RessourceType;
         var language = _language;
-        lock (RessourceType)
+        lock (ressourceType)
         {
-            var cultureProperty = RessourceType.GetProperty("Culture", BindingFlags.NonPublic | BindingFlags.Static);
+            var cultureProperty = ressourceType.GetProperty("Culture", BindingFlags.NonPublic | BindingFlags.Static);
             cultureProperty?.SetValue(null, new CultureInfo(language));
-            return RessourceType.GetProperty(ressource, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
+            return ressourceType.GetProperty(ressource, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
                 ?.ToString();
         }
     }

@@ -17,4 +17,19 @@
       <ProjectReference Include="..\DiscordBot.DataAccess.Contract\DiscordBot.DataAccess.Contract.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Modularity\BaseRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>BaseRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Modularity\BaseRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>BaseRessources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

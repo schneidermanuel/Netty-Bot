@@ -61,8 +61,7 @@ internal class CapsLockAutoModRule : AutoModRuleBase
                 && words[0].Length > 5))
         {
             var onlyEmotesAction =
-                ValidationHelper.MapValidation(Configs[context.Guild.Id].GetValue(ValidationHelper.ActionKey),
-                    "Zu viele Caps!");
+                ValidationHelper.MapValidation(Configs[context.Guild.Id].GetValue(ValidationHelper.ActionKey), nameof(AutoModRessources.Validation_TooManyCaps));
             return onlyEmotesAction;
         }
 
