@@ -166,8 +166,8 @@ public abstract class CommandModuleBase : IGuildModule
 
     protected string Localize(string ressource)
     {
-        var cultureProperty = RessourceType.GetProperty("Culture");
+        var cultureProperty = RessourceType.GetProperty("Culture", BindingFlags.NonPublic | BindingFlags.Static);
         cultureProperty?.SetValue(null, new CultureInfo("de"));
-        return RessourceType.GetProperty(ressource)?.GetValue(null)?.ToString();
+        return RessourceType.GetProperty(ressource, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)?.ToString();
     }
 }
