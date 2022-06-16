@@ -11,6 +11,7 @@
       <PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2658" />
       <PackageReference Include="Opus" Version="1.0.0" />
       <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
+      <PackageReference Include="TweetinviAPI" Version="5.0.4" />
     </ItemGroup>
 
 </Project>

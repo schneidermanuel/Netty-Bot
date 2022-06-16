@@ -29,6 +29,7 @@
 		<PackageReference Include="Opus" Version="1.0.0" />
 		<PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
 		<PackageReference Include="System.Text.Json" Version="6.0.3" />
+		<PackageReference Include="TweetinviAPI" Version="5.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
