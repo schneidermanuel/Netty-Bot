@@ -8,4 +8,5 @@ public interface ITwitterRegistrationBusinessLogic
     Task<bool> IsAccountRegisteredOnChannelAsync(ulong guildId, ulong channelId, string username);
     Task RegisterTwitterAsync(TwitterRegistrationDto twitterRegistrationDto);
     Task<IReadOnlyCollection<TwitterRegistrationDto>> RetrieveAllRegistartionsAsync();
+    Task UnregisterTwitterAsync(ulong guildId, ulong channelId, string username);
 }

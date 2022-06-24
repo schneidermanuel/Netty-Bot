@@ -70,6 +70,15 @@ namespace DiscordBot.Modules.TwitterNotification {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Diese Registrierung ist nicht vorhanden.
+        /// </summary>
+        internal static string Error_AccountNotRegistered {
+            get {
+                return ResourceManager.GetString("Error_AccountNotRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Die Regel ist ungültig.
         /// </summary>
         internal static string Error_InvalidRule {

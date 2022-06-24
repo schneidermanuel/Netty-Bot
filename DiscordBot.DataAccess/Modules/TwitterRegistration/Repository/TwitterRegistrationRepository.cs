@@ -52,8 +52,26 @@ internal class TwitterRegistrationRepository : ITwitterRegistrationRepository
         {
             var query = await session.Query<TwitterRegistrationEntity>().ToListAsync();
             return query.Select(reg =>
-                    new TwitterRegistrationData(reg.RegistrationId, reg.GuildId, reg.ChannelId, reg.TwitterUsername, reg.Message, reg.RuleFilter))
+                    new TwitterRegistrationData(reg.RegistrationId, reg.GuildId, reg.ChannelId, reg.TwitterUsername,
+                        reg.Message, reg.RuleFilter))
                 .ToArray();
+        }
+    }
+
+    public async Task UnregisterTwitterAsync(string guildId, string channelId, string username)
+    {
+        using (var session = _sessionProvider.OpenSession())
+        {
+            var query = session.Query<TwitterRegistrationEntity>()
+                .Where(entity => entity.GuildId == guildId
+                                 && entity.ChannelId == channelId
+                                 && entity.TwitterUsername == username);
+            foreach (var entity in query)
+            {
+                await session.DeleteAsync(entity);
+            }
+
+            await session.FlushAsync();
         }
     }
 }

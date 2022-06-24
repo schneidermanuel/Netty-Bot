@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
@@ -27,6 +28,7 @@ internal class TwitterRegistrationCommands : CommandModuleBase, IGuildModule
 
     public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
     {
+        await RequirePermissionAsync(socketCommandContext, GuildPermission.Administrator);
         return await IsEnabled(id);
     }
 
@@ -69,6 +71,20 @@ internal class TwitterRegistrationCommands : CommandModuleBase, IGuildModule
         await context.Channel.SendMessageAsync(Localize(nameof(TwitterNotificationRessources.Message_Registered)));
         await _manager.RegisterTwitterUserAsync(dto);
     }
+
+    [Command("unregisterTwitter")]
+    public async Task UnregisterAsync(SocketCommandContext context)
+    {
+        var username = await RequireString(context);
+        if (!await _businessLogic.IsAccountRegisteredOnChannelAsync(context.Guild.Id, context.Channel.Id, username))
+        {
+            await context.Channel.SendMessageAsync(
+                Localize(nameof(TwitterNotificationRessources.Error_AccountNotRegistered)));
+            return;
+        }
+        await _businessLogic.UnregisterTwitterAsync(context.Guild.Id, context.Channel.Id, username);
+    }
+    
 
     private string ExtractRule(string arg)
     {

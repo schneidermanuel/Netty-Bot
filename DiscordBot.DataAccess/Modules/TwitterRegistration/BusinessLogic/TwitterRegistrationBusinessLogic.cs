@@ -37,6 +37,11 @@ internal class TwitterRegistrationBusinessLogic : ITwitterRegistrationBusinessLo
         return datas.Select(MapDataToDto).ToArray();
     }
 
+    public async Task UnregisterTwitterAsync(ulong guildId, ulong channelId, string username)
+    {
+        await _repository.UnregisterTwitterAsync(guildId.ToString(), channelId.ToString(), username);
+    }
+
     private TwitterRegistrationDto MapDataToDto(TwitterRegistrationData data)
     {
         return new TwitterRegistrationDto

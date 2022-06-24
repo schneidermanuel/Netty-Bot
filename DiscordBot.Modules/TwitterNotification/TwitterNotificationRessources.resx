@@ -30,4 +30,7 @@
     <data name="Error_InvalidRule" xml:space="preserve">
         <value>Die Regel ist ungültig</value>
     </data>
+    <data name="Error_AccountNotRegistered" xml:space="preserve">
+        <value>Diese Registrierung ist nicht vorhanden</value>
+    </data>
 </root>
