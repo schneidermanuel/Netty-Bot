@@ -12,4 +12,5 @@ public static class BotClientConstants
     public static bool LavalinkSsl { get; set; }
     public static string YoutubeApiKey { get; set; }
     public static int Port { get; set; }
+    public static string TwitterBearerToken { get; set; }
 }

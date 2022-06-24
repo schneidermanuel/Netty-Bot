@@ -9,5 +9,5 @@
     <LavalinkPort><!--LAVALINK PORT--></LavalinkPort>
     <LavalinkPassword><!--LAVALINK PASSWORD--></LavalinkPassword>
     <LavalinkSsl><!--LAVALINK SSL--></LavalinkSsl>
-    <YoutubeApiKey><!--API KEY --></YoutubeApiKey>
+    <TwitterApiKeySecret><!-- TWITTER API KEY SECRET --></TwitterApiKeySecret>
 </MainConfig>

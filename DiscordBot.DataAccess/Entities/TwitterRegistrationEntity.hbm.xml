@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
+                   namespace="DiscordBot.DataAccess.Entities">
+    <class name="TwitterRegistrationEntity" table="twitterRegistration">
+        <id name="RegistrationId" column="registrationId" type="Int64">
+            <generator class="increment"/>
+        </id>
+        <property name="GuildId" type="String" column="guildId"/>
+        <property name="ChannelId" type="String" column="channelId"/>
+        <property name="TwitterUsername" type="String" column="twitterUsername"/>
+        <property name="Message" type="String" column="message"/>
+        <property name="RuleFilter" type="String" column="ruleFilter"/>
+    </class>
+</hibernate-mapping>

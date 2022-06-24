@@ -12,7 +12,6 @@
       <PackageReference Include="MySql.Data" Version="8.0.28" />
       <PackageReference Include="Opus" Version="1.0.0" />
       <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
-      <PackageReference Include="TweetinviAPI" Version="5.0.4" />
     </ItemGroup>
 
     <ItemGroup>

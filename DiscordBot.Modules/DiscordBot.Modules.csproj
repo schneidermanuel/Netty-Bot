@@ -12,7 +12,7 @@
       <PackageReference Include="MySql.Data" Version="8.0.28" />
       <PackageReference Include="Opus" Version="1.0.0" />
       <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
-      <PackageReference Include="TweetinviAPI" Version="5.0.4" />
+      <PackageReference Include="TwitterSharp" Version="2.1.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -74,6 +74,10 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>ConfigurationRessources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="TwitterNotification\TwitterNotificationRessources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>TwitterNotificationRessources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -131,6 +135,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>ConfigurationRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="TwitterNotification\TwitterNotificationRessources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>TwitterNotificationRessources.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

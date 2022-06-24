@@ -9,7 +9,7 @@ public static class Configurator
 {
     public static void Configure()
     {
-        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/config.xml";
+        var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, "config.xml");
         var serializer = new XmlSerializer(typeof(MainConfig));
         var stream = new FileStream(path, FileMode.Open);
         var config = serializer.Deserialize(stream) as MainConfig;
@@ -23,5 +23,6 @@ public static class Configurator
         BotClientConstants.LavalinkPort = (config?.LavalinkPort).GetValueOrDefault(443);
         BotClientConstants.YoutubeApiKey = (config?.YoutubeApiKey);
         BotClientConstants.Port = (config?.Port).GetValueOrDefault();
+        BotClientConstants.TwitterBearerToken = config?.TwitterBearerToken;
     }
 }

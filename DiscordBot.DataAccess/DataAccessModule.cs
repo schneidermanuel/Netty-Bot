@@ -8,6 +8,7 @@ using DiscordBot.DataAccess.Modules.MkCalculator;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
 using DiscordBot.DataAccess.Modules.ReactionRoles;
 using DiscordBot.DataAccess.Modules.TwitchNotifications;
+using DiscordBot.DataAccess.Modules.TwitterRegistration;
 using DiscordBot.DataAccess.Modules.UserConfiguration;
 using DiscordBot.DataAccess.Modules.YoutubeNotifications;
 using DiscordBot.DataAccess.Modules.ZenQuote;
@@ -32,5 +33,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<MkCalculatorModule>();
         builder.RegisterModule<UserConfigurationModule>();
         builder.RegisterModule<GuildConfigModule>();
+        builder.RegisterModule<TwitterRegistrationModule>();
     }
 }
