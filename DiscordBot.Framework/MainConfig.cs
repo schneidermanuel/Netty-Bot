@@ -18,5 +18,7 @@ public class MainConfig
     public string YoutubeApiKey { get; set; }
     public int Port { get; set; }
     public string TwitterBearerToken { get; set; }
+    public string SpotifyClientId { get; set; }
+    public string SpotifyClientSecret { get; set; }
 
 }

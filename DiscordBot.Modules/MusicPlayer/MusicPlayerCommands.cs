@@ -7,23 +7,26 @@ using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MusicPlayer;
 using DiscordBot.Framework.Contract.Modularity;
+using Microsoft.VisualBasic;
 using Victoria;
 
 namespace DiscordBot.Modules.MusicPlayer;
 
-public class MusicPlayerCommands : CommandModuleBase, IGuildModule
+internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
 {
     private readonly LavaNode _lavaNode;
     private readonly MusicManager _manager;
     private readonly IMusicPlayerBusinessLogic _businessLogic;
+    private readonly SpotifyApiManager _spotifyApiManager;
 
     public MusicPlayerCommands(IModuleDataAccess dataAccess, LavaNode lavaNode, MusicManager manager,
-        IMusicPlayerBusinessLogic businessLogic) :
+        IMusicPlayerBusinessLogic businessLogic, SpotifyApiManager spotifyApiManager) :
         base(dataAccess)
     {
         _lavaNode = lavaNode;
         _manager = manager;
         _businessLogic = businessLogic;
+        _spotifyApiManager = spotifyApiManager;
     }
 
     protected override Type RessourceType => typeof(MusicPlayerRessources);
@@ -52,6 +55,43 @@ public class MusicPlayerCommands : CommandModuleBase, IGuildModule
         catch (Exception e)
         {
             Console.WriteLine(e);
+        }
+    }
+
+    [Command("loadSpotify")]
+    public async Task LoadSpotifyAsync(ICommandContext context)
+    {
+        var voiceState = context.User as IVoiceState;
+        if (voiceState?.VoiceChannel == null)
+        {
+            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_MustBeInVoice)));
+            return;
+        }
+
+        var playlistUrl = await RequireString(context);
+        try
+        {
+            var playlistId = playlistUrl.Split("https://open.spotify.com/playlist/")[1].Split('?').First();
+            var playlist = await _spotifyApiManager.GetPlaylistInformationAsync(playlistId);
+            await context.Channel.SendMessageAsync(string.Format(
+                Localize(nameof(MusicPlayerRessources.Status_PlaylistLoading)), playlist.Name, playlist.TrackCount));
+            var tracks = await _spotifyApiManager.GetPlaylistAsync(playlistId);
+
+            await PlaySongAsync(tracks.First(), context.Channel, context.Guild, voiceState);
+
+            var results = await Task.WhenAll(tracks.Skip(1)
+                .Select(track => PlaySongAsync(track, context.Channel, context.Guild, voiceState)));
+
+            var count = results.Count(result => result);
+
+            await context.Channel.SendMessageAsync(string.Format(
+                Localize(nameof(MusicPlayerRessources.Message_PlaylistLoaded)), playlist.Name, count + 1,
+                playlist.TrackCount));
+        }
+        catch (Exception)
+        {
+            await context.Channel.SendMessageAsync(
+                Localize(nameof(MusicPlayerRessources.Error_SpotifyPlaylistNotParsable)));
         }
     }
 

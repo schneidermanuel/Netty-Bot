@@ -55,4 +55,10 @@
     <data name="Error_PlaylistNotOwned" xml:space="preserve">
         <value>Die Playlist '{0}' gehört dir nicht</value>
     </data>
+    <data name="Error_SpotifyPlaylistNotParsable" xml:space="preserve">
+        <value>Die Spotify Playlist konnte nicht geladen werden. Bitte stelle sicher, dass der Link stimmt und die Playlist öffentlich einsehbar ist.</value>
+    </data>
+    <data name="Status_PlaylistLoading" xml:space="preserve">
+        <value>Lade Playlist '{0}' von Spotify... ({1} Tracks)</value>
+    </data>
 </root>

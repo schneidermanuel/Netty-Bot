@@ -48,4 +48,10 @@
     <data name="Error_PlaylistNotOwned" xml:space="preserve">
         <value>The playlist '{0}' does not belong to you</value>
     </data>
+    <data name="Error_SpotifyPlaylistNotParsable" xml:space="preserve">
+        <value>The Spotify playlist could not be loaded. Please make sure you used the correct url and the playlist ist publcly available</value>
+    </data>
+    <data name="Status_PlaylistLoading" xml:space="preserve">
+        <value>Loading Playlist '{0}' from Spotify... ({1} tracks)</value>
+    </data>
 </root>

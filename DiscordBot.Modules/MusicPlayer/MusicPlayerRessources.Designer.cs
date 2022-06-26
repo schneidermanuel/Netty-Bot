@@ -115,6 +115,15 @@ namespace DiscordBot.Modules.MusicPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Die Spotify Playlist konnte nicht geladen werden. Bitte stelle sicher, dass der Link stimmt und die Playlist öffentlich einsehbar ist..
+        /// </summary>
+        internal static string Error_SpotifyPlaylistNotParsable {
+            get {
+                return ResourceManager.GetString("Error_SpotifyPlaylistNotParsable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Du hast bereits die maximale Anzahl an Playlists erstellt. Bitte bestehende löschen..
         /// </summary>
         internal static string Error_TooManyPlaylists {
@@ -148,6 +157,15 @@ namespace DiscordBot.Modules.MusicPlayer {
         internal static string Message_PlaylistLoaded {
             get {
                 return ResourceManager.GetString("Message_PlaylistLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lade Playlist &apos;{0}&apos; von Spotify... ({1} Tracks).
+        /// </summary>
+        internal static string Status_PlaylistLoading {
+            get {
+                return ResourceManager.GetString("Status_PlaylistLoading", resourceCulture);
             }
         }
         

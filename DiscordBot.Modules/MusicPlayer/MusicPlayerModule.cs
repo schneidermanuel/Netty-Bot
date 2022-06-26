@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.TimedAction;
 
@@ -12,5 +13,6 @@ public class MusicPlayerModule : Module
         builder.RegisterType<MusicPlayerCommands>().As<IGuildModule>();
         builder.RegisterType<MusicBootStep>().As<ITimedAction>();
         builder.RegisterType<MusicManager>().SingleInstance().AsSelf();
+        builder.RegisterType<SpotifyApiManager>().AsSelf().As<IBootStep>().SingleInstance();
     }
 }
