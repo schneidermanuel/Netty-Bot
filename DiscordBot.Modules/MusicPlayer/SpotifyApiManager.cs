@@ -43,8 +43,15 @@ internal class SpotifyApiManager : IBootStep
         var result = new List<string>();
         await foreach (var track in _spotify.Paginate(await _spotify.Playlists.GetItems(playlistId)))
         {
-            var fullTrack = (FullTrack)track.Track;
-            result.Add(fullTrack.Name + " - " + fullTrack.Artists.First().Name);
+            try
+            {
+                var fullTrack = (FullTrack)track.Track;
+                result.Add(fullTrack.Name + " - " + fullTrack.Artists.First().Name);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         return result;
