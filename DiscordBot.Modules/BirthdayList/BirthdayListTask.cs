@@ -18,7 +18,7 @@ public class BirthdayListTask : ITimedAction
         return ExecutionTime.Daily;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         await _manager.RemoveBirthdayRolesFromUsers(client);
         await _manager.RefreshAllBirthdayChannel(client);

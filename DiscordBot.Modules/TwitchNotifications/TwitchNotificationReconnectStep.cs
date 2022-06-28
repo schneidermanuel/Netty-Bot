@@ -18,7 +18,7 @@ internal class TwitchNotificationReconnectStep : ITimedAction
         return ExecutionTime.Hourly;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         await _pubsubManager.ReconnectAsync();
     }

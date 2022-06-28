@@ -4,19 +4,22 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.WebSocket;
 using DiscordBot.Framework.Contract;
-using DiscordBot.Framework.Contract.Boot;
+using DiscordBot.Framework.Contract.TimedAction;
 using Newtonsoft.Json.Linq;
 using SpotifyAPI.Web;
 
 namespace DiscordBot.Modules.MusicPlayer;
 
-internal class SpotifyApiManager : IBootStep
+internal class SpotifyApiManager : ITimedAction
 {
     private const string SpotifyTokenUrl = "https://accounts.spotify.com/api/token";
     private SpotifyClient _spotify;
 
-    public async Task BootAsync()
+    public ExecutionTime GetExecutionTime() => ExecutionTime.Hourly;
+
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         var bearerToken = await AuthorizeSpotifyAsync();
         _spotify = new SpotifyClient(bearerToken);
@@ -57,14 +60,11 @@ internal class SpotifyApiManager : IBootStep
         return result;
     }
 
-
     private static string Base64Encode(string plainText)
     {
         var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
         return Convert.ToBase64String(plainTextBytes);
     }
-
-    public BootOrder StepPosition => BootOrder.Async;
 
     public async Task<SpotifyPlaylistInfo> GetPlaylistInformationAsync(string playlistId)
     {

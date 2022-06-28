@@ -17,7 +17,7 @@ internal class RefreshYoutubeAction : ITimedAction
         return ExecutionTime.Daily;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         await _manager.RefreshAllRegistrations();
     }

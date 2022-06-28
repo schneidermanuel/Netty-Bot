@@ -18,7 +18,7 @@ internal class SetupAutoRolesTask : ITimedAction
         return ExecutionTime.PostBoot;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         await _manager.RefreshSetupsAsync();
         client.UserJoined += async user => { await _manager.UserJoinedGuild(user); };

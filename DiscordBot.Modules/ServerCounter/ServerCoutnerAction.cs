@@ -12,7 +12,7 @@ internal class ServerCoutnerAction : ITimedAction
         return ExecutionTime.Hourly;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         var guildCount = client.Guilds.Count;
         var message = $"We now support english! Change your language with !language. Hosted with love by Brainy for {guildCount} Servers";

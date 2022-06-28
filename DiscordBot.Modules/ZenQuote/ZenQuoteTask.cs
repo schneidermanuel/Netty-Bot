@@ -20,7 +20,7 @@ public class ZenQuoteTask : ITimedAction
         return ExecutionTime.Daily;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         var registrations = await _businessLogic.LoadAllRegistrations();
         var quote = await _businessLogic.RetrieveQuoteOfTheDayAsync();

@@ -18,7 +18,7 @@ internal class AutoModBootStep : ITimedAction
         return ExecutionTime.PostBoot;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         await _manager.InitializeAsync();
     }

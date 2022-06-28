@@ -15,7 +15,7 @@ internal class MkBootStep : ITimedAction
         _businessLogic = businessLogic;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         await _businessLogic.ClearAllAsync();
     }

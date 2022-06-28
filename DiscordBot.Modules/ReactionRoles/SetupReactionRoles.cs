@@ -22,7 +22,7 @@ public class SetupReactionRoles : ITimedAction
         return ExecutionTime.PostBoot;
     }
 
-    public async Task Execute(DiscordSocketClient client)
+    public async Task ExecuteAsync(DiscordSocketClient client)
     {
         foreach (var reactionRole in _manager.ReactionRoles)
         {

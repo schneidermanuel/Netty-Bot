@@ -91,7 +91,7 @@ public class BotManager
         await _client.SetStatusAsync(UserStatus.Online);
         await _client.SetActivityAsync(new Game("Hosted with Love by BrainyXS"));
         var postBootTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.PostBoot)
-            .Select(x => x.Execute(_client));
+            .Select(x => x.ExecuteAsync(_client));
         await Task.WhenAll(postBootTasks);
         var dailyStuffThread = new Thread(DailyStuff);
         var hourlyStuffThread = new Thread(HourlyStuff);
@@ -104,7 +104,7 @@ public class BotManager
         var hourlyTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.Hourly).ToArray();
         while (true)
         {
-            var tasks = hourlyTasks.Select(x => x.Execute(_client));
+            var tasks = hourlyTasks.Select(x => x.ExecuteAsync(_client));
             await Task.WhenAll(tasks);
             await Task.Delay(new TimeSpan(1, 0, 0));
         }
@@ -132,7 +132,7 @@ public class BotManager
     private async Task DoDailyTasks()
     {
         var dailyTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.Daily)
-            .Select(x => x.Execute(_client));
+            .Select(x => x.ExecuteAsync(_client));
         await Task.WhenAll(dailyTasks);
     }
 }
