@@ -126,17 +126,46 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
     public async Task FinishAsync(ICommandContext context)
     {
         var result = _manager.GetFinalResult(context.Channel.Id);
+        var games = (await _manager.RetriveHistoryAsync(result.GameId)).ToArray();
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();
         embedBuilder.WithTitle("Mario Kart Final Result");
         embedBuilder.WithThumbnailUrl(
             "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
-        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_FinalResult)),
-            result.Points, result.Difference, result.EnemyPoints));
-
+        embedBuilder.WithDescription(BuildFinalDescription(result, games));
+        
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
         _manager.EndGame(context.Channel.Id);
+        var url = BuildChartUrl(games);
+        await context.Channel.SendMessageAsync(url);
+    }
+
+    private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)
+    {
+        var url = "https://analytics.netty-bot.com/MarioKart/result.php?";
+        var chartValue = 0;
+        foreach (var game in games)
+        {
+            chartValue += game.TeamPoints - game.EnemyPoints;
+            url += $"scoreHistory[]={chartValue}&comments[]={game.Comment.Replace(" ", "%20")}&";
+        }
+
+        return url;
+    }
+
+    private string BuildFinalDescription(MkResult result, IReadOnlyCollection<MkHistoryItem> mkHistoryItems)
+    {
+        var desc = string.Format(Localize(nameof(MarioKartRessources.Message_FinalResult)),
+            result.Points, result.Difference, result.EnemyPoints) + "\n\n";
+        for (var i = 0; i < mkHistoryItems.Count; i++)
+        {
+            var item = mkHistoryItems.ElementAt(i);
+            var comment = string.IsNullOrEmpty(item.Comment) ? string.Empty : $"({item.Comment})";
+            desc += $"{i + 1}: {item.TeamPoints} - {Math.Abs(item.TeamPoints - item.EnemyPoints)} - {item.EnemyPoints} {comment}\n";
+        }
+
+        return desc;
     }
 
     [Command("mkwr")]

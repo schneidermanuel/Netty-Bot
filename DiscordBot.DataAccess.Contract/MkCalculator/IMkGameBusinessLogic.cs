@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DiscordBot.DataAccess.Contract.MkCalculator;
 
@@ -10,4 +11,5 @@ public interface IMkGameBusinessLogic
     Task SaveHistoryItemAsync(MkHistoryItem history);
     Task<bool> CanRevertAsync(long gameId);
     Task<MkHistoryItem> RevertGameAsync(long gameId);
+    Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId);
 }

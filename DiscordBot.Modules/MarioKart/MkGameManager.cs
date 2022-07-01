@@ -78,4 +78,9 @@ internal class MkManager
         result.EnemyPoints -= historyItem.EnemyPoints;
 
     }
+
+    public async Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId)
+    {
+        return await _businessLogic.RetriveHistoryAsync(gameId);
+    }
 }

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
 
 namespace DiscordBot.DataAccess.Modules.MkCalculator.BusinessLogic;
@@ -48,6 +50,19 @@ internal class MkGameBusinessLogic : IMkGameBusinessLogic
             GameId = data.GameId,
             TeamPoints = data.Points
         };
+    }
+
+    public async Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId)
+    {
+        var datas = await _repository.RetrieveHistoryAsync(gameId);
+        return datas.Select(data => new MkHistoryItem
+        {
+            Comment = data.Comment,
+            Id = data.Id,
+            EnemyPoints = data.EnemyPoints,
+            GameId = data.GameId,
+            TeamPoints = data.Points
+        });
     }
 
     private HistoryItemData MapToHistoryData(MkHistoryItem history)

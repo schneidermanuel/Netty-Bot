@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
@@ -112,6 +113,18 @@ internal class MkGameRepository : IMkGameRepository
             await session.DeleteAsync(entity);
             await session.FlushAsync();
             return data;
+        }
+    }
+
+    public async Task<IEnumerable<HistoryItemData>> RetrieveHistoryAsync(long gameId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var query = session.Query<MarioKartHistoryItemEntity>()
+                .Where(entity => entity.MarioKartGameId == gameId)
+                .OrderBy(entity => entity.CreatedAt);
+            var entities = await query.ToListAsync();
+            return entities.Select(entity => new HistoryItemData(entity.Id, entity.MarioKartGameId, entity.TeamPoints, entity.EnemyPoints, entity.Comment));
         }
     }
 
