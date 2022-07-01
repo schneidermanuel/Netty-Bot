@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -53,7 +54,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();
         embedBuilder.WithTitle("Mario Kart Result");
-        embedBuilder.WithThumbnailUrl(GetThumbnailUrl(comment));
+        embedBuilder.WithThumbnailUrl(await GetThumbnailUrlAsync(comment));
         embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_RaceResult)),
             result.Points, result.Difference, result.EnemyPoints, sumResult.Points, sumResult.Difference,
             sumResult.EnemyPoints));
@@ -85,34 +86,17 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }
 
-    private string GetThumbnailUrl(string comment)
+    private async Task<string> GetThumbnailUrlAsync(string comment)
     {
         var words = comment.Split(' ');
         var courseCode = words.FirstOrDefault()?.Trim()?.ToLower() ?? string.Empty;
 
-        HttpWebResponse response = null;
         var url = $"https://www.mkleaderboards.com/images/mk8/{courseCode}.jpg";
-        var request = (HttpWebRequest)WebRequest.Create(url);
-        request.Method = "HEAD";
-
-
-        try
-        {
-            response = (HttpWebResponse)request.GetResponse();
-            return url;
-        }
-        catch (WebException ex)
-        {
-            return "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png";
-        }
-        finally
-        {
-            // Don't forget to close your response.
-            if (response != null)
-            {
-                response.Close();
-            }
-        }
+        var client = new HttpClient();
+        var response = await client.GetAsync(url);
+        return response.IsSuccessStatusCode
+            ? url
+            : "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png";
     }
 
     [Command("mkdisplay")]
@@ -134,7 +118,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithThumbnailUrl(
             "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
         embedBuilder.WithDescription(BuildFinalDescription(result, games));
-        
+
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
         _manager.EndGame(context.Channel.Id);
         var url = BuildChartUrl(games);
@@ -162,7 +146,8 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         {
             var item = mkHistoryItems.ElementAt(i);
             var comment = string.IsNullOrEmpty(item.Comment) ? string.Empty : $"({item.Comment})";
-            desc += $"{i + 1}: {item.TeamPoints} - {Math.Abs(item.TeamPoints - item.EnemyPoints)} - {item.EnemyPoints} {comment}\n";
+            desc +=
+                $"{i + 1}: {item.TeamPoints} - {Math.Abs(item.TeamPoints - item.EnemyPoints)} - {item.EnemyPoints} {comment}\n";
         }
 
         return desc;
