@@ -60,4 +60,7 @@ Total: {3} - {4} - {5}</value>
     <data name="WR_Glider" xml:space="preserve">
         <value>Gleiter</value>
     </data>
+    <data name="Error_NotRevertable" xml:space="preserve">
+        <value>Aktuell kann kein Rennen zurückgesetzt werden</value>
+    </data>
 </root>

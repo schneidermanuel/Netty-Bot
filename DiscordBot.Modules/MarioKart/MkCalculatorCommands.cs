@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract;
+using DiscordBot.DataAccess.Contract.MkCalculator;
 using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.MarioKart;
@@ -39,19 +42,77 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
             places.Add(place);
         }
 
+        var comment = await RequireReminderOrEmpty(context, 7);
+
         var result = _calculator.Calculate(places);
-        _manager.RegisterResult(result, context.Channel.Id);
+        await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
+
 
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();
         embedBuilder.WithTitle("Mario Kart Result");
-        embedBuilder.WithThumbnailUrl(
-            "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
-        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_RaceResult)), result.Points, result.Difference, result.EnemyPoints, sumResult.Points, sumResult.Difference, sumResult.EnemyPoints));
+        embedBuilder.WithThumbnailUrl(GetThumbnailUrl(comment));
+        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_RaceResult)),
+            result.Points, result.Difference, result.EnemyPoints, sumResult.Points, sumResult.Difference,
+            sumResult.EnemyPoints));
 
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+    }
+
+    [Command("mkrevert")]
+    public async Task RevertGameAsync(SocketCommandContext context)
+    {
+        if (!await _manager.CanRevertAsync(context.Channel.Id))
+        {
+            await context.Channel.SendMessageAsync(Localize(nameof(MarioKartRessources.Error_NotRevertable)));
+            return;
+        }
+
+        await _manager.RevertGameAsync(context.Channel.Id);
+
+        var result = _manager.GetFinalResult(context.Channel.Id);
+        var embedBuilder = new EmbedBuilder();
+        embedBuilder.WithColor(Color.Gold);
+        embedBuilder.WithCurrentTimestamp();
+        embedBuilder.WithTitle("Reverted!");
+        embedBuilder.WithThumbnailUrl(
+            "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
+        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_FinalResult)),
+            result.Points, result.Difference, result.EnemyPoints));
+
+        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+    }
+
+    private string GetThumbnailUrl(string comment)
+    {
+        var words = comment.Split(' ');
+        var courseCode = words.FirstOrDefault()?.Trim()?.ToLower() ?? string.Empty;
+
+        HttpWebResponse response = null;
+        var url = $"https://www.mkleaderboards.com/images/mk8/{courseCode}.jpg";
+        var request = (HttpWebRequest)WebRequest.Create(url);
+        request.Method = "HEAD";
+
+
+        try
+        {
+            response = (HttpWebResponse)request.GetResponse();
+            return url;
+        }
+        catch (WebException ex)
+        {
+            return "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png";
+        }
+        finally
+        {
+            // Don't forget to close your response.
+            if (response != null)
+            {
+                response.Close();
+            }
+        }
     }
 
     [Command("mkdisplay")]
@@ -71,7 +132,8 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithTitle("Mario Kart Final Result");
         embedBuilder.WithThumbnailUrl(
             "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
-        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_FinalResult)), result.Points, result.Difference, result.EnemyPoints));
+        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_FinalResult)),
+            result.Points, result.Difference, result.EnemyPoints));
 
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
         _manager.EndGame(context.Channel.Id);
@@ -95,7 +157,8 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         var builder = new EmbedBuilder();
         builder.WithCurrentTimestamp();
         builder.WithColor(Color.Red);
-        builder.WithTitle(string.Format(Localize(nameof(MarioKartRessources.WR_Title)), wr.Trackname, wr.Time, wr.Player));
+        builder.WithTitle(string.Format(Localize(nameof(MarioKartRessources.WR_Title)), wr.Trackname, wr.Time,
+            wr.Player));
         builder.WithThumbnailUrl(wr.Nation);
         builder.AddField(Localize(nameof(MarioKartRessources.WR_Lap1)), wr.Lap1, true);
         builder.AddField(Localize(nameof(MarioKartRessources.WR_Lap2)), wr.Lap2, true);

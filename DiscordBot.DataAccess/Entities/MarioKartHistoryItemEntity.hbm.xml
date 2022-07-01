@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
+                   namespace="DiscordBot.DataAccess.Entities">
+    <class name="MarioKartHistoryItemEntity" table="marioKartHistoryItem">
+        <id name="Id" column="historyItemId" type="Int64">
+            <generator class="increment"/>
+        </id>
+        <property name="MarioKartGameId" type="Int64" column="marioKartGameId"/>
+        <property name="TeamPoints" type="Int32" column="teamPoints"/>
+        <property name="EnemyPoints" type="Int32" column="enemyPoints"/>
+        <property name="CreatedAt" type="DateTime" column="createdAt"/>
+        <property name="Comment" type="string" column="Comment"/>
+    </class>
+</hibernate-mapping>

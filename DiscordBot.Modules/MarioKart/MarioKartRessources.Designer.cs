@@ -88,6 +88,15 @@ namespace DiscordBot.Modules.MarioKart {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aktuell kann kein Rennen zurückgesetzt werden.
+        /// </summary>
+        internal static string Error_NotRevertable {
+            get {
+                return ResourceManager.GetString("Error_NotRevertable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Team - Unterschied - Gegner
         ///{0} - {1} - {2}.
         /// </summary>

@@ -53,4 +53,7 @@ Total: {3} - {4} - {5}</value>
     <data name="WR_Tires" xml:space="preserve">
         <value>Tires</value>
     </data>
+    <data name="Error_NotRevertable" xml:space="preserve">
+        <value>There is no race te be reverted</value>
+    </data>
 </root>
