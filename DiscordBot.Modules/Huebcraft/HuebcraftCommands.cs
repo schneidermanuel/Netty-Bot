@@ -58,7 +58,6 @@ public class HuebcraftCommands : CommandModuleBase, IGuildModule
         });
         var teamRole = context.Guild.GetRole(948633042094792734);
         await channel.SendMessageAsync($"{teamRole.Mention}: Start der Bewerbung von {context.User.Mention} als {bewerbungType}");
-        await channel.SendMessageAsync("Der Kanal kann mit !fertig gelöscht werden. ");
     }
 
     [Command("fertig")]
