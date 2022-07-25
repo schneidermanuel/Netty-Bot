@@ -117,7 +117,7 @@ internal class YoutubeNotificationManager
         embedBuilder.WithTitle(notification.Title);
         embedBuilder.WithUrl($"http://www.youtube.com/watch?v={notification.VideoId}");
         embedBuilder.WithThumbnailUrl(user.Snippet.Thumbnails.High.Url);
-        embedBuilder.WithImageUrl(video.Snippet.Thumbnails.High.Url);
+        embedBuilder.WithImageUrl(video.Snippet.Thumbnails.Medium.Url);
         var description = video.Snippet.Description;
         if (description.Length > 30)
         {
