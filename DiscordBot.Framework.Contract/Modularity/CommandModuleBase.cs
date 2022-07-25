@@ -13,7 +13,7 @@ namespace DiscordBot.Framework.Contract.Modularity;
 
 public abstract class CommandModuleBase : IGuildModule
 {
-    private IDictionary<string, MethodInfo> _commandMethods;
+    private static IDictionary<string, MethodInfo> _commandMethods;
     private readonly IModuleDataAccess _dataAccess;
     protected abstract Type RessourceType { get; }
 
@@ -69,6 +69,7 @@ public abstract class CommandModuleBase : IGuildModule
         }
 
         var baseCommand = message.Remove(0, 1).Split(' ')[0].ToLower();
+        Debug.Assert(_commandMethods != null, nameof(_commandMethods) + " != null");
         if (!_commandMethods.ContainsKey(baseCommand))
         {
             return;
