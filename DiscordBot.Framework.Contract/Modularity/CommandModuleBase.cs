@@ -13,13 +13,14 @@ namespace DiscordBot.Framework.Contract.Modularity;
 
 public abstract class CommandModuleBase : IGuildModule
 {
-    private IDictionary<string, MethodInfo> _commandMethods;
+    private static IDictionary<Type, Dictionary<string, MethodInfo>> _commandMethods;
     private readonly IModuleDataAccess _dataAccess;
     protected abstract Type RessourceType { get; }
 
     protected CommandModuleBase(IModuleDataAccess dataAccess)
     {
         _dataAccess = dataAccess;
+        _commandMethods = new Dictionary<Type, Dictionary<string, MethodInfo>>();
     }
 
     public abstract string ModuleUniqueIdentifier { get; }
@@ -40,22 +41,23 @@ public abstract class CommandModuleBase : IGuildModule
 
     private void BuildCommandInfos()
     {
-        _commandMethods = new Dictionary<string, MethodInfo>();
         var methods = GetType().GetMethods()
             .Where(m => m.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0).ToList();
+        var moduleMethods = new Dictionary<string, MethodInfo>();
         foreach (var methodInfo in methods)
         {
             var attribute = (CommandAttribute)methodInfo.GetCustomAttribute(typeof(CommandAttribute));
             Debug.Assert(attribute != null, nameof(attribute) + " != null");
-            _commandMethods.Add(attribute.Text.ToLower(), methodInfo);
+            moduleMethods.Add(attribute.Text.ToLower(), methodInfo);
         }
+        _commandMethods.Add(GetType(), moduleMethods);
     }
 
     public abstract Task ExecuteAsync(ICommandContext context);
 
     protected async Task ExecuteCommandsAsync(ICommandContext context)
     {
-        if (_commandMethods == null)
+        if (!_commandMethods.ContainsKey(GetType()))
         {
             BuildCommandInfos();
         }
@@ -69,12 +71,13 @@ public abstract class CommandModuleBase : IGuildModule
         }
 
         var baseCommand = message.Remove(0, 1).Split(' ')[0].ToLower();
-        if (!_commandMethods.ContainsKey(baseCommand))
+        var moduleMethods = _commandMethods[GetType()];
+        if (!moduleMethods.ContainsKey(baseCommand))
         {
             return;
         }
 
-        var method = _commandMethods[baseCommand];
+        var method = moduleMethods[baseCommand];
         method.Invoke(this, new object[] { context });
         Console.WriteLine("Invoking " + method.Name);
     }
