@@ -24,4 +24,10 @@
     <data name="Error_InvalidRole" xml:space="preserve">
         <value>Keine Rolle mit der Id '{0}' gefunden</value>
     </data>
+    <data name="Error_NotReplied" xml:space="preserve">
+        <value>Antworte auf die Nachricht, zu welcher eine Reaktionsrolle hinzugefügt werden soll.</value>
+    </data>
+    <data name="Error_EmoteAlreadyAdded" xml:space="preserve">
+        <value>Diese Reaktion wird auf der Nachricht bereits verwendet</value>
+    </data>
 </root>

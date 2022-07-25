@@ -61,11 +61,29 @@ namespace DiscordBot.Modules.ReactionRoles {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Diese Reaktion wird auf der Nachricht bereits verwendet.
+        /// </summary>
+        internal static string Error_EmoteAlreadyAdded {
+            get {
+                return ResourceManager.GetString("Error_EmoteAlreadyAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Keine Rolle mit der Id &apos;{0}&apos; gefunden.
         /// </summary>
         internal static string Error_InvalidRole {
             get {
                 return ResourceManager.GetString("Error_InvalidRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Antworte auf die Nachricht, zu welcher eine Reaktionsrolle hinzugefügt werden soll..
+        /// </summary>
+        internal static string Error_NotReplied {
+            get {
+                return ResourceManager.GetString("Error_NotReplied", resourceCulture);
             }
         }
         

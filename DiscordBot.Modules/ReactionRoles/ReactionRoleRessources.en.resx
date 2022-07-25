@@ -17,4 +17,10 @@
     <data name="Error_InvalidRole" xml:space="preserve">
         <value>Cannot find a role with the id '{0}'</value>
     </data>
+    <data name="Error_NotReplied" xml:space="preserve">
+        <value>Please reply to the message you want to add a reaction role. </value>
+    </data>
+    <data name="Error_EmoteAlreadyAdded" xml:space="preserve">
+        <value>This reaction is already in use on the selected message</value>
+    </data>
 </root>

@@ -40,4 +40,9 @@ internal class ReactionRoleBusinessLogic : IReactionRoleBusinessLogic
     {
         await _repository.DeleteReactionRoleAsync(reactionRoleId);
     }
+
+    public async Task<bool> CanAddReactionRoleAsync(ulong messageId, IEmote emote)
+    {
+        return await _repository.CanAddReactionRoleAsync(messageId.ToString(), emote);
+    }
 }

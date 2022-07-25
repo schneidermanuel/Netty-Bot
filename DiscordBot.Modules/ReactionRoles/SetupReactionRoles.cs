@@ -53,7 +53,7 @@ public class SetupReactionRoles : ITimedAction
             await ((ISocketMessageChannel) guild.GetChannel(reactionRole.ChannelId))
                 .GetMessageAsync(reactionRole.MessageId);
         var emote = reactionRole.Emote;
-        await message.RemoveAllReactionsAsync();
+        await message.RemoveAllReactionsForEmoteAsync(emote);
         await Task.Delay(2000);
         await message.AddReactionAsync(emote);
     }

@@ -15,14 +15,22 @@ public class ReactionRoleManager
     public async Task ReactionAdded(Cacheable<IUserMessage, ulong> message,
         SocketReaction reaction)
     {
-        var reactionRole = ReactionRoles.SingleOrDefault(role => role.MessageId == message.Id);
-        if (reactionRole == null || reaction.Emote.Name != reactionRole.Emote.Name)
+        var reactionRoles = ReactionRoles.Where(role => role.MessageId == message.Id);
+        foreach (var reactionRole in reactionRoles)
+        {
+            await ProcessReactionRoleAsync(message, reaction, reactionRole);
+        }
+    }
+
+    private static async Task ProcessReactionRoleAsync(Cacheable<IUserMessage, ulong> message, SocketReaction reaction, ReactionRole reactionRole)
+    {
+        if (reaction.Emote.Name != reactionRole.Emote.Name)
         {
             return;
         }
 
         var loadedMessage = await message.GetOrDownloadAsync();
-        var guild = ((SocketGuildChannel) loadedMessage.Channel).Guild;
+        var guild = ((SocketGuildChannel)loadedMessage.Channel).Guild;
         var user = guild.GetUser(reaction.UserId);
         if (user.IsBot)
         {

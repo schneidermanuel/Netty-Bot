@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord;
 using DiscordBot.DataAccess.Entities;
 using DiscordBot.DataAccess.Modules.ReactionRoles.BusinessLogic;
 using DiscordBot.DataAccess.NHibernate;
@@ -53,6 +54,17 @@ internal class ReactionRolesRepository : IReactionRolesRepository
             var entity = await session.GetAsync<ReactionRoleEntity>(reactionRoleId);
             await session.DeleteAsync(entity);
             await session.FlushAsync();
+        }
+    }
+
+    public async Task<bool> CanAddReactionRoleAsync(string messageId, IEmote emote)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var query = session.Query<ReactionRoleEntity>()
+                .Where(entity => entity.MessageId == messageId &&
+                                 entity.EmojiId == emote.ToString());
+            return !await query.AnyAsync();
         }
     }
 
