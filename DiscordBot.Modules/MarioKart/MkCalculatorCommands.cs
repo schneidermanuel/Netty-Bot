@@ -56,8 +56,11 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithTitle("Mario Kart Result");
         embedBuilder.WithThumbnailUrl(await GetThumbnailUrlAsync(comment));
         embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_RaceResult)),
-            result.Points, result.Difference, result.EnemyPoints, sumResult.Points, sumResult.Difference,
-            sumResult.EnemyPoints));
+            result.Points.To3CharString(), result.Difference.To3CharString(),
+            result.EnemyPoints.To3CharString(),
+            sumResult.Points.To3CharString(),
+            sumResult.Difference.To3CharString(),
+            sumResult.EnemyPoints.To3CharString()));
 
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
     }

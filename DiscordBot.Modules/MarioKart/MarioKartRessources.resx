@@ -22,13 +22,13 @@
         <value>Bitte 6 Zahlen eingeben</value>
     </data>
     <data name="Message_RaceResult" xml:space="preserve">
-        <value>Team - Unterschied - Gegner
-Diese Runde: {0} - {1} - {2}
-Total: {3} - {4} - {5}</value>
+        <value>```             Team    Unterschied    Gegner
+Diese Runde: {0}     {1}            {2}
+Total:       {3}     {4}            {5}```</value>
     </data>
     <data name="Message_FinalResult" xml:space="preserve">
-        <value>Team - Unterschied - Gegner
-{0} - {1} - {2}</value>
+        <value>```             Team    Unterschied    Gegner
+Total:       {0}     {1}            {2}```</value>
     </data>
     <data name="Error_MkwrSyntax" xml:space="preserve">
         <value>Bitte geben Sie Strecke und die CC an! (!mkwr  MKS 150)</value>

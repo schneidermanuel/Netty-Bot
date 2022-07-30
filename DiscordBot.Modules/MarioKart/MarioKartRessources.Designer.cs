@@ -97,8 +97,8 @@ namespace DiscordBot.Modules.MarioKart {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Team - Unterschied - Gegner
-        ///{0} - {1} - {2}.
+        ///   Looks up a localized string similar to ```             Team    Unterschied    Gegner
+        ///Total:       {0}     {1}            {2}```.
         /// </summary>
         internal static string Message_FinalResult {
             get {
@@ -107,9 +107,9 @@ namespace DiscordBot.Modules.MarioKart {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Team - Unterschied - Gegner
-        ///Diese Runde: {0} - {1} - {2}
-        ///Total: {3} - {4} - {5}.
+        ///   Looks up a localized string similar to ```             Team    Unterschied    Gegner
+        ///Diese Runde: {0}     {1}            {2}
+        ///Total:       {3}     {4}            {5}```.
         /// </summary>
         internal static string Message_RaceResult {
             get {
