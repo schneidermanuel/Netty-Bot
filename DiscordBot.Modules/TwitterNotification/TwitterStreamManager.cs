@@ -27,6 +27,7 @@ internal class TwitterStreamManager
     private IList<TwitterRegistrationDto> _registrations;
     private readonly ITwitterRegistrationBusinessLogic _businessLogic;
     private readonly TwitterRuleValidator _ruleValidator;
+    private Task _task;
 
     public TwitterStreamManager(DiscordSocketClient discordSocketClient, TwitterClient client,
         IList<TwitterRegistrationDto> registrations,
@@ -45,7 +46,7 @@ internal class TwitterStreamManager
     {
         var regs = (await _businessLogic.RetrieveAllRegistartionsAsync()).ToList();
 
-        Task.Run(async () =>
+        _task = Task.Run(async () =>
         {
             await _client.NextTweetStreamAsync(IncomingTweet, new TweetSearchOptions
             {
@@ -53,12 +54,26 @@ internal class TwitterStreamManager
             });
         });
 
+
         foreach (var registration in regs)
         {
             await RegisterTwitterUserAsync(registration);
         }
 
         Console.WriteLine("Twitter Initialized");
+    }
+
+    public async Task RestartAsync()
+    {
+        _client.CancelTweetStream();
+        await _task;
+        _task = Task.Run(async () =>
+        {
+            await _client.NextTweetStreamAsync(IncomingTweet, new TweetSearchOptions
+            {
+                UserOptions = Array.Empty<UserOption>()
+            });
+        });
     }
 
     private async void IncomingTweet(Tweet tweet)
