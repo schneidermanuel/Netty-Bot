@@ -21,6 +21,7 @@ public class BotManager
     private readonly IEnumerable<IGuildModule> _modules;
     private readonly IEnumerable<ITimedAction> _timedActions;
     private readonly IModuleDataAccess _dataAccess;
+    private bool _isReady;
 
     public static DiscordSocketClient _client = new DiscordSocketClient(new DiscordSocketConfig
     {
@@ -37,6 +38,7 @@ public class BotManager
 
     public async Task StartSystemAsync()
     {
+        _isReady = false;
         _client.Ready += ClientReady;
         _client.Log += Log;
         _client.MessageReceived += MessageRecieved;
@@ -48,6 +50,10 @@ public class BotManager
 
     private async Task MessageRecieved(SocketMessage arg)
     {
+        if (!_isReady)
+        {
+            return;
+        }
         var context = new SocketCommandContext(_client, arg as SocketUserMessage);
         if (context.User.IsBot)
         {
@@ -89,10 +95,11 @@ public class BotManager
     {
         _client.Ready -= ClientReady;
         await _client.SetStatusAsync(UserStatus.Online);
-        await _client.SetActivityAsync(new Game("Hosted with Love by BrainyXS"));
+        await _client.SetActivityAsync(new Game("Booting..."));
         var postBootTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.PostBoot)
             .Select(x => x.ExecuteAsync(_client));
         await Task.WhenAll(postBootTasks);
+        _isReady = true;
         var dailyStuffThread = new Thread(DailyStuff);
         var hourlyStuffThread = new Thread(HourlyStuff);
         dailyStuffThread.Start();
