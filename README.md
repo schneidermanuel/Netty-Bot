@@ -10,7 +10,7 @@ You may donate [here](https://tipeeestream.com/brainyxs/donation)
 
 ## Add the Bot
 
-A fully hosted bot including web will be available for free once this project leaves beta state.
+A fully hosted bot is available [here](https://invite.netty-bot.com). A Web configuration UI is planed.
 
 ### Self-Host this Bot
 
