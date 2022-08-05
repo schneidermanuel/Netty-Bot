@@ -46,12 +46,22 @@ internal class TwitterStreamManager
     {
         var regs = (await _businessLogic.RetrieveAllRegistartionsAsync()).ToList();
 
-        _task = Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
-            await _client.NextTweetStreamAsync(IncomingTweet, new TweetSearchOptions
+            while (true)
             {
-                UserOptions = Array.Empty<UserOption>()
-            });
+                try
+                {
+                    await _client.NextTweetStreamAsync(IncomingTweet, new TweetSearchOptions
+                    {
+                        UserOptions = Array.Empty<UserOption>()
+                    });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
         });
 
 
@@ -61,19 +71,6 @@ internal class TwitterStreamManager
         }
 
         Console.WriteLine("Twitter Initialized");
-    }
-
-    public async Task RestartAsync()
-    {
-        _client.CancelTweetStream();
-        await _task;
-        _task = Task.Run(async () =>
-        {
-            await _client.NextTweetStreamAsync(IncomingTweet, new TweetSearchOptions
-            {
-                UserOptions = Array.Empty<UserOption>()
-            });
-        });
     }
 
     private async void IncomingTweet(Tweet tweet)
@@ -124,12 +121,12 @@ internal class TwitterStreamManager
     public async Task RegisterTwitterUserAsync(TwitterRegistrationDto registrationDto)
     {
         var username = registrationDto.Username;
+        _registrations.Add(registrationDto);
+
         if (!_listenedUsers.Contains(username.ToLower()))
         {
-            var user = await _client.GetUserAsync(username);
-            _listenedUsers.Add(username);
-            _registrations.Add(registrationDto);
-            await _client.AddTweetStreamAsync(new StreamRequest(Expression.Author(user.Username)));
+            _listenedUsers.Add(username.ToLower());
+            await _client.AddTweetStreamAsync(new StreamRequest(Expression.Author(username)));
         }
     }
 }

@@ -15,7 +15,6 @@ internal class TwitterModule : Module
         builder.RegisterType<TwitterStreamManager>().SingleInstance();
         builder.RegisterType<TwitterRegistrationCommands>().As<IGuildModule>();
         builder.RegisterType<TwitterApiInitializer>().As<ITimedAction>();
-        builder.RegisterType<TwitterRestarter>().As<ITimedAction>();
         builder.RegisterType<TwitterRuleValidator>().AsSelf();
     }
 }
