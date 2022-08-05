@@ -64,6 +64,14 @@ internal class MkWorldRecordMapper : IMkWorldRecordMapper
         { "bSR", "DS+Shroom+Ridge" },
         { "bSG", "GBA+Sky+Garden" },
         { "bNH", "Tour+Ninja+Hideaway" },
+        { "bNYM", "Tour+New+York+Minute" },
+        { "bMC3", "SNES+Mario+Circuit+3" },
+        { "bKD", "N64+Kalimari+Desert" },
+        { "bWP", "DS+Waluigi+Pinball" },
+        { "bSS", "Tour+Sydney+Sprint" },
+        { "bSL", "GBA+Snow+Land" },
+        { "bMG", "Wii+Mushroom+Gorge" },
+        { "bSHS", "Sky-High+Sundae" },
     };
 
     public string GetNameByShortForm(string shortform)

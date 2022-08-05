@@ -159,10 +159,10 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
     [Command("mkwr")]
     public async Task WorldReccordCommandAsync(ICommandContext context)
     {
-        await RequireArg(context, 2, Localize(nameof(MarioKartRessources.Error_MkwrSyntax)));
+        await RequireArg(context, 1, Localize(nameof(MarioKartRessources.Error_MkwrSyntax)));
 
         var strecke = await RequireString(context);
-        var cc = await RequireIntArg(context, 2);
+        var cc = RequireIntArgOrDefault(context, 2, 150);
 
         var wr = await _worldRecordLoader.LoadWorldRecord(strecke, cc);
         if (wr == null)
