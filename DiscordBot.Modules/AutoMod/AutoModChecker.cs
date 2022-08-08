@@ -26,7 +26,7 @@ internal class AutoModChecker : CommandModuleBase, IGuildModule
         if (context.User is SocketGuildUser { GuildPermissions.Administrator: false })
         {
             var violation = await _manager.ProcessMessage(context);
-            var reason = Localize(violation.Reason);
+            var reason = string.Format(Localize(violation.Reason), context.User.Mention);
             await violation.Execute(context, reason);
         }
     }
