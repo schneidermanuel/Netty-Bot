@@ -7,7 +7,6 @@ using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
 using DiscordBot.DataAccess.Contract.TwitterRegistration.BusinessLogic;
-using Microsoft.AspNetCore.Components.Web;
 using TwitterSharp.Client;
 using TwitterSharp.Request;
 using TwitterSharp.Request.AdvancedSearch;
@@ -60,6 +59,7 @@ internal class TwitterStreamManager
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    _client.CancelTweetStream();
                 }
             }
         });
