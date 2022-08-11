@@ -126,7 +126,14 @@ internal class TwitterStreamManager
         if (!_listenedUsers.Contains(username.ToLower()))
         {
             _listenedUsers.Add(username.ToLower());
-            await _client.AddTweetStreamAsync(new StreamRequest(Expression.Author(username)));
+            try
+            {
+                await _client.AddTweetStreamAsync(new StreamRequest(Expression.Author(username)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }
