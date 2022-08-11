@@ -59,16 +59,23 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
     private async Task ProcessGet(HttpContext context)
     {
-        var re = context.Request;
-        var challenge = re.Query["hub.challenge"];
-
-        if (!string.IsNullOrEmpty(challenge))
+        try
         {
-            var bytes = Encoding.UTF8.GetBytes(challenge);
-            await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
-        }
+            var re = context.Request;
+            var challenge = re.Query["hub.challenge"];
 
-        await context.Response.CompleteAsync();
+            if (!string.IsNullOrEmpty(challenge))
+            {
+                var bytes = Encoding.UTF8.GetBytes(challenge);
+                await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+            }
+
+            await context.Response.CompleteAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private YoutubeNotification ConvertAtomToSyndication(Stream stream)
