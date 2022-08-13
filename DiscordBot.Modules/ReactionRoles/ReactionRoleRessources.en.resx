@@ -15,7 +15,7 @@
         <value>Syntax error: {0}registerReactionRole [emote] [roleId] [message]</value>
     </data>
     <data name="Error_InvalidRole" xml:space="preserve">
-        <value>Cannot find a role with the id '{0}'</value>
+        <value>Role not found</value>
     </data>
     <data name="Error_NotReplied" xml:space="preserve">
         <value>Please reply to the message you want to add a reaction role. </value>

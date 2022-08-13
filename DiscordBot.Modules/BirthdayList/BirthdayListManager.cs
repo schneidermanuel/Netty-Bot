@@ -11,18 +11,20 @@ namespace DiscordBot.Modules.BirthdayList;
 public class BirthdayListManager
 {
     private readonly IGeburtstagListBusinessLogic _businessLogic;
+    private readonly DiscordSocketClient _client;
     private List<Birthday> _birthdays;
 
-    public BirthdayListManager(IGeburtstagListBusinessLogic businessLogic)
+    public BirthdayListManager(IGeburtstagListBusinessLogic businessLogic, DiscordSocketClient client)
     {
         _businessLogic = businessLogic;
+        _client = client;
     }
 
-    public async Task RefreshSingleBirthdayChannel(BirthdayChannel channelSetup, DiscordSocketClient client)
+    public async Task RefreshSingleBirthdayChannel(BirthdayChannel channelSetup)
     {
         try
         {
-            var guild = client.GetGuild(channelSetup.GuildId);
+            var guild = _client.GetGuild(channelSetup.GuildId);
             var channel = (SocketTextChannel)guild.GetChannel(channelSetup.ChannelId);
             var birthdaysOnServer = await GetBirthdaysFromServer(guild);
 
@@ -105,17 +107,17 @@ public class BirthdayListManager
         return output;
     }
 
-    public async Task RefreshAllBirthdayChannel(DiscordSocketClient client)
+    public async Task RefreshAllBirthdayChannel()
     {
         _birthdays = await _businessLogic.GetAllGeburtstageAsync();
         var channels = await _businessLogic.GetAllGeburtstagsChannelAsync();
         foreach (var channel in channels)
         {
-            await RefreshSingleBirthdayChannel(channel, client);
+            await RefreshSingleBirthdayChannel(channel);
         }
     }
 
-    public async Task CheckNewBirthday(DiscordSocketClient client)
+    public async Task CheckNewBirthday()
     {
         var birthdays = _birthdays.Where(x =>
             x.Geburtsdatum.Day == DateTime.Now.Day && x.Geburtsdatum.Month == DateTime.Now.Month);
@@ -124,7 +126,7 @@ public class BirthdayListManager
         {
             foreach (var subChannel in subbedChannel)
             {
-                var guild = client.GetGuild(subChannel.GuildId);
+                var guild = _client.GetGuild(subChannel.GuildId);
                 var user = guild.GetUser(birthday.UserId);
                 if (user == null)
                 {
@@ -161,7 +163,7 @@ public class BirthdayListManager
         }
     }
 
-    public async Task RemoveBirthdayRolesFromUsers(DiscordSocketClient client)
+    public async Task RemoveBirthdayRolesFromUsers()
     {
         var birthdayRoleAssociations = await _businessLogic.RetrieveAllBirthdayRoleAssotiations();
         var birthdayRoleSetups = (await _businessLogic.RetrieveAllBirthdayRoleSetupsAsync()).ToList();
@@ -174,7 +176,7 @@ public class BirthdayListManager
 
             try
             {
-                var guild = client.GetGuild(birthdayRoleAssociation.GuildId);
+                var guild = _client.GetGuild(birthdayRoleAssociation.GuildId);
                 var user = guild.GetUser(birthdayRoleAssociation.UserId);
                 var setup = birthdayRoleSetups.Single(setup => setup.GuildId == birthdayRoleAssociation.GuildId);
                 var role = guild.GetRole(setup.RoleId);

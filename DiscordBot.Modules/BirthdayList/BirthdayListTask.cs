@@ -20,8 +20,8 @@ public class BirthdayListTask : ITimedAction
 
     public async Task ExecuteAsync(DiscordSocketClient client)
     {
-        await _manager.RemoveBirthdayRolesFromUsers(client);
-        await _manager.RefreshAllBirthdayChannel(client);
-        await _manager.CheckNewBirthday(client);
+        await _manager.RemoveBirthdayRolesFromUsers();
+        await _manager.RefreshAllBirthdayChannel();
+        await _manager.CheckNewBirthday();
     }
 }

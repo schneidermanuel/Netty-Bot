@@ -82,7 +82,7 @@
         <value>Es wurde kein Geburtstagslistenkanal gesetzt. </value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>Die Rolle '{0}' wurde nicht gefunden. Bitte ID verwenden</value>
+        <value>Die Rolle wurde nicht gefunden. </value>
     </data>
     <data name="Message_BirthdayRoleSuccess" xml:space="preserve">
         <value>Die Rolle '{0}' wird nun an Geburtstagen automatisch verteilt!

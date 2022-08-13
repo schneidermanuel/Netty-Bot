@@ -8,7 +8,7 @@ internal class AutoRoleModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<AutoRoleCommands>().As<IGuildModule>();
+        builder.RegisterType<AutoRoleCommands>().As<ICommandModule>();
         builder.RegisterType<AutoRoleManager>().SingleInstance().AsSelf();
         builder.RegisterType<SetupAutoRolesTask>().As<ITimedAction>();
     }

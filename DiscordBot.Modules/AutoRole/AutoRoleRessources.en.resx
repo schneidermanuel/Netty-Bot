@@ -22,7 +22,7 @@ Available: add, list, delete</value>
         <value>Automatically assigning the following roles</value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>The role '{0}' could not be found. Please use the id</value>
+        <value>The role could not be found. </value>
     </data>
     <data name="Error_PermissionTooHigh" xml:space="preserve">
         <value>This role has administrator privileges and won't be assigned.</value>

@@ -9,6 +9,6 @@ internal class ConfigurationModule : Module
     {
         base.Load(builder);
 
-        builder.RegisterType<ConfigurationCommands>().As<IGuildModule>();
+        builder.RegisterType<ConfigurationCommands>().As<ICommandModule>();
     }
 }

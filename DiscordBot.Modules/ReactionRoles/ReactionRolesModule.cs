@@ -11,7 +11,7 @@ public class ReactionRolesModule : Module
     {
         builder.RegisterType<ReactionRoleBootStep>().As<IBootStep>();
         builder.RegisterType<SetupReactionRoles>().As<ITimedAction>();
-        builder.RegisterType<ReactionRoleCommands>().As<IGuildModule>();
+        builder.RegisterType<ReactionRoleCommands>().As<ICommandModule>();
         builder.RegisterType<ReactionRoleManager>().SingleInstance();
     }
 }

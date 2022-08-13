@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Discord;
 using DiscordBot.DataAccess;
 using DiscordBot.Framework;
 using DiscordBot.Framework.BootSteps;
@@ -50,7 +51,7 @@ public class DiscordBotSystem
         builder.RegisterModule<VictoriaModule>();
         builder.RegisterModule<PubSubModule>();
         builder.RegisterModule<DiscordBotPubSubBackendModule>();
-        builder.RegisterInstance(BotManager._client);
+        builder.RegisterInstance(BotManager.Client);
         _container = builder.Build();
     }
 
@@ -70,4 +71,5 @@ public class DiscordBotSystem
         var endStepTask = endSteps.Select(step => step.BootAsync());
         await Task.WhenAll(endStepTask);
     }
+
 }

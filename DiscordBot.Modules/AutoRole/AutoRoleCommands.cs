@@ -1,15 +1,17 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.AutoRole;
 using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.AutoRole;
 
-internal class AutoRoleCommands : CommandModuleBase, IGuildModule
+internal class AutoRoleCommands : CommandModuleBase, ICommandModule
 {
     private readonly IAutoRoleBusinessLogic _businessLogic;
     private readonly AutoRoleManager _manager;
@@ -20,64 +22,34 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
         _businessLogic = businessLogic;
         _manager = manager;
     }
-
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
+    
+    [Command("autoRole-delete")]
+    [Description("Delete an auto role setup")]
+    [Parameter(Name = "role", Description = "The role to delete", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
+    public async Task DeleteAutoRoleSetupAsync(SocketSlashCommand context, IGuild guild)
     {
-        var user = socketCommandContext.Guild.GetUser(socketCommandContext.User.Id);
-        return await IsEnabled(id) && user.GuildPermissions.ManageRoles;
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
-    }
-
-    [Command("autoRoleConfig")]
-    public async Task ConfigAutoRoleCommand(ICommandContext context)
-    {
-        var method = await RequireString(context);
-        switch (method)
+        var role = await RequireRoleAsync(context);
+        var setups = (await _businessLogic.RetrieveAllSetupsForGuildAsync(guild.Id)).ToArray();
+        if (setups.All(setup => setup.RoleId != role.Id))
         {
-            case "add":
-                await AddAutoRoleAsync(context);
-                await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
-                await _manager.RefreshSetupsAsync();
-                break;
-            case "list":
-                await ListAutoRolesAsync(context);
-                break;
-
-            case "delete":
-                await DeleteAutoRoleSetupAsync(context);
-                await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
-                await _manager.RefreshSetupsAsync();
-                break;
-            default:
-                await context.Channel.SendMessageAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_InvalidAction)), method));
-                break;
-        }
-    }
-
-    private async Task DeleteAutoRoleSetupAsync(ICommandContext context)
-    {
-        var roleId = await RequireUlongAsync(context, 2);
-        var setups = (await _businessLogic.RetrieveAllSetupsForGuildAsync(context.Guild.Id)).ToArray();
-        if (setups.All(setup => setup.RoleId != roleId))
-        {
-            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_InvalidRole)), roleId));
+            await context.RespondAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_InvalidRole)),
+                role));
             return;
         }
 
-        var setupToDelete = setups.Single(setup => setup.RoleId == roleId);
+        var setupToDelete = setups.Single(setup => setup.RoleId == role.Id);
         await _businessLogic.DeleteSetupAsync(setupToDelete.AutoRoleSetupId);
-        await context.Channel.SendMessageAsync(Localize(nameof(AutoRoleRessources.Message_DeletedRegistration)));
+        await context.RespondAsync(Localize(nameof(AutoRoleRessources.Message_DeletedRegistration)));
+        await _manager.RefreshSetupsAsync();
     }
 
-    private async Task ListAutoRolesAsync(ICommandContext context)
+    [Command("autoRole-list")]
+    [Description("Lists all auto roles")]
+    public async Task ListAutoRolesAsync(SocketSlashCommand context, IGuild guild)
     {
-        var setups = await _businessLogic.RetrieveAllSetupsForGuildAsync(context.Guild.Id);
+        var setups = await _businessLogic.RetrieveAllSetupsForGuildAsync(guild.Id);
         var output = setups.Select(autoRoleSetup =>
-                new { Role = context.Guild.GetRole(autoRoleSetup.RoleId), Id = autoRoleSetup.RoleId })
+                new { Role = guild.GetRole(autoRoleSetup.RoleId), Id = autoRoleSetup.RoleId })
             .Aggregate(string.Empty, (current, role) => current + $"{role.Role?.Name ?? "missingRole"} ({role.Id})\n");
 
         var embedBuilder = new EmbedBuilder();
@@ -86,30 +58,36 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithCurrentTimestamp();
         embedBuilder.WithColor(Color.Blue);
         var embed = embedBuilder.Build();
-        await context.Channel.SendMessageAsync("", false, embed);
+        await context.RespondAsync("", new[] { embed });
     }
 
-    private async Task AddAutoRoleAsync(ICommandContext context)
+    [Command("autoRole-add")]
+    [Description("Assignes a role to every user joinig the server")]
+    [Parameter(Name = "role", Description = "The role to assign", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Role)]
+    public async Task AddAutoRoleAsync(SocketSlashCommand context, IGuild guild)
     {
-        var roleId = await RequireUlongAsync(context, 2);
-        var role = context.Guild.GetRole(roleId);
+        await RequirePermissionAsync(context, guild, GuildPermission.ManageRoles);
+        var role = await RequireRoleAsync(context);
         if (role == null)
         {
-            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_RoleNotFound)), roleId));
+            await context.RespondAsync(
+                string.Format(Localize(nameof(AutoRoleRessources.Error_RoleNotFound))));
             return;
         }
 
         if (role.Permissions.Administrator)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(AutoRoleRessources.Error_PermissionTooHigh)));
+            await context.RespondAsync(Localize(nameof(AutoRoleRessources.Error_PermissionTooHigh)));
             return;
         }
-        var guildId = context.Guild.Id;
 
-        var canCreateSetup = await _businessLogic.CanCreateAutoRoleAsync(guildId, roleId);
+        var guildId = guild.Id;
+
+        var canCreateSetup = await _businessLogic.CanCreateAutoRoleAsync(guildId, role.Id);
         if (!canCreateSetup)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(AutoRoleRessources.Message_NewAutoRole)));
+            await context.RespondAsync(Localize(nameof(AutoRoleRessources.Message_NewAutoRole)));
             return;
         }
 
@@ -117,11 +95,15 @@ internal class AutoRoleCommands : CommandModuleBase, IGuildModule
         {
             AutoRoleSetupId = 0,
             GuildId = guildId,
-            RoleId = roleId
+            RoleId = role.Id
         };
         await _businessLogic.SaveSetupAsync(setup);
+        await _manager.RefreshSetupsAsync();
+        await context.RespondAsync("🤝");
     }
 
+
     protected override Type RessourceType => typeof(AutoRoleRessources);
+
     public override string ModuleUniqueIdentifier => "AUTOROLE";
 }

@@ -9,7 +9,7 @@ public class BirthdayListModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         base.Load(builder);
-        builder.RegisterType<BirthdayCommands>().As<IGuildModule>();
+        builder.RegisterType<BirthdayCommands>().As<ICommandModule>();
         builder.RegisterType<BirthdayListManager>().SingleInstance();
         builder.RegisterType<BirthdayListTask>().As<ITimedAction>();
     }

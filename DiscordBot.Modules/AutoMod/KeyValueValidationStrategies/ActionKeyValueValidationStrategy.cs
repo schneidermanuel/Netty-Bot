@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 using DiscordBot.Modules.AutoMod.Rules;
 
@@ -22,11 +23,11 @@ internal class ActionKeyValueValidationStrategy : IKeyValueValidationStrategy
         return type == ConfigurationValueType.ActionValue;
     }
 
-    public async Task ExecuteAsync(string module, string key, string value, ICommandContext context)
+    public async Task ExecuteAsync(string module, string key, string value, SocketSlashCommand context)
     {
         if (!_keys.Contains(value))
         {
-            await context.Channel.SendMessageAsync("Der Wert ist kein gültiger Schlüssel.");
+            await context.RespondAsync("Der Wert ist kein gültiger Schlüssel.");
             throw new ArgumentException();
         }
     }

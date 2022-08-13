@@ -1,15 +1,17 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.ZenQuote;
 using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.ZenQuote;
 
-public class ZenQuoteCommands : CommandModuleBase, IGuildModule
+public class ZenQuoteCommands : CommandModuleBase, ICommandModule
 {
     private readonly IZenQuoteBusinessLogic _businessLogic;
 
@@ -20,31 +22,21 @@ public class ZenQuoteCommands : CommandModuleBase, IGuildModule
 
     protected override Type RessourceType => typeof(ZenQuoteRessources);
     public override string ModuleUniqueIdentifier => "ZENQUOTE";
-
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        await RequirePermissionAsync(socketCommandContext, GuildPermission.Administrator);
-        return await IsEnabled(id);
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
-    }
-
+    
     [Command("registerQuote")]
-    public async Task RegisterForZenQuote(ICommandContext context)
+    [Description("Sends a quote to this channel once a day")]
+    public async Task RegisterForZenQuote(SocketSlashCommand context, IGuild guild)
     {
-        await RequirePermissionAsync(context, GuildPermission.Administrator);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var registrations = await _businessLogic.LoadAllRegistrations();
-        if (registrations.Any(reg => reg.Channelid == context.Channel.Id && reg.GuildId == context.Guild.Id))
+        if (registrations.Any(reg => reg.Channelid == context.Channel.Id && reg.GuildId == guild.Id))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyEnabled)));
+            await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyEnabled)));
             return;
         }
         var channelId = context.Channel.Id;
-        var guildId = context.Guild.Id;
+        var guildId = guild.Id;
         var registration = new ZenQuoteRegistration
         {
             Channelid = channelId,
@@ -52,23 +44,24 @@ public class ZenQuoteCommands : CommandModuleBase, IGuildModule
             GuildId = guildId
         };
         await _businessLogic.SaveRegistrationAsync(registration);
-        await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteEnabled)));
+        await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteEnabled)));
     }
 
     [Command("unregisterQuote")]
-    public async Task UnregisterQuoteAsync(ICommandContext context)
+    [Description("Stops sending a quote to this channel")]
+    public async Task UnregisterQuoteAsync(SocketSlashCommand context, IGuild guild)
     {
-        await RequirePermissionAsync(context, GuildPermission.Administrator);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var registrations = await _businessLogic.LoadAllRegistrations();
-        var regForChannel = registrations.Where(reg => reg.GuildId == context.Guild.Id &&
+        var regForChannel = registrations.Where(reg => reg.GuildId == guild.Id &&
                                                        reg.Channelid == context.Channel.Id).ToList();
         if (!regForChannel.Any())
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyDisabled)));
+            await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyDisabled)));
             return;
         }
 
         await _businessLogic.RemoveRegistrationAsync(regForChannel.Single().Id);
-        await context.Channel.SendMessageAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteDisabled)));
+        await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteDisabled)));
     }
 }

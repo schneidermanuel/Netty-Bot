@@ -1,14 +1,16 @@
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
 using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.ReactionRoles;
 
-public class ReactionRoleCommands : CommandModuleBase, IGuildModule
+public class ReactionRoleCommands : CommandModuleBase, ICommandModule
 {
     private readonly IModuleDataAccess _dataAccess;
     private readonly ReactionRoleManager _manager;
@@ -25,79 +27,83 @@ public class ReactionRoleCommands : CommandModuleBase, IGuildModule
     protected override Type RessourceType => typeof(ReactionRoleRessources);
     public override string ModuleUniqueIdentifier => "REACTION_ROLE";
 
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        await RequirePermissionAsync(socketCommandContext, GuildPermission.Administrator);
-        return await IsEnabled(id);
-    }
-
-    public override Task ExecuteAsync(ICommandContext context)
-    {
-        return ExecuteCommandsAsync(context);
-    }
-
     [Command("addReactionRole")]
-    public async Task AddReactionRoleAsync(ICommandContext context)
+    [Description("Adds a Reaction Role to an existing Message")]
+    [Parameter(Name = "emote", Description = "The emote to react with", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "role", Description = "The role to assign", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
+    [Parameter(Name = "message", Description = "The ID of the Message. Rightclick => Copy ID", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    public async Task AddReactionRoleAsync(SocketSlashCommand context, IGuild guild)
     {
-        if (context.Message.ReferencedMessage == null)
+        await RequirePermissionAsync(context, guild, GuildPermission.ManageRoles);
+        IMessage message = null;
+        try
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(ReactionRoleRessources.Error_NotReplied)));
-            return;
+            var messageId = await RequireUlongAsync(context, 3);
+            message = await context.Channel.GetMessageAsync(messageId);
+        }
+        catch (Exception)
+        {
+            //Ignored
         }
 
+        if (message == null)
+        {
+            await context.RespondAsync(Localize(nameof(ReactionRoleRessources.Error_NotReplied)));
+            return;
+        }
+        
         var emote = GetEmote(await RequireString(context));
-        var roleId = await RequireUlongAsync(context, 2);
-
-        var referencedMessage = context.Message.ReferencedMessage;
-        var messageId = referencedMessage.Id;
-        var channelId = referencedMessage.Channel.Id;
-
-        var role = context.Guild.GetRole(roleId);
+        var role = await RequireRoleAsync(context, 2);
+        
         if (role == null)
         {
-            await context.Channel.SendMessageAsync(
-                string.Format(Localize(nameof(ReactionRoleRessources.Error_InvalidRole)), roleId));
+            await context.RespondAsync(
+                string.Format(Localize(nameof(ReactionRoleRessources.Error_InvalidRole))));
             return;
         }
 
-        if (!await _businessLogic.CanAddReactionRoleAsync(referencedMessage.Id, emote))
+        if (!await _businessLogic.CanAddReactionRoleAsync(message.Id, emote))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(ReactionRoleRessources.Error_EmoteAlreadyAdded)));
+            await context.RespondAsync(Localize(nameof(ReactionRoleRessources.Error_EmoteAlreadyAdded)));
             return;
         }
 
-        await referencedMessage.AddReactionAsync(emote);
+        await message.AddReactionAsync(emote);
         var reactionRole = new ReactionRole
         {
             Emote = emote,
             Id = 0,
-            ChannelId = channelId,
-            GuildId = context.Guild.Id,
-            MessageId = messageId,
+            ChannelId = message.Channel.Id,
+            GuildId = guild.Id,
+            MessageId = message.Id,
             RoleId = role.Id
         };
         _manager.ReactionRoles.Add(reactionRole);
         await _businessLogic.SaveReactionRoleAsync(reactionRole);
-        await context.Message.DeleteAsync();
+        await context.RespondAsync("🤝");
     }
 
     [Command("registerReactionRole")]
-    public async Task RegisterReactionRoleAsync(ICommandContext context)
+    [Description("Registers a Reaction Role to a new Message")]
+    [Parameter(Name = "emote", Description = "The emote to react with", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "role", Description = "The role to assign", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
+    [Parameter(Name = "message", Description = "The message to send", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    public async Task RegisterReactionRoleAsync(SocketSlashCommand context, IGuild guild)
     {
-        var prefix = await _dataAccess.GetServerPrefixAsync(context.Guild.Id);
+        await RequirePermissionAsync(context, guild, GuildPermission.ManageRoles);
+        var prefix = await _dataAccess.GetServerPrefixAsync(guild.Id);
         await RequireArg(context, 3, string.Format(Localize(nameof(ReactionRoleRessources.Error_SyntaxError)), prefix));
         var emote = GetEmote(await RequireString(context));
-        var roleId = await RequireUlongAsync(context, 2);
+        var role = await RequireRoleAsync(context, 2);
 
-        var role = context.Guild.GetRole(roleId);
         if (role == null)
         {
-            await context.Channel.SendMessageAsync(
-                string.Format(Localize(nameof(ReactionRoleRessources.Error_InvalidRole)), roleId));
+            await context.RespondAsync(
+                string.Format(Localize(nameof(ReactionRoleRessources.Error_InvalidRole))));
             return;
         }
 
-        var content = await RequireReminderArg(context, 3);
+        var content = await RequireString(context, 3);
         Embed embed = null;
         if (content.StartsWith("embed:"))
         {
@@ -117,13 +123,13 @@ public class ReactionRoleCommands : CommandModuleBase, IGuildModule
             Emote = emote,
             Id = 0,
             ChannelId = message.Channel.Id,
-            GuildId = context.Guild.Id,
+            GuildId = guild.Id,
             MessageId = message.Id,
             RoleId = role.Id
         };
         _manager.ReactionRoles.Add(reactionRole);
         await _businessLogic.SaveReactionRoleAsync(reactionRole);
-        await context.Message.DeleteAsync();
+        await context.RespondAsync("🤝");
     }
 
     private IEmote GetEmote(string emote)
