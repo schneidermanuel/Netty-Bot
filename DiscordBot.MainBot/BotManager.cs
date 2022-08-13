@@ -104,6 +104,27 @@ public class BotManager
         var hourlyStuffThread = new Thread(HourlyStuff);
         dailyStuffThread.Start();
         hourlyStuffThread.Start();
+        foreach (var clientGuild in _client.Guilds)
+        {
+            try
+            {
+                var commands = await clientGuild.GetApplicationCommandsAsync();
+                // Everything Good, bot has Command Access
+            }
+            catch (Exception e)
+            {
+                // Not Good, Bot does NOT have Command Scope Access
+                await clientGuild.Owner.SendMessageAsync($"Hey, thanks for using Netty!\nWe have great news for you!\nFrom the 1. September, we will follow discord's new standard and switch to slash commands. " +
+                                                         $"\nThis makes it way easier for you and your users to use our commands\n" +
+                                                         $"However, I currentiy don't have the required permission on your Server '{clientGuild.Name}'.\n" +
+                                                         $"In order to use the bot in the future, you need to give me the permission 'applications.commands'.\n" +
+                                                         $"Thats an easy process! Just select my profile, click 'view profile' and press the blue 'Add to Server' button, and re-add the bot to your server.\n" +
+                                                         $"No need to kick me out first! All your commands will be preserved.\n" +
+                                                         $"If you have any questions, feel free to contant Brainy | Manuel#5332 for help.\n " +
+                                                         $"There is a demonstration Video available at https://netty-bot.com/Slashcommands.mp4");
+                Console.WriteLine($"Sent Message to '{clientGuild.Owner}' for '{clientGuild.Name}'");
+            }
+        }
     }
 
     private async void HourlyStuff()
