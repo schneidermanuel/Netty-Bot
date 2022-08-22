@@ -14,7 +14,6 @@ using DiscordBot.Framework;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.TimedAction;
-using NHibernate.Util;
 
 // ReSharper disable LocalizableElement
 
@@ -73,6 +72,11 @@ public class BotManager
 
     private async Task SlashCommandRecieved(SocketSlashCommand slashCommand)
     {
+        if (slashCommand.Data.Name == "help")
+        {
+            await slashCommand.RespondAsync("check https://netty-bot.com/ for help");
+            return;
+        }
         try
         {
             var guild = ((SocketGuildChannel)slashCommand.Channel).Guild;
@@ -145,6 +149,11 @@ public class BotManager
         Client.Ready -= ClientReady;
         await Client.SetStatusAsync(UserStatus.Online);
         await Client.SetActivityAsync(new Game("Booting..."));
+
+        var builder = new SlashCommandBuilder();
+        builder.WithName("help");
+        builder.WithDescription("Sends some help");
+        await Client.CreateGlobalApplicationCommandAsync(builder.Build());
         
         var postBootTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.PostBoot)
             .Select(x => x.ExecuteAsync(Client));
