@@ -49,7 +49,7 @@ internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
         {
             message = string.Format(Localize(nameof(TwitchNotificationRessources.Message_NewStream)), username);
         }
-
+        
         var registration = new TwitchNotificationRegistration
         {
             Message = message,

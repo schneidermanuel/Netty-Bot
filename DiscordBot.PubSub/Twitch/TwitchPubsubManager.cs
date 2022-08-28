@@ -29,23 +29,28 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         _callback = callback;
     }
 
-    public async Task<bool> RegisterStreamerAsync(string channelName)
+    public async Task RegisterStreamerAsync(string channelName)
     {
-        var channelInfo = await _api.Helix.Users.GetUsersAsync(null, new List<string> { channelName });
-        if (!channelInfo.Users.Any())
+        try
         {
-            return false;
-        }
+            var channelInfo = await _api.Helix.Users.GetUsersAsync(null, new List<string> { channelName });
+            if (!channelInfo.Users.Any())
+            {
+                return;
+            }
 
-        var id = channelInfo.Users.First().Id;
-        if (!_listening.Contains(id))
+            var id = channelInfo.Users.First().Id;
+            if (!_listening.Contains(id))
+            {
+                _client.ListenToVideoPlayback(id);
+                _listening.Add(id);
+                Console.WriteLine("[Twitch] Listening to " + channelName);
+            }
+        }
+        catch (Exception)
         {
-            _client.ListenToVideoPlayback(id);
-            _listening.Add(id);
-            Console.WriteLine("[Twitch] Listening to " + channelName);
+            Console.WriteLine("[TWITCH] Error Listening to " + channelName);
         }
-
-        return true;
     }
 
     public async Task ReconnectAsync()
