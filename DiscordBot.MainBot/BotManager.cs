@@ -163,7 +163,7 @@ public class BotManager
         var hourlyStuffThread = new Thread(HourlyStuff);
         dailyStuffThread.Start();
         hourlyStuffThread.Start();
-        foreach (var clientGuild in _client.Guilds)
+        foreach (var clientGuild in Client.Guilds)
         {
             try
             {
