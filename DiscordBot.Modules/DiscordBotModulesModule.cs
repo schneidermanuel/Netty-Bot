@@ -3,7 +3,6 @@ using DiscordBot.Modules.AutoMod;
 using DiscordBot.Modules.AutoRole;
 using DiscordBot.Modules.BirthdayList;
 using DiscordBot.Modules.Configuration;
-using DiscordBot.Modules.Huebcraft;
 using DiscordBot.Modules.MarioKart;
 using DiscordBot.Modules.MusicPlayer;
 using DiscordBot.Modules.ReactionRoles;
@@ -19,7 +18,6 @@ public class DiscordBotModulesModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterModule<HuebcraftModule>();
         builder.RegisterModule<ReactionRolesModule>();
         builder.RegisterModule<ZenQuoteModule>();
         builder.RegisterModule<BirthdayListModule>();

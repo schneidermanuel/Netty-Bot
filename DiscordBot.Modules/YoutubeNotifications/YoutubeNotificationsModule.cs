@@ -12,7 +12,7 @@ internal class YoutubeNotificationsModule : Module
         base.Load(builder);
 
         builder.RegisterType<YoutubeNotificationsBootStep>().As<IBootStep>();
-        builder.RegisterType<YoutubeNotificationCommands>().As<IGuildModule>();
+        builder.RegisterType<YoutubeNotificationCommands>().As<ICommandModule>();
         builder.RegisterType<RefreshYoutubeAction>().As<ITimedAction>();
         builder.RegisterType<YoutubeNotificationManager>().AsSelf().SingleInstance();
     }

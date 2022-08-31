@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MkCalculator;
 using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.MarioKart;
 
-internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
+internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 {
     private readonly IMkCalculator _calculator;
     private readonly MkManager _manager;
@@ -27,13 +28,23 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         _worldRecordLoader = worldRecordLoader;
     }
 
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        return await IsEnabled(id);
-    }
-
     [Command("race")]
-    public async Task CalculateAsync(ICommandContext context)
+    [Description("Registers a race to the current Mario Kart War session")]
+    [Parameter(Name = "Player1", Description = "The Position of the Player (1-12)", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    [Parameter(Name = "Player2", Description = "The Position of the Player (1-12)", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    [Parameter(Name = "Player3", Description = "The Position of the Player (1-12)", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    [Parameter(Name = "Player4", Description = "The Position of the Player (1-12)", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    [Parameter(Name = "Player5", Description = "The Position of the Player (1-12)", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    [Parameter(Name = "Player6", Description = "The Position of the Player (1-12)", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    [Parameter(Name = "Comment", Description = "Use any comment you want", IsOptional = true,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task CalculateAsync(SocketSlashCommand context, IGuild guild)
     {
         await RequireArg(context, 6, Localize(nameof(MarioKartRessources.Error_Enter6Numbers)));
         var places = new List<int>();
@@ -43,7 +54,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
             places.Add(place);
         }
 
-        var comment = await RequireReminderOrEmpty(context, 7);
+        var comment = RequireStringOrEmpty(context, 7);
 
         var result = _calculator.Calculate(places);
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
@@ -62,15 +73,17 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
             sumResult.Difference.To3CharString(),
             sumResult.EnemyPoints.To3CharString()));
 
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+        await context.RespondAsync("", new[] { embedBuilder.Build() });
     }
 
+
     [Command("mkrevert")]
-    public async Task RevertGameAsync(SocketCommandContext context)
+    [Description("Reverts the last Mario Kart Race")]
+    public async Task RevertGameAsync(SocketSlashCommand context, IGuild guild)
     {
         if (!await _manager.CanRevertAsync(context.Channel.Id))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MarioKartRessources.Error_NotRevertable)));
+            await context.RespondAsync(Localize(nameof(MarioKartRessources.Error_NotRevertable)));
             return;
         }
 
@@ -86,13 +99,13 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_FinalResult)),
             result.Points, result.Difference, result.EnemyPoints));
 
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+        await context.RespondAsync("", new[] { embedBuilder.Build() });
     }
 
     private async Task<string> GetThumbnailUrlAsync(string comment)
     {
         var words = comment.Split(' ');
-        var courseCode = words.FirstOrDefault()?.Trim()?.ToLower() ?? string.Empty;
+        var courseCode = words.FirstOrDefault()?.Trim().ToLower() ?? string.Empty;
 
         var url = $"https://www.mkleaderboards.com/images/mk8/{courseCode}.jpg";
         var client = new HttpClient();
@@ -103,14 +116,17 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
     }
 
     [Command("mkdisplay")]
-    public async Task MkDisplayAsync(ICommandContext context)
+    [Description(
+        "Creates a link to use in your OBS Browser Source")]
+    public async Task MkDisplayAsync(SocketSlashCommand context, IGuild guild)
     {
         await context.Channel.SendMessageAsync(
             "https://mk-leaderboard.netty-bot.com?key=" + context.Channel.Id);
     }
 
     [Command("mkcomplete")]
-    public async Task FinishAsync(ICommandContext context)
+    [Description("Completes the current Mario Kart War")]
+    public async Task FinishAsync(SocketSlashCommand context, IGuild guild)
     {
         var result = _manager.GetFinalResult(context.Channel.Id);
         var games = (await _manager.RetriveHistoryAsync(result.GameId)).ToArray();
@@ -125,7 +141,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
         _manager.EndGame(context.Channel.Id);
         var url = BuildChartUrl(games);
-        await context.Channel.SendMessageAsync(url);
+        await context.RespondAsync(url);
     }
 
     private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)
@@ -157,7 +173,12 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
     }
 
     [Command("mkwr")]
-    public async Task WorldReccordCommandAsync(ICommandContext context)
+    [Description("Displays the current WR of the selected Mario Kart course at either 150 or 200 ccm")]
+    [Parameter(Name = "course", Description = "The course to display the WR for", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "ccm", Description = "The ccm to display the WR for", IsOptional = true,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    public async Task WorldReccordCommandAsync(SocketSlashCommand context, IGuild guild)
     {
         await RequireArg(context, 1, Localize(nameof(MarioKartRessources.Error_MkwrSyntax)));
 
@@ -167,7 +188,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
         var wr = await _worldRecordLoader.LoadWorldRecord(strecke, cc);
         if (wr == null)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MarioKartRessources.Error_CannotParseInformation)));
+            await context.RespondAsync(Localize(nameof(MarioKartRessources.Error_CannotParseInformation)));
             return;
         }
 
@@ -189,12 +210,7 @@ internal class MkCalculatorCommands : CommandModuleBase, IGuildModule
             builder.WithUrl(wr.VideoUrl);
         }
 
-        await context.Channel.SendMessageAsync("", false, builder.Build());
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
+        await context.RespondAsync("", new[] { builder.Build() });
     }
 
     protected override Type RessourceType => typeof(MarioKartRessources);

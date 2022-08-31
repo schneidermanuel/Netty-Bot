@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 using DiscordBot.Framework.Contract.Modularity;
@@ -11,7 +13,7 @@ using DiscordBot.Modules.AutoMod.KeyValueValidationStrategies;
 
 namespace DiscordBot.Modules.AutoMod;
 
-internal class AutoModCommands : CommandModuleBase, IGuildModule
+internal class AutoModCommands : CommandModuleBase, ICommandModule
 {
     private readonly IEnumerable<IKeyValueValidationStrategy> _strategies;
     private readonly AutoModManager _manager;
@@ -23,51 +25,21 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         _manager = manager;
     }
 
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        await RequirePermissionAsync(socketCommandContext, GuildPermission.Administrator);
-        return await IsEnabled(id);
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
-    }
-
     protected override Type RessourceType => typeof(AutoModRessources);
     public override string ModuleUniqueIdentifier => "AUTOMOD";
 
-    [Command("autoMod")]
-    public async Task AutoModCommand(ICommandContext context)
+    [Command("automod-listconfigs")]
+    [Description("Lists all available configs for a module")]
+    [Parameter(Name = "module", Description = "The module to list configs for", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task ListConfigsAsync(SocketSlashCommand context, IGuild guild)
     {
-        var action = await RequireString(context);
-        switch (action)
-        {
-            case "enable":
-                await EnableModuleAsync(context);
-                break;
-            case "disable":
-                await DisableModuleAsync(context);
-                break;
-            case "config":
-                await ConfigureModuleAsync(context);
-                break;
-            case "list":
-                await ListModulesAsync(context);
-                break;
-            case "list-configs":
-                await ListConfigsAsync(context);
-                break;
-        }
-    }
-
-    private async Task ListConfigsAsync(ICommandContext context)
-    {
-        var module = await RequireString(context, 2);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
+        var module = await RequireString(context);
         var configs = _manager.GetAvailableConfigs(module);
         if (configs == null)
         {
-            await context.Channel.SendMessageAsync(
+            await context.RespondAsync(
                 string.Format(Localize(nameof(AutoModRessources.Error_RuleDoesNotExist)), module));
             return;
         }
@@ -78,12 +50,15 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithTitle(string.Format(Localize(nameof(AutoModRessources.Title_PossibleConfigs)), module));
         embedBuilder.WithColor(Color.DarkBlue);
         embedBuilder.WithCurrentTimestamp();
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+        await context.RespondAsync("", new[] { embedBuilder.Build() });
     }
 
-    private async Task ListModulesAsync(ICommandContext context)
+    [Command("automod-list")]
+    [Description("Lists all available automod modules")]
+    public async Task ListModulesAsync(SocketSlashCommand context, IGuild guild)
     {
-        var modules = _manager.GetModules(context.Guild.Id);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
+        var modules = _manager.GetModules(guild.Id);
         var content = string.Empty;
         foreach (var module in modules)
         {
@@ -98,33 +73,41 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         embedBuilder.WithTitle(Localize(nameof(AutoModRessources.Title_AvailableRules)));
         embedBuilder.WithColor(Color.DarkBlue);
         embedBuilder.WithCurrentTimestamp();
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+        await context.RespondAsync("", new[] { embedBuilder.Build() });
     }
 
-    private async Task ConfigureModuleAsync(ICommandContext context)
+    [Command("automod-config")]
+    [Description("Changes a configuration value for a module")]
+    [Parameter(Name = "module", Description = "The module to change the config for", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "key", Description = "The value to be changed", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "value", Description = "The value to be changed to", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task ConfigureModuleAsync(SocketSlashCommand context, IGuild guild)
     {
-        var module = await RequireString(context, 2);
+        var module = await RequireString(context);
         await RequireExistingRule(context, module);
-        if (!_manager.IsRuleEnabledForGuild(module, context.Guild.Id))
+        if (!_manager.IsRuleEnabledForGuild(module, guild.Id))
         {
-            await context.Channel.SendMessageAsync(
+            await context.RespondAsync(
                 string.Format(Localize(nameof(AutoModRessources.Error_RuleNotActive)), module));
             return;
         }
 
-        var key = await RequireString(context, 3);
-        var value = (await RequireReminderOrEmpty(context, 4)).Trim();
+        var key = await RequireString(context, 2);
+        var value = (await RequireString(context, 3)).Trim();
         if (string.IsNullOrEmpty(value))
         {
-            value = _manager.GetConfigValue(module, context.Guild.Id, key);
+            value = _manager.GetConfigValue(module, guild.Id, key);
             if (value == null)
             {
-                await context.Channel.SendMessageAsync(
+                await context.RespondAsync(
                     string.Format(Localize(nameof(AutoModRessources.Error_ConfigUnset)), key, module));
             }
             else
             {
-                await context.Channel.SendMessageAsync(
+                await context.RespondAsync(
                     string.Format(Localize(nameof(AutoModRessources.Message_SetValue)), module, key, value));
             }
 
@@ -134,50 +117,60 @@ internal class AutoModCommands : CommandModuleBase, IGuildModule
         var type = _manager.GetValueTypeForRuleAndKey(module, key);
         await ValidateKeyValuePair(type, module, key, value, context);
 
-        await _manager.SetValue(module, key, value, context.Guild.Id);
-        await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Message_SetValue)));
+        await _manager.SetValue(module, key, value, guild.Id);
+        await context.RespondAsync(Localize(nameof(AutoModRessources.Message_SetValue)));
     }
 
     private async Task ValidateKeyValuePair(ConfigurationValueType type, string module, string key, string value,
-        ICommandContext context)
+        SocketSlashCommand context)
     {
         var strategy = _strategies.Single(strategy => strategy.IsResponsible(type));
         await strategy.ExecuteAsync(module, key, value, context);
     }
 
-    private async Task EnableModuleAsync(ICommandContext context)
+    [Command("automod-enable")]
+    [Description("Enables a rule")]
+    [Parameter(Name = "rule", Description = "The rule to enable", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task EnableModuleAsync(SocketSlashCommand context, IGuild guild)
     {
-        var module = await RequireString(context, 2);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
+        var module = await RequireString(context);
         await RequireExistingRule(context, module);
-        if (_manager.IsRuleEnabledForGuild(module, context.Guild.Id))
+        if (_manager.IsRuleEnabledForGuild(module, guild.Id))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Error_RuleAlreadyActive)));
+            await context.RespondAsync(Localize(nameof(AutoModRessources.Error_RuleAlreadyActive)));
             return;
         }
 
-        await _manager.EnableRuleAsync(module, context.Guild.Id);
-        await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Message_RuleActivated)));
+        await _manager.EnableRuleAsync(module, guild.Id);
+        await context.RespondAsync(Localize(nameof(AutoModRessources.Message_RuleActivated)));
     }
 
-    private async Task DisableModuleAsync(ICommandContext context)
+    [Command("automod-disable")]
+    [Description("Disables a rule")]
+    [Parameter(Name = "rule", Description = "The rule to disable", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task DisableModuleAsync(SocketSlashCommand context, IGuild guild)
     {
-        var module = await RequireString(context, 2);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
+        var module = await RequireString(context);
         await RequireExistingRule(context, module);
-        if (!_manager.IsRuleEnabledForGuild(module, context.Guild.Id))
+        if (!_manager.IsRuleEnabledForGuild(module, guild.Id))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Error_RuleNotActive)));
+            await context.RespondAsync(Localize(nameof(AutoModRessources.Error_RuleNotActive)));
             return;
         }
 
-        await _manager.DisableRuleAsync(module, context.Guild.Id);
-        await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Identifier_Inactive)));
+        await _manager.DisableRuleAsync(module, guild.Id);
+        await context.RespondAsync(Localize(nameof(AutoModRessources.Identifier_Inactive)));
     }
 
-    private async Task RequireExistingRule(ICommandContext context, string rule)
+    private async Task RequireExistingRule(SocketSlashCommand context, string rule)
     {
         if (!_manager.ExistsRule(rule))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(AutoModRessources.Error_RuleDoesNotExist)));
+            await context.RespondAsync(Localize(nameof(AutoModRessources.Error_RuleDoesNotExist)));
             throw new ArgumentException();
         }
     }

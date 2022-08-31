@@ -10,7 +10,7 @@ internal class MkCalculatorModule : Module
     {
         base.Load(builder);
 
-        builder.RegisterType<MkCalculatorCommands>().As<IGuildModule>();
+        builder.RegisterType<MkCalculatorCommands>().As<ICommandModule>();
         builder.RegisterType<MkCalculator>().As<IMkCalculator>();
         builder.RegisterType<MkManager>().AsSelf().SingleInstance();
         builder.RegisterType<MkWorldRecordMapper>().As<IMkWorldRecordMapper>();

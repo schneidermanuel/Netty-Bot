@@ -45,24 +45,24 @@ internal class TwitterStreamManager
     {
         var regs = (await _businessLogic.RetrieveAllRegistartionsAsync()).ToList();
 
-        _ = Task.Run(async () =>
-        {
-            while (true)
-            {
-                try
-                {
-                    await _client.NextTweetStreamAsync(IncomingTweet, new TweetSearchOptions
-                    {
-                        UserOptions = Array.Empty<UserOption>()
-                    });
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    _client.CancelTweetStream();
-                }
-            }
-        });
+        // _ = Task.Run(async () =>
+        // {
+        //     while (true)
+        //     {
+        //         try
+        //         {
+        //             await _client.NextTweetStreamAsync(IncomingTweet, new TweetSearchOptions
+        //             {
+        //                 UserOptions = Array.Empty<UserOption>()
+        //             });
+        //         }
+        //         catch (Exception e)
+        //         {
+        //             Console.WriteLine(e);
+        //             _client.CancelTweetStream();
+        //         }
+        //     }
+        // });
 
 
         foreach (var registration in regs)

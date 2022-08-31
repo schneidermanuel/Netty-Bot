@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MusicPlayer;
 using DiscordBot.Framework.Contract.Modularity;
-using Microsoft.VisualBasic;
 using Victoria;
 
 namespace DiscordBot.Modules.MusicPlayer;
 
-internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
+internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
 {
     private readonly LavaNode _lavaNode;
     private readonly MusicManager _manager;
@@ -32,25 +33,19 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
     protected override Type RessourceType => typeof(MusicPlayerRessources);
     public override string ModuleUniqueIdentifier => "MUSIC_PLAYER";
 
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        return await IsEnabled(id);
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
-    }
 
     [Command("play")]
-    public async Task PlayCommand(ICommandContext context)
+    [Description("Play a song")]
+    [Parameter(Name = "song", Description = "The song to play", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task PlayCommand(SocketSlashCommand context, IGuild guild)
     {
         try
         {
             var voiceState = context.User as IVoiceState;
-            var songname = await RequireReminderArg(context);
-            if (!await PlaySongAsync(songname, context.Channel, context.Guild, voiceState)) return;
-            await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+            var songname = await RequireString(context);
+            if (!await PlaySongAsync(songname, context.Channel, guild, voiceState)) return;
+            await context.RespondAsync("🤝");
         }
         catch (Exception e)
         {
@@ -59,12 +54,15 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
     }
 
     [Command("loadSpotify")]
-    public async Task LoadSpotifyAsync(ICommandContext context)
+    [Description("Plays a playlist from spotify")]
+    [Parameter(Name = "URL", Description = "The URL of the playlist. Needs to be public", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task LoadSpotifyAsync(SocketSlashCommand context, IGuild guild)
     {
         var voiceState = context.User as IVoiceState;
         if (voiceState?.VoiceChannel == null)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_MustBeInVoice)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_MustBeInVoice)));
             return;
         }
 
@@ -77,14 +75,14 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
                 Localize(nameof(MusicPlayerRessources.Status_PlaylistLoading)), playlist.Name, playlist.TrackCount));
             var tracks = await _spotifyApiManager.GetPlaylistAsync(playlistId);
 
-            await PlaySongAsync(tracks.First(), context.Channel, context.Guild, voiceState);
+            await PlaySongAsync(tracks.First(), context.Channel, guild, voiceState);
 
             var results = await Task.WhenAll(tracks.Skip(1)
-                .Select(track => PlaySongAsync(track, context.Channel, context.Guild, voiceState)));
+                .Select(track => PlaySongAsync(track, context.Channel, guild, voiceState)));
 
             var count = results.Count(result => result);
 
-            await context.Channel.SendMessageAsync(string.Format(
+            await context.RespondAsync(string.Format(
                 Localize(nameof(MusicPlayerRessources.Message_PlaylistLoaded)), playlist.Name, count + 1,
                 playlist.TrackCount));
         }
@@ -122,44 +120,48 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
 
 
     [Command("skip")]
-    public async Task SkipCommand(ICommandContext context)
+    [Description("Skips the current song")]
+    public async Task SkipCommand(SocketSlashCommand context, IGuild guild)
     {
-        if (!_lavaNode.HasPlayer(context.Guild))
+        if (!_lavaNode.HasPlayer(guild))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
-        await _manager.SkipTrack(context.Guild);
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        await _manager.SkipTrack(guild);
+        await context.RespondAsync("🤝");
     }
 
     [Command("queue")]
-    public async Task Queue(ICommandContext context)
+    [Description("Shows the current queue")]
+    [Parameter(Name = "page", Description = "The page to show", IsOptional = true,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    public async Task Queue(SocketSlashCommand context, IGuild guild)
     {
         var skipPages = RequireIntArgOrDefault(context, 1, 1) - 1;
-        var songCount = _manager.GetSongCount(context.Guild);
+        var songCount = _manager.GetSongCount(guild);
         if (songCount == 0)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
         var pageCount = (songCount / 10) + 1;
         if (skipPages > pageCount)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_InvlaidPage)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_InvlaidPage)));
             return;
         }
 
-        var songs = _manager.RetrieveSongs(context.Guild, skipPages);
+        var songs = _manager.RetrieveSongs(guild, skipPages);
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Blue);
         embedBuilder.WithDescription(songs);
         embedBuilder.WithCurrentTimestamp();
         embedBuilder.WithTitle(string.Format(Localize(nameof(MusicPlayerRessources.Title_QueueTitle)), songCount,
             skipPages + 1, pageCount));
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+        await context.RespondAsync(string.Empty, new[] { embedBuilder.Build() });
     }
 
     [Command("stop")]
@@ -194,57 +196,65 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
     }
 
     [Command("pause")]
-    public async Task PauseCommand(ICommandContext context)
+    [Description("Pauses the current song")]
+    public async Task PauseCommand(SocketSlashCommand context, IGuild guild)
     {
-        if (!_lavaNode.HasPlayer(context.Guild))
+        if (!_lavaNode.HasPlayer(guild))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
-        await _manager.PauseAsync(context.Guild);
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        await _manager.PauseAsync(guild);
+        await context.RespondAsync("🤝");
     }
 
     [Command("resume")]
-    public async Task ResumeCommand(ICommandContext context)
+    [Description("Resumes the current song")]
+    public async Task ResumeCommand(SocketSlashCommand context, IGuild guild)
     {
-        if (!_lavaNode.HasPlayer(context.Guild))
+        if (!_lavaNode.HasPlayer(guild))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
-        await _manager.ResumeAsync(context.Guild);
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        await _manager.ResumeAsync(guild);
+        await context.RespondAsync("🤝");
     }
 
     [Command("createPlaylist")]
-    public async Task SaveQueueToDatabaseAsync(ICommandContext context)
+    [Description("Creates a playlist from the current queue")]
+    [Parameter(Name = "name", Description = "The name of the playlist", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task SaveQueueToDatabaseAsync(SocketSlashCommand context, IGuild guild)
     {
         var userId = context.User.Id;
         var canUserCreatePlaylist = await _businessLogic.CanUserCreatePlaylistAsync(userId);
         if (!canUserCreatePlaylist)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_TooManyPlaylists)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_TooManyPlaylists)));
             return;
         }
 
-        var title = await RequireReminderArg(context);
-        var playlist = _manager.CreatePlaylist(title, context.Guild.Id, userId);
+        var title = await RequireString(context);
+        var playlist = _manager.CreatePlaylist(title, guild.Id, userId);
         await _businessLogic.SavePlaylistAsync(playlist);
-        await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Message_PlaylistCreated)));
+        await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Message_PlaylistCreated)));
     }
 
     [Command("playlists")]
-    public async Task ShowPlaylistsCommandAsync(ICommandContext context)
+    [Description("Shows all playlists")]
+    [Parameter(Name = "page", Description = "The page to show", IsOptional = true,
+        ParameterType = ApplicationCommandOptionType.Integer)]
+    public async Task ShowPlaylistsCommandAsync(SocketSlashCommand context, IGuild guild)
     {
-        var skipPages = RequireIntArgOrDefault(context);
+        var skipPages = RequireIntArgOrDefault(context, 1, 1) - 1;
         var playlists = await _businessLogic.RetrieveAllPlaylistsAsync();
         var playlistsWithUserOnServer = new List<Playlist>();
         foreach (var playlist in playlists)
         {
-            var owner = await context.Guild.GetUserAsync(playlist.AuthorId);
+            var owner = await guild.GetUserAsync(playlist.AuthorId);
             if (owner != null)
             {
                 playlistsWithUserOnServer.Add(playlist);
@@ -254,7 +264,7 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var output = string.Empty;
         foreach (var playlist in playlistsWithUserOnServer.Skip(skipPages * 10).Take(10))
         {
-            var owner = await context.Guild.GetUserAsync(playlist.AuthorId);
+            var owner = await guild.GetUserAsync(playlist.AuthorId);
             output += string.Format(Localize(nameof(MusicPlayerRessources.Line_Playlist)), playlist.PlaylistId,
                 playlist.Title, owner.Username);
         }
@@ -262,19 +272,21 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Blue);
         embedBuilder.WithCurrentTimestamp();
-        embedBuilder.WithTitle(string.Format(Localize(nameof(MusicPlayerRessources.Title_Playlists)),
-            context.Guild.Name, skipPages + 1));
+        embedBuilder.WithTitle(string.Format(Localize(nameof(MusicPlayerRessources.Title_Playlists)), guild.Name,
+            skipPages + 1));
         embedBuilder.WithDescription(output);
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
+        await context.RespondAsync("", new[] { embedBuilder.Build() });
     }
 
     [Command("playlist")]
-    public async Task LoadPlaylistCommandAsync(ICommandContext context)
+    [Description("Plays a playlist")]
+    [Parameter(Name = "playlistId", Description = "The id of the playlist", IsOptional = false, ParameterType = ApplicationCommandOptionType.Integer)]
+    public async Task LoadPlaylistCommandAsync(SocketSlashCommand context, IGuild guild)
     {
         var voiceState = context.User as IVoiceState;
         if (voiceState?.VoiceChannel == null)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_MustBeInVoice)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_MustBeInVoice)));
             return;
         }
 
@@ -283,26 +295,27 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
         var playlist = await _businessLogic.RetrieveSinglePlaylistAsync(playlistId);
         if (playlist == null)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_PlaylistNotFound)));
+            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_PlaylistNotFound)));
             return;
         }
 
         var count = 0;
         foreach (var track in playlist.Tracks)
         {
-            if (!await PlaySongAsync(track.Title, context.Channel, context.Guild, voiceState))
+            if (!await PlaySongAsync(track.Title, context.Channel, guild, voiceState))
                 continue;
             count++;
         }
 
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
-        await context.Channel.SendMessageAsync(string.Format(
+        await context.RespondAsync(string.Format(
             Localize(nameof(MusicPlayerRessources.Message_PlaylistLoaded)), playlist.Title, count,
             playlist.Tracks.Count));
     }
 
     [Command("deletePlaylist")]
-    public async Task DeletePlaylistCommandAsync(ICommandContext context)
+    [Description("Deletes a playlist")]
+    [Parameter(Name = "playlistId", Description = "The id of the playlist", IsOptional = false, ParameterType = ApplicationCommandOptionType.Integer)]
+    public async Task DeletePlaylistCommandAsync(SocketSlashCommand context, IGuild guild)
     {
         var playlistId = await RequireLongArg(context);
 
@@ -321,13 +334,14 @@ internal class MusicPlayerCommands : CommandModuleBase, IGuildModule
         }
 
         await _businessLogic.DeletePlaylistAsync(playlistId);
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        await context.RespondAsync("🤝");
     }
 
     [Command("shuffle")]
-    public async Task ShufflePlaylistCommandAsync(ICommandContext context)
+    [Description("Shuffles the current queue")]
+    public async Task ShufflePlaylistCommandAsync(SocketSlashCommand context, IGuild guild)
     {
-        _manager.ShufflePlaylist(context.Guild);
-        await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+        _manager.ShufflePlaylist(guild);
+        await context.RespondAsync("🤝");
     }
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -13,39 +15,89 @@ using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.TimedAction;
 
+// ReSharper disable LocalizableElement
+
 namespace DiscordBot.MainBot;
 
 public class BotManager
 {
-    private const ulong ClientId = 898251551183896586;
     private readonly IEnumerable<IGuildModule> _modules;
     private readonly IEnumerable<ITimedAction> _timedActions;
     private readonly IModuleDataAccess _dataAccess;
+    private readonly IEnumerable<ICommandModule> _commandModules;
     private bool _isReady;
 
-    public static DiscordSocketClient _client = new DiscordSocketClient(new DiscordSocketConfig
+    public static readonly DiscordSocketClient Client = new(new DiscordSocketConfig
     {
         GatewayIntents = GatewayIntents.All
     });
 
-    public BotManager(IEnumerable<IGuildModule> modules, IEnumerable<ITimedAction> timedActions,
-        IModuleDataAccess dataAccess)
+    private Dictionary<string, CommandInfos> _slashCommands;
+
+    public BotManager(IEnumerable<IGuildModule> modules,
+        IEnumerable<ITimedAction> timedActions,
+        IModuleDataAccess dataAccess,
+        IEnumerable<ICommandModule> commandModules)
     {
         _modules = modules;
         _timedActions = timedActions;
         _dataAccess = dataAccess;
+        _commandModules = commandModules;
     }
 
     public async Task StartSystemAsync()
     {
         _isReady = false;
-        _client.Ready += ClientReady;
-        _client.Log += Log;
-        _client.MessageReceived += MessageRecieved;
-        await _client.LoginAsync(TokenType.Bot, BotClientConstants.BotToken);
+        _slashCommands = new Dictionary<string, CommandInfos>();
+        foreach (var commandModule in _commandModules)
+        {
+            var commands = commandModule.BuildCommandInfos();
+            foreach (var command in commands)
+            {
+                _slashCommands.Add(command.Key,
+                    new CommandInfos { CommandModule = commandModule, MethodInfo = command.Value });
+            }
+        }
+
+        Client.Ready += ClientReady;
+        Client.Log += Log;
+        Client.MessageReceived += MessageRecieved;
+        Client.GuildAvailable += GuildAvailable;
+        Client.SlashCommandExecuted += SlashCommandRecieved;
+        await Client.LoginAsync(TokenType.Bot, BotClientConstants.BotToken);
         Console.WriteLine("Logged in");
-        await _client.StartAsync();
+        await Client.StartAsync();
         Console.WriteLine("Startet System");
+    }
+
+    private async Task SlashCommandRecieved(SocketSlashCommand slashCommand)
+    {
+        if (slashCommand.Data.Name == "help")
+        {
+            await slashCommand.RespondAsync("check https://netty-bot.com/ for help");
+            return;
+        }
+        try
+        {
+            var guild = ((SocketGuildChannel)slashCommand.Channel).Guild;
+
+            var command = _slashCommands.Single(cmd => cmd.Key == slashCommand.CommandName);
+            var commandInfo = command.Value;
+            if (!await _dataAccess.IsModuleEnabledForGuild(guild.Id, command.Value.CommandModule.ModuleUniqueIdentifier))
+            {
+                return;
+            }
+            commandInfo.MethodInfo.Invoke(commandInfo.CommandModule, new object[] { slashCommand, guild });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    private async Task GuildAvailable(SocketGuild arg)
+    {
+        _ = RegisterSlashCommandsAsync(arg);
     }
 
     private async Task MessageRecieved(SocketMessage arg)
@@ -54,12 +106,13 @@ public class BotManager
         {
             return;
         }
-        var context = new SocketCommandContext(_client, arg as SocketUserMessage);
+
+        var context = new SocketCommandContext(Client, arg as SocketUserMessage);
         if (context.User.IsBot)
         {
             return;
         }
-        
+
         foreach (var module in _modules)
         {
             await module.InitializeAsync(context);
@@ -93,11 +146,17 @@ public class BotManager
 
     private async Task ClientReady()
     {
-        _client.Ready -= ClientReady;
-        await _client.SetStatusAsync(UserStatus.Online);
-        await _client.SetActivityAsync(new Game("Booting..."));
+        Client.Ready -= ClientReady;
+        await Client.SetStatusAsync(UserStatus.Online);
+        await Client.SetActivityAsync(new Game("Booting..."));
+
+        var builder = new SlashCommandBuilder();
+        builder.WithName("help");
+        builder.WithDescription("Sends some help");
+        await Client.CreateGlobalApplicationCommandAsync(builder.Build());
+        
         var postBootTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.PostBoot)
-            .Select(x => x.ExecuteAsync(_client));
+            .Select(x => x.ExecuteAsync(Client));
         await Task.WhenAll(postBootTasks);
         _isReady = true;
         var dailyStuffThread = new Thread(DailyStuff);
@@ -124,7 +183,7 @@ public class BotManager
         var hourlyTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.Hourly).ToArray();
         while (true)
         {
-            var tasks = hourlyTasks.Select(x => x.ExecuteAsync(_client));
+            var tasks = hourlyTasks.Select(x => x.ExecuteAsync(Client));
             await Task.WhenAll(tasks);
             await Task.Delay(new TimeSpan(1, 0, 0));
         }
@@ -152,7 +211,43 @@ public class BotManager
     private async Task DoDailyTasks()
     {
         var dailyTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.Daily)
-            .Select(x => x.ExecuteAsync(_client));
+            .Select(x => x.ExecuteAsync(Client));
         await Task.WhenAll(dailyTasks);
+    }
+
+    private async Task RegisterSlashCommandsAsync(IGuild guild)
+    {
+        try
+        {
+            foreach (var command in _slashCommands)
+            {
+                Console.WriteLine("registering " + command.Key);
+                var builder = new SlashCommandBuilder();
+                builder.WithName(command.Key.ToLower());
+                var methodInfo = command.Value;
+                var description = methodInfo.MethodInfo.GetCustomAttribute<DescriptionAttribute>()?.Description ??
+                                  "missing description";
+                builder.WithDescription(description);
+                foreach (var parameterAttribute in methodInfo.MethodInfo.GetCustomAttributes<ParameterAttribute>())
+                {
+                    builder.AddOption(parameterAttribute.Name.ToLower(), parameterAttribute.ParameterType,
+                        parameterAttribute.Description, !parameterAttribute.IsOptional);
+                }
+                try
+                {
+                    await guild.CreateApplicationCommandAsync(builder.Build());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            Console.WriteLine("Registered Slash Commands on " + guild.Name);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

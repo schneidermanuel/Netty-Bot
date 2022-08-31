@@ -7,20 +7,18 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 
 namespace DiscordBot.Framework.Contract.Modularity;
 
-public abstract class CommandModuleBase : IGuildModule
+public abstract class CommandModuleBase : ICommandModule
 {
-    private static IDictionary<Type, Dictionary<string, MethodInfo>> _commandMethods;
-    private readonly IModuleDataAccess _dataAccess;
     protected abstract Type RessourceType { get; }
 
     protected CommandModuleBase(IModuleDataAccess dataAccess)
     {
         _dataAccess = dataAccess;
-        _commandMethods = new Dictionary<Type, Dictionary<string, MethodInfo>>();
     }
 
     public abstract string ModuleUniqueIdentifier { get; }
@@ -31,15 +29,14 @@ public abstract class CommandModuleBase : IGuildModule
     }
 
     private string _language = string.Empty;
+    private readonly IModuleDataAccess _dataAccess;
 
     public async Task InitializeAsync(SocketCommandContext context)
     {
         _language = await _dataAccess.GetUserLanguageAsync(context.User.Id);
     }
 
-    public abstract Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext);
-
-    private void BuildCommandInfos()
+    public Dictionary<string, MethodInfo> BuildCommandInfos()
     {
         var methods = GetType().GetMethods()
             .Where(m => m.GetCustomAttributes(typeof(CommandAttribute), false).Length > 0).ToList();
@@ -50,124 +47,108 @@ public abstract class CommandModuleBase : IGuildModule
             Debug.Assert(attribute != null, nameof(attribute) + " != null");
             moduleMethods.Add(attribute.Text.ToLower(), methodInfo);
         }
-        _commandMethods.Add(GetType(), moduleMethods);
+
+        return moduleMethods;
     }
 
-    public abstract Task ExecuteAsync(ICommandContext context);
-
-    protected async Task ExecuteCommandsAsync(ICommandContext context)
+    public virtual async Task ExecuteAsync(ICommandContext context)
     {
-        if (!_commandMethods.ContainsKey(GetType()))
-        {
-            BuildCommandInfos();
-        }
-
-        var prefix = await _dataAccess.GetServerPrefixAsync(context.Guild.Id);
-        var message = context.Message.Content;
-
-        if (!message.StartsWith(prefix))
-        {
-            return;
-        }
-
-        var baseCommand = message.Remove(0, 1).Split(' ')[0].ToLower();
-        var moduleMethods = _commandMethods[GetType()];
-        if (!moduleMethods.ContainsKey(baseCommand))
-        {
-            return;
-        }
-
-        var method = moduleMethods[baseCommand];
-        method.Invoke(this, new object[] { context });
-        Console.WriteLine("Invoking " + method.Name);
+        await Task.CompletedTask;
     }
 
-    protected async Task RequireArg(ICommandContext context, int count = 1, string errorMessage = null)
+    protected async Task RequireArg(SocketSlashCommand context, int count = 1, string errorMessage = null)
     {
-        var args = context.Message.Content.Split(' ').Skip(1);
+        var args = context.Data.Options;
         if (args.Count() < count)
         {
-            await context.Channel.SendMessageAsync(errorMessage ?? Localize(nameof(BaseRessources.Error_ArgumentCount), typeof(BaseRessources)));
+            await context.RespondAsync(errorMessage ??
+                                       Localize(nameof(BaseRessources.Error_ArgumentCount),
+                                           typeof(BaseRessources)));
             throw new ArgumentException(errorMessage ??
-                                        $"{ModuleUniqueIdentifier}: Require Args: {count}, found {context.Message.Content}");
+                                        $"{ModuleUniqueIdentifier}: Require Args: {count}, found {context.Data.Options.Count() - 1}");
         }
     }
 
-    protected async Task<int> RequireIntArg(ICommandContext context, int position = 1)
+    protected async Task<int> RequireIntArg(SocketSlashCommand context, int position = 1)
     {
         await RequireArg(context, position);
-        var arg = context.Message.Content.Split(' ').Skip(position).First();
+        var arg = context.Data.Options.Skip(position - 1).First().Value.ToString();
         if (int.TryParse(arg, out var result))
         {
             return result;
         }
 
-        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
+        await context.RespondAsync(
+            string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
         throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Int Arg: {arg}");
     }
 
-    protected async Task<long> RequireLongArg(ICommandContext context, int position = 1)
+    protected async Task<long> RequireLongArg(SocketSlashCommand context, int position = 1)
     {
         await RequireArg(context, position);
-        var arg = context.Message.Content.Split(' ').Skip(position).First();
+        var arg = context.Data.Options.Skip(position - 1).First().Value.ToString();
         if (long.TryParse(arg, out var result))
         {
             return result;
         }
 
-        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
+        await context.RespondAsync(
+            string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
         throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Long Arg: {arg}");
     }
 
-    protected async Task<ulong> RequireUlongAsync(ICommandContext context, int position = 1)
+    protected async Task<ulong> RequireUlongAsync(SocketSlashCommand context, int position = 1)
     {
         await RequireArg(context, position);
-        var arg = context.Message.Content.Split(' ').Skip(position).First();
+        var arg = context.Data.Options.Skip(position - 1).First().Value.ToString();
         if (ulong.TryParse(arg, out var result))
         {
             return result;
         }
 
-        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
+        await context.RespondAsync(
+            string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
         throw new ArgumentException($"{ModuleUniqueIdentifier}: Required ULong Arg: {arg}");
     }
 
-
-    protected async Task<string> RequireReminderArg(ICommandContext context, int position = 1)
+    protected int RequireIntArgOrDefault(SocketSlashCommand context, int position = 1, int defaultValue = 0)
     {
-        await RequireArg(context, position);
-        var args = context.Message.Content.Split(' ').Skip(position);
-        var output = args.Aggregate(string.Empty, (current, arg) => current + $"{arg} ");
-        return output.Trim();
-    }
-
-    protected async Task<string> RequireReminderOrEmpty(ICommandContext context, int position = 1)
-    {
-        var args = context.Message.Content.Split(' ').Skip(position);
-        var output = args.Aggregate(string.Empty, (current, arg) => current + $"{arg} ");
-        return await Task.FromResult(output.Trim());
-    }
-
-    protected int RequireIntArgOrDefault(ICommandContext context, int position = 1, int defaultValue = 0)
-    {
-        var args = context.Message.Content.Split(' ').Skip(position);
-        var arg = args.FirstOrDefault();
+        var args = context.Data.Options.Skip(position - 1);
+        var arg = args.FirstOrDefault()?.Value.ToString() ?? string.Empty;
         return int.TryParse(arg, out var result) ? result : defaultValue;
     }
 
-    protected async Task<string> RequireString(ICommandContext context, int position = 1)
+    protected async Task<string> RequireString(SocketSlashCommand context, int position = 1)
     {
         await RequireArg(context, position);
-        return context.Message.Content.Split(' ').Skip(position).First();
+        return context.Data.Options.Skip(position - 1).First().Value.ToString();
+    }
+    protected string RequireStringOrEmpty(SocketSlashCommand context, int position = 1)
+    {
+        var arg = context.Data.Options.Skip(position - 1).FirstOrDefault()?.Value ?? string.Empty;
+        return arg.ToString();
     }
 
-    protected async Task RequirePermissionAsync(ICommandContext context, GuildPermission permission)
+
+    protected async Task<IRole> RequireRoleAsync(SocketSlashCommand context, int position = 1)
     {
-        var hasPermission = (await context.Guild.GetUserAsync(context.User.Id)).GuildPermissions.Has(permission);
+        await RequireArg(context, position);
+        var arg = context.Data.Options.Skip(position - 1).First().Value;
+        if (arg is IRole role)
+        {
+            return role;
+        }
+
+        return null;
+    }
+
+    protected async Task RequirePermissionAsync(SocketSlashCommand context, IGuild guild, GuildPermission permission)
+    {
+        var hasPermission = (await guild.GetUserAsync(context.User.Id)).GuildPermissions.Has(permission);
         if (!hasPermission)
         {
             throw new InvalidOperationException(
-                $"{ModuleUniqueIdentifier}: Keine Berechtigung in '{context.Guild.Name}'");
+                $"{ModuleUniqueIdentifier}: Keine Berechtigung in '{guild.Name}'");
         }
     }
 

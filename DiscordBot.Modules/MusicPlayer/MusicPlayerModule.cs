@@ -10,7 +10,7 @@ public class MusicPlayerModule : Module
     protected override void Load(ContainerBuilder builder)
     {
         base.Load(builder);
-        builder.RegisterType<MusicPlayerCommands>().As<IGuildModule>();
+        builder.RegisterType<MusicPlayerCommands>().As<ICommandModule>();
         builder.RegisterType<MusicBootStep>().As<ITimedAction>();
         builder.RegisterType<MusicManager>().SingleInstance().AsSelf();
         builder.RegisterType<SpotifyApiManager>().AsSelf().As<ITimedAction>().SingleInstance();

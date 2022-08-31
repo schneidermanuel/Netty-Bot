@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
 using DiscordBot.DataAccess.Contract.TwitterRegistration.BusinessLogic;
@@ -9,7 +12,7 @@ using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.TwitterNotification;
 
-internal class TwitterRegistrationCommands : CommandModuleBase, IGuildModule
+internal class TwitterRegistrationCommands : CommandModuleBase, ICommandModule
 {
     private readonly ITwitterRegistrationBusinessLogic _businessLogic;
     private readonly TwitterStreamManager _manager;
@@ -26,35 +29,29 @@ internal class TwitterRegistrationCommands : CommandModuleBase, IGuildModule
 
     protected override Type RessourceType => typeof(TwitterNotificationRessources);
 
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        await RequirePermissionAsync(socketCommandContext, GuildPermission.Administrator);
-        return await IsEnabled(id);
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
-    }
 
     [Command("registerTwitter")]
-    public async Task RegisterTwitterAsync(ICommandContext context)
+    [Description("Sends a message whenever a twitter user posts a tweet")]
+    [Parameter(Name = "username", Description = "The twitter username to register", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "message", Description = "The message to send", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "rule", Description = "The rule to determine if a tweet should be postet", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
+    public async Task RegisterTwitterAsync(SocketSlashCommand context, IGuild guild)
     {
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
-        if (await _businessLogic.IsAccountRegisteredOnChannelAsync(context.Guild.Id, context.Channel.Id, username))
+        if (await _businessLogic.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))
         {
-            await context.Channel.SendMessageAsync(
+            await context.RespondAsync(
                 Localize(nameof(TwitterNotificationRessources.Error_AccountAlreadyRegistered)));
             return;
         }
 
-        var arg = await RequireReminderOrEmpty(context, 2);
-        var message = ExtractMessage(arg, username);
-        var rule = ExtractRule(arg);
-
+        var message = await RequireString(context, 2);
+        var rule = await RequireString(context, 3);
+        
         if (!_ruleValidator.IsRuleValid(rule))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(TwitterNotificationRessources.Error_InvalidRule)));
+            await context.RespondAsync(Localize(nameof(TwitterNotificationRessources.Error_InvalidRule)));
             return;
         }
 
@@ -63,42 +60,32 @@ internal class TwitterRegistrationCommands : CommandModuleBase, IGuildModule
             Message = message,
             Username = username,
             ChannelId = context.Channel.Id,
-            GuildId = context.Guild.Id,
+            GuildId = guild.Id,
             RuleFilter = rule
         };
 
         await _businessLogic.RegisterTwitterAsync(dto);
-        await context.Channel.SendMessageAsync(Localize(nameof(TwitterNotificationRessources.Message_Registered)));
+        await context.RespondAsync(Localize(nameof(TwitterNotificationRessources.Message_Registered)));
         await _manager.RegisterTwitterUserAsync(dto);
     }
 
     [Command("unregisterTwitter")]
-    public async Task UnregisterAsync(SocketCommandContext context)
+    [Description("Unregisters a twitter user from the current channel")]
+    [Parameter(Name = "username", Description = "The twitter username to unregister", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    public async Task UnregisterAsync(SocketSlashCommand context, IGuild guild)
     {
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
-        if (!await _businessLogic.IsAccountRegisteredOnChannelAsync(context.Guild.Id, context.Channel.Id, username))
+        if (!await _businessLogic.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))
         {
-            await context.Channel.SendMessageAsync(
+            await context.RespondAsync(
                 Localize(nameof(TwitterNotificationRessources.Error_AccountNotRegistered)));
             return;
         }
-        await _businessLogic.UnregisterTwitterAsync(context.Guild.Id, context.Channel.Id, username);
+        await _businessLogic.UnregisterTwitterAsync(guild.Id, context.Channel.Id, username);
+        await context.RespondAsync("🤝");
     }
     
-
-    private string ExtractRule(string arg)
-    {
-        return arg.Contains(';') ? arg.Split(';')[1] : string.Empty;
-    }
-
-    private string ExtractMessage(string arg, string username)
-    {
-        var message = arg.Contains(';') ? arg.Split(';')[0] : arg;
-        return string.IsNullOrEmpty(message)
-            ? string.Format(Localize(nameof(TwitterNotificationRessources.Message_Default)), username)
-            : message;
-    }
-
 
     public override string ModuleUniqueIdentifier => "TWITTER_NOTIFICATIONS";
 }

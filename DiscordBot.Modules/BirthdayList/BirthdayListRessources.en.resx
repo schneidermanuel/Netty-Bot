@@ -75,7 +75,7 @@
         <value>No channel with a birthday list was created</value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>The role '{0}' could not be found. Please use the id</value>
+        <value>The role could not be found. </value>
     </data>
     <data name="Message_BirthdayRoleSuccess" xml:space="preserve">
         <value>The role '{0}' will be assigned automatically at birthdays. 

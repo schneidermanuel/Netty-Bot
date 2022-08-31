@@ -13,7 +13,7 @@ internal class TwitterModule : Module
         var client = new TwitterClient(BotClientConstants.TwitterBearerToken);
         builder.RegisterInstance(client).As<TwitterClient>();
         builder.RegisterType<TwitterStreamManager>().SingleInstance();
-        builder.RegisterType<TwitterRegistrationCommands>().As<IGuildModule>();
+        builder.RegisterType<TwitterRegistrationCommands>().As<ICommandModule>();
         builder.RegisterType<TwitterApiInitializer>().As<ITimedAction>();
         builder.RegisterType<TwitterRuleValidator>().AsSelf();
     }

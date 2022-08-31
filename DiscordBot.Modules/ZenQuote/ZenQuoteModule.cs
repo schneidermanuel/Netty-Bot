@@ -11,6 +11,6 @@ public class ZenQuoteModule : Module
         base.Load(builder);
 
         builder.RegisterType<ZenQuoteTask>().As<ITimedAction>();
-        builder.RegisterType<ZenQuoteCommands>().As<IGuildModule>();
+        builder.RegisterType<ZenQuoteCommands>().As<ICommandModule>();
     }
 }

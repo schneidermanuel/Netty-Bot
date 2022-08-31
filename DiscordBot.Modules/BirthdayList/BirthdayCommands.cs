@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -10,7 +11,7 @@ using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.BirthdayList;
 
-public class BirthdayCommands : CommandModuleBase, IGuildModule
+public class BirthdayCommands : CommandModuleBase, ICommandModule
 {
     private readonly IModuleDataAccess _dataAccess;
     private readonly IGeburtstagListBusinessLogic _businessLogic;
@@ -27,30 +28,24 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
     protected override Type RessourceType => typeof(BirthdayListRessources);
     public override string ModuleUniqueIdentifier => "BIRTHDAYLIST";
 
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        return await IsEnabled(id);
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
-    }
 
     [Command("registerBirthday")]
-    public async Task RegisterBirthday(ICommandContext context)
+    [Description("Saves your birthday to the birthday list")]
+    [Parameter(Name = "birthday", Description = "Your birthday in the format dd.MM (31.01)", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task RegisterBirthday(SocketSlashCommand context, IGuild guild)
     {
         var hasUserBirthdayRegistered = await _businessLogic.HasUserRegisteredBirthday(context.User.Id);
         if (hasUserBirthdayRegistered)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_BirthdayAlreadySaved)));
+            await context.RespondAsync(Localize(nameof(BirthdayListRessources.Error_BirthdayAlreadySaved)));
             return;
         }
 
-        var prefix = await _dataAccess.GetServerPrefixAsync(context.Guild.Id);
+        var prefix = await _dataAccess.GetServerPrefixAsync(guild.Id);
         try
         {
-            var date = context.Message.Content.Split(" ")[1];
+            var date = await RequireString(context);
             var day = int.Parse(date.Split(".")[0]);
             var month = int.Parse(date.Split(".")[1]);
             var birthday = new DateTime(2000, month, day);
@@ -60,28 +55,31 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
                 UserId = context.User.Id
             };
             await _businessLogic.SaveBirthdayAsync(registration);
-            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Message_BirthdaySaved)));
-            await _manager.RefreshAllBirthdayChannel((DiscordSocketClient)context.Client);
+            await context.RespondAsync(Localize(nameof(BirthdayListRessources.Message_BirthdaySaved)));
+            await _manager.RefreshAllBirthdayChannel();
         }
         catch (Exception)
         {
-            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BirthdayListRessources.Error_InvalidFormat)), prefix));
+            await context.RespondAsync(string.Format(Localize(nameof(BirthdayListRessources.Error_InvalidFormat)),
+                prefix));
         }
     }
 
     [Command("registerBirthdayChannel")]
-    public async Task RegisterBirthdayChannel(ICommandContext context)
+    [Description("Lists the birthday of all members in this channel")]
+    public async Task RegisterBirthdayChannel(SocketSlashCommand context, IGuild guild)
     {
-        await RequirePermissionAsync(context, GuildPermission.Administrator);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
-        var hasGuildChannel = await _businessLogic.HasGuildSetupGeburtstagChannelAsync(context.Guild.Id);
+        var hasGuildChannel = await _businessLogic.HasGuildSetupGeburtstagChannelAsync(guild.Id);
         if (hasGuildChannel)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_BirthdaylistAlreadyPresent)));
+            await context.RespondAsync(
+                Localize(nameof(BirthdayListRessources.Error_BirthdaylistAlreadyPresent)));
             return;
         }
 
-        var channel = (ISocketMessageChannel)context.Channel;
+        var channel = context.Channel;
         await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Title_Birthdaylist)));
         var janMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_1)));
         var febMsg = await channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Month_2)));
@@ -99,7 +97,7 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
         {
             Id = 0,
             ChannelId = channel.Id,
-            GuildId = context.Guild.Id,
+            GuildId = guild.Id,
             JanMessageId = janMsg.Id,
             FebMessageId = febMsg.Id,
             MarMessageId = marMsg.Id,
@@ -115,38 +113,43 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
         };
         var id = await _businessLogic.SaveBirthdayChannelAsync(birthdayChannel);
         birthdayChannel.Id = id;
-        await _manager.RefreshSingleBirthdayChannel(birthdayChannel, (DiscordSocketClient)context.Client);
+        await _manager.RefreshSingleBirthdayChannel(birthdayChannel);
     }
 
     [Command("unsubBirthdays")]
-    public async Task UbsubChannelFromBirthdayEvents(ICommandContext context)
+    [Description("Stops sending Informations on birthdays in this channel")]
+    public async Task UbsubChannelFromBirthdayEvents(SocketSlashCommand context, IGuild guild)
     {
-        await RequirePermissionAsync(context, GuildPermission.Administrator);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var channel = context.Channel;
-        var guildId = context.Guild.Id;
+        var guildId = guild.Id;
 
         var isChannelSubbed = await _businessLogic.IsChannelSubbedAsync(guildId, channel.Id);
         if (!isChannelSubbed)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_NotificationsNotEnabled)));
+            await context.RespondAsync(
+                Localize(nameof(BirthdayListRessources.Error_NotificationsNotEnabled)));
             return;
         }
 
         await _businessLogic.DeleteSubbedChannelAsync(guildId, channel.Id);
+        await context.RespondAsync("🤝");
     }
 
     [Command("subBirthdays")]
-    public async Task SubChannelToBirthdayEvents(ICommandContext context)
+    [Description("Starts sending Informations on birthdays in this channel")]
+    public async Task SubChannelToBirthdayEvents(SocketSlashCommand context, IGuild guild)
     {
-        await RequirePermissionAsync(context, GuildPermission.Administrator);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var allSubbedChannel = await _businessLogic.GetAllSubbedChannelAsync();
         var channel = context.Channel;
-        var guildId = context.Guild.Id;
+        var guildId = guild.Id;
         if (allSubbedChannel.Any(sub => sub.GuildId == guildId))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_NotificationsAlreadyEnabled)));
+            await context.RespondAsync(
+                Localize(nameof(BirthdayListRessources.Error_NotificationsAlreadyEnabled)));
             return;
         }
 
@@ -157,30 +160,34 @@ public class BirthdayCommands : CommandModuleBase, IGuildModule
             GuildId = guildId
         };
         await _businessLogic.SaveBirthdaySubAsync(sub);
-        await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Message_BirthdayNotificationsEnabled)));
+        await context.RespondAsync(
+            Localize(nameof(BirthdayListRessources.Message_BirthdayNotificationsEnabled)));
     }
 
     [Command("setBirthdayRole")]
-    public async Task SetupBirthdayRoleCommandAsync(ICommandContext context)
+    [Description("Sets the role that will be given to the user at their birthday")]
+    [Parameter(Name = "role", Description = "The role that will be given to the user at their birthday", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
+    public async Task SetupBirthdayRoleCommandAsync(SocketSlashCommand context, IGuild guild)
     {
-        await RequirePermissionAsync(context, GuildPermission.Administrator);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
-        var roleId = await RequireUlongAsync(context);
+        var role = await RequireRoleAsync(context);
 
-        if (!await _businessLogic.HasGuildSetupGeburtstagChannelAsync(context.Guild.Id))
+        if (!await _businessLogic.HasGuildSetupGeburtstagChannelAsync(guild.Id))
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(BirthdayListRessources.Error_NoBirthdayChannel)));
+            await context.RespondAsync(Localize(nameof(BirthdayListRessources.Error_NoBirthdayChannel)));
             return;
         }
 
-        var role = context.Guild.GetRole(roleId);
         if (role == null)
         {
-            await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BirthdayListRessources.Error_RoleNotFound)), roleId));
+            await context.RespondAsync(
+                string.Format(Localize(nameof(BirthdayListRessources.Error_RoleNotFound))));
             return;
         }
 
-        await _businessLogic.CreateOrUpdateBirthdayRoleAsync(context.Guild.Id, roleId);
-        await context.Channel.SendMessageAsync(string.Format(Localize(nameof(BirthdayListRessources.Message_BirthdayRoleSuccess)), role.Name));
+        await _businessLogic.CreateOrUpdateBirthdayRoleAsync(guild.Id, role.Id);
+        await context.RespondAsync(
+            string.Format(Localize(nameof(BirthdayListRessources.Message_BirthdayRoleSuccess)), role.Name));
     }
 }

@@ -1,14 +1,16 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.TwitchNotifications;
 using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.TwitchNotifications;
 
-internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
+internal class TwitchNotificationCommands : CommandModuleBase, ICommandModule
 {
     private readonly TwitchNotificationsManager _manager;
     private readonly ITwitchNotificationsBusinessLogic _businessLogic;
@@ -20,31 +22,24 @@ internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
         _businessLogic = businessLogic;
     }
 
-    public override async Task<bool> CanExecuteAsync(ulong id, SocketCommandContext socketCommandContext)
-    {
-        await RequirePermissionAsync(socketCommandContext, GuildPermission.Administrator);
-        return await IsEnabled(id);
-    }
-
-    public override async Task ExecuteAsync(ICommandContext context)
-    {
-        await ExecuteCommandsAsync(context);
-    }
-
     [Command("registerTwitch")]
-    public async Task RegisterTwitchChannel(ICommandContext context)
+    [Description("Sends notification whenever a twitch stream is live")]
+    [Parameter(Name = "username", Description = "The twitch username", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "message", Description = "The message sent when the stream starts", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
+    public async Task RegisterTwitchChannel(SocketSlashCommand context, IGuild guild)
     {
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
         var channelId = context.Channel.Id;
-        var guildId = context.Guild.Id;
+        var guildId = guild.Id;
         var isAlreadyRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, guildId);
         if (isAlreadyRegistered)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
+            await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
             return;
         }
 
-        var message = await RequireReminderOrEmpty(context, 2);
+        var message = RequireStringOrEmpty(context, 2);
         if (string.IsNullOrEmpty(message.Trim()))
         {
             message = string.Format(Localize(nameof(TwitchNotificationRessources.Message_NewStream)), username);
@@ -58,24 +53,27 @@ internal class TwitchNotificationCommands : CommandModuleBase, IGuildModule
             GuildId = guildId
         };
         await _businessLogic.SaveRegistrationAsync(registration);
-        await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
+        await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
         await _manager.AddUserAsync(registration);
     }
 
     [Command("unregisterTwitch")]
-    public async Task UnregisterTwitchChannel(ICommandContext context)
+    [Description("Unregisters a twitch channel from the notification service")]
+    [Parameter(Name = "username", Description = "The twitch username", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
+    public async Task UnregisterTwitchChannel(SocketSlashCommand context, IGuild guild)
     {
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
-        var isRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, context.Guild.Id);
+        var isRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, guild.Id);
         if (!isRegistered)
         {
-            await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Error_RegistrationInvalid)));
+            await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Error_RegistrationInvalid)));
             return;
         }
 
-        await _businessLogic.DeleteRegistrationAsync(username, context.Guild.Id);
-        await context.Channel.SendMessageAsync(Localize(nameof(TwitchNotificationRessources.Message_UnregistrationSucess)));
-        _manager.RemoveUser(username, context.Guild.Id);
+        await _businessLogic.DeleteRegistrationAsync(username, guild.Id);
+        await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Message_UnregistrationSucess)));
+        _manager.RemoveUser(username, guild.Id);
     }
 
     protected override Type RessourceType => typeof(TwitchNotificationRessources);

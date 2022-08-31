@@ -22,7 +22,7 @@
         <value>Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht]</value>
     </data>
     <data name="Error_InvalidRole" xml:space="preserve">
-        <value>Keine Rolle mit der Id '{0}' gefunden</value>
+        <value>Rolle nicht gefunden</value>
     </data>
     <data name="Error_NotReplied" xml:space="preserve">
         <value>Antworte auf die Nachricht, zu welcher eine Reaktionsrolle hinzugefügt werden soll.</value>

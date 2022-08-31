@@ -29,7 +29,7 @@ Verfügbar: add, list, delete"</value>
         <value>Automatisch verteilte Rollen auf dem Server</value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>Die Rolle '{0}' wurde nicht gefunden. Bitte ID verwenden</value>
+        <value>Die Rolle  wurde nicht gefunden. </value>
     </data>
     <data name="Error_PermissionTooHigh" xml:space="preserve">
         <value>Diese Rolle hat Administratorrechte und wird nicht automatisch verteilt.</value>
