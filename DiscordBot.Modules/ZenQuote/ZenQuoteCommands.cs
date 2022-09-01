@@ -22,11 +22,13 @@ public class ZenQuoteCommands : CommandModuleBase, ICommandModule
 
     protected override Type RessourceType => typeof(ZenQuoteRessources);
     public override string ModuleUniqueIdentifier => "ZENQUOTE";
-    
+
     [Command("registerQuote")]
     [Description("Sends a quote to this channel once a day")]
-    public async Task RegisterForZenQuote(SocketSlashCommand context, IGuild guild)
+    public async Task RegisterForZenQuote(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
+
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var registrations = await _businessLogic.LoadAllRegistrations();
@@ -35,6 +37,7 @@ public class ZenQuoteCommands : CommandModuleBase, ICommandModule
             await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyEnabled)));
             return;
         }
+
         var channelId = context.Channel.Id;
         var guildId = guild.Id;
         var registration = new ZenQuoteRegistration
@@ -49,8 +52,9 @@ public class ZenQuoteCommands : CommandModuleBase, ICommandModule
 
     [Command("unregisterQuote")]
     [Description("Stops sending a quote to this channel")]
-    public async Task UnregisterQuoteAsync(SocketSlashCommand context, IGuild guild)
+    public async Task UnregisterQuoteAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var registrations = await _businessLogic.LoadAllRegistrations();
         var regForChannel = registrations.Where(reg => reg.GuildId == guild.Id &&

@@ -24,4 +24,7 @@
     <data name="Error_NotAnInt" xml:space="preserve">
         <value>Der Ausdruck '{0}' konnte nicht konvertiert werden. Erwartet: Zahl</value>
     </data>
+    <data name="Error_NotAGuild" xml:space="preserve">
+        <value>Kann nur auf einem Server ausgeführt werden</value>
+    </data>
 </root>

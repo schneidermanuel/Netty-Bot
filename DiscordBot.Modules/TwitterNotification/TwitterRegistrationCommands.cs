@@ -35,8 +35,9 @@ internal class TwitterRegistrationCommands : CommandModuleBase, ICommandModule
     [Parameter(Name = "username", Description = "The twitter username to register", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
     [Parameter(Name = "message", Description = "The message to send", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
     [Parameter(Name = "rule", Description = "The rule to determine if a tweet should be postet", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task RegisterTwitterAsync(SocketSlashCommand context, IGuild guild)
+    public async Task RegisterTwitterAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
         if (await _businessLogic.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))
@@ -72,8 +73,9 @@ internal class TwitterRegistrationCommands : CommandModuleBase, ICommandModule
     [Command("unregisterTwitter")]
     [Description("Unregisters a twitter user from the current channel")]
     [Parameter(Name = "username", Description = "The twitter username to unregister", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task UnregisterAsync(SocketSlashCommand context, IGuild guild)
+    public async Task UnregisterAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
         if (!await _businessLogic.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))

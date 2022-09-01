@@ -32,7 +32,7 @@ internal class ConfigurationCommands : CommandModuleBase, ICommandModule
     [Description("Sets the language for the bot.")]
     [Parameter(Name = "language", Description = "The language to set the bot to.", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task ChangeLanguageAsync(SocketSlashCommand context, IGuild guild)
+    public async Task ChangeLanguageAsync(SocketSlashCommand context)
     {
         await RequireArg(context, 1, "Supported Languages: \nGerman - de\nEnglish - en");
         var language = await RequireString(context);
@@ -50,8 +50,10 @@ internal class ConfigurationCommands : CommandModuleBase, ICommandModule
     [Description("Sets the prefix for the bot.")]
     [Parameter(Name = "prefix", Description = "The prefix to set the bot to.", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task ChangePrefixAsync(SocketSlashCommand context, IGuild guild)
+    public async Task ChangePrefixAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
+
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         await RequireArg(context, 1, Localize(nameof(ConfigurationRessources.Error_NoPrefix)));
         var prefix = await RequireString(context);

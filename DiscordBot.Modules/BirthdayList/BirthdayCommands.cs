@@ -33,7 +33,7 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
     [Description("Saves your birthday to the birthday list")]
     [Parameter(Name = "birthday", Description = "Your birthday in the format dd.MM (31.01)", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task RegisterBirthday(SocketSlashCommand context, IGuild guild)
+    public async Task RegisterBirthday(SocketSlashCommand context)
     {
         var hasUserBirthdayRegistered = await _businessLogic.HasUserRegisteredBirthday(context.User.Id);
         if (hasUserBirthdayRegistered)
@@ -41,6 +41,7 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
             await context.RespondAsync(Localize(nameof(BirthdayListRessources.Error_BirthdayAlreadySaved)));
             return;
         }
+        var guild = await RequireGuild(context);
 
         var prefix = await _dataAccess.GetServerPrefixAsync(guild.Id);
         try
@@ -67,8 +68,9 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
 
     [Command("registerBirthdayChannel")]
     [Description("Lists the birthday of all members in this channel")]
-    public async Task RegisterBirthdayChannel(SocketSlashCommand context, IGuild guild)
+    public async Task RegisterBirthdayChannel(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var hasGuildChannel = await _businessLogic.HasGuildSetupGeburtstagChannelAsync(guild.Id);
@@ -118,8 +120,9 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
 
     [Command("unsubBirthdays")]
     [Description("Stops sending Informations on birthdays in this channel")]
-    public async Task UbsubChannelFromBirthdayEvents(SocketSlashCommand context, IGuild guild)
+    public async Task UbsubChannelFromBirthdayEvents(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var channel = context.Channel;
@@ -139,8 +142,9 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
 
     [Command("subBirthdays")]
     [Description("Starts sending Informations on birthdays in this channel")]
-    public async Task SubChannelToBirthdayEvents(SocketSlashCommand context, IGuild guild)
+    public async Task SubChannelToBirthdayEvents(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var allSubbedChannel = await _businessLogic.GetAllSubbedChannelAsync();
@@ -167,8 +171,9 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
     [Command("setBirthdayRole")]
     [Description("Sets the role that will be given to the user at their birthday")]
     [Parameter(Name = "role", Description = "The role that will be given to the user at their birthday", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
-    public async Task SetupBirthdayRoleCommandAsync(SocketSlashCommand context, IGuild guild)
+    public async Task SetupBirthdayRoleCommandAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
         var role = await RequireRoleAsync(context);

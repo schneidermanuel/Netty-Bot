@@ -29,11 +29,16 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
 
     [Command("addReactionRole")]
     [Description("Adds a Reaction Role to an existing Message")]
-    [Parameter(Name = "emote", Description = "The emote to react with", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
-    [Parameter(Name = "role", Description = "The role to assign", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
-    [Parameter(Name = "message", Description = "The ID of the Message. Rightclick => Copy ID", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task AddReactionRoleAsync(SocketSlashCommand context, IGuild guild)
+    [Parameter(Name = "emote", Description = "The emote to react with", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "role", Description = "The role to assign", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Role)]
+    [Parameter(Name = "message", Description = "The ID of the Message. Rightclick => Copy ID", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task AddReactionRoleAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
+
         await RequirePermissionAsync(context, guild, GuildPermission.ManageRoles);
         IMessage message = null;
         try
@@ -51,10 +56,10 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
             await context.RespondAsync(Localize(nameof(ReactionRoleRessources.Error_NotReplied)));
             return;
         }
-        
+
         var emote = GetEmote(await RequireString(context));
         var role = await RequireRoleAsync(context, 2);
-        
+
         if (role == null)
         {
             await context.RespondAsync(
@@ -85,11 +90,16 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
 
     [Command("registerReactionRole")]
     [Description("Registers a Reaction Role to a new Message")]
-    [Parameter(Name = "emote", Description = "The emote to react with", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
-    [Parameter(Name = "role", Description = "The role to assign", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
-    [Parameter(Name = "message", Description = "The message to send", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task RegisterReactionRoleAsync(SocketSlashCommand context, IGuild guild)
+    [Parameter(Name = "emote", Description = "The emote to react with", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "role", Description = "The role to assign", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.Role)]
+    [Parameter(Name = "message", Description = "The message to send", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task RegisterReactionRoleAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
+
         await RequirePermissionAsync(context, guild, GuildPermission.ManageRoles);
         var prefix = await _dataAccess.GetServerPrefixAsync(guild.Id);
         await RequireArg(context, 3, string.Format(Localize(nameof(ReactionRoleRessources.Error_SyntaxError)), prefix));

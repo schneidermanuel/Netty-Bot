@@ -26,8 +26,9 @@ internal class TwitchNotificationCommands : CommandModuleBase, ICommandModule
     [Description("Sends notification whenever a twitch stream is live")]
     [Parameter(Name = "username", Description = "The twitch username", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
     [Parameter(Name = "message", Description = "The message sent when the stream starts", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task RegisterTwitchChannel(SocketSlashCommand context, IGuild guild)
+    public async Task RegisterTwitchChannel(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
         var channelId = context.Channel.Id;
@@ -60,8 +61,9 @@ internal class TwitchNotificationCommands : CommandModuleBase, ICommandModule
     [Command("unregisterTwitch")]
     [Description("Unregisters a twitch channel from the notification service")]
     [Parameter(Name = "username", Description = "The twitch username", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task UnregisterTwitchChannel(SocketSlashCommand context, IGuild guild)
+    public async Task UnregisterTwitchChannel(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
         var isRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, guild.Id);

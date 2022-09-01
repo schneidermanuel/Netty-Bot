@@ -32,8 +32,9 @@ internal class AutoModCommands : CommandModuleBase, ICommandModule
     [Description("Lists all available configs for a module")]
     [Parameter(Name = "module", Description = "The module to list configs for", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task ListConfigsAsync(SocketSlashCommand context, IGuild guild)
+    public async Task ListConfigsAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var module = await RequireString(context);
         var configs = _manager.GetAvailableConfigs(module);
@@ -55,8 +56,9 @@ internal class AutoModCommands : CommandModuleBase, ICommandModule
 
     [Command("automod-list")]
     [Description("Lists all available automod modules")]
-    public async Task ListModulesAsync(SocketSlashCommand context, IGuild guild)
+    public async Task ListModulesAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var modules = _manager.GetModules(guild.Id);
         var content = string.Empty;
@@ -84,8 +86,9 @@ internal class AutoModCommands : CommandModuleBase, ICommandModule
         ParameterType = ApplicationCommandOptionType.String)]
     [Parameter(Name = "value", Description = "The value to be changed to", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task ConfigureModuleAsync(SocketSlashCommand context, IGuild guild)
+    public async Task ConfigureModuleAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         var module = await RequireString(context);
         await RequireExistingRule(context, module);
         if (!_manager.IsRuleEnabledForGuild(module, guild.Id))
@@ -132,8 +135,9 @@ internal class AutoModCommands : CommandModuleBase, ICommandModule
     [Description("Enables a rule")]
     [Parameter(Name = "rule", Description = "The rule to enable", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task EnableModuleAsync(SocketSlashCommand context, IGuild guild)
+    public async Task EnableModuleAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var module = await RequireString(context);
         await RequireExistingRule(context, module);
@@ -151,8 +155,9 @@ internal class AutoModCommands : CommandModuleBase, ICommandModule
     [Description("Disables a rule")]
     [Parameter(Name = "rule", Description = "The rule to disable", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task DisableModuleAsync(SocketSlashCommand context, IGuild guild)
+    public async Task DisableModuleAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var module = await RequireString(context);
         await RequireExistingRule(context, module);

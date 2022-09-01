@@ -31,8 +31,9 @@ internal class YoutubeNotificationCommands : CommandModuleBase, ICommandModule
     [Description("Register a channel to receive youtube notifications")]
     [Parameter(Name = "channelid", Description = "The channel-id of the channel to register", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
     [Parameter(Name = "message", Description = "The message to send when a video is uploaded", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task RegisterYoutubeAsync(SocketSlashCommand context, IGuild guild)
+    public async Task RegisterYoutubeAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var youtubeChannelId = await RequireString(context);
         var guildId = guild.Id;
@@ -76,8 +77,9 @@ internal class YoutubeNotificationCommands : CommandModuleBase, ICommandModule
     [Command("unregisterYoutube")]
     [Description("Unregister a channel from receiving youtube notifications")]
     [Parameter(Name = "channelid", Description = "The channel-id of the channel to unregister", IsOptional = false, ParameterType = ApplicationCommandOptionType.String)]
-    public async Task UnregisterYoutubeAsync(SocketSlashCommand context, IGuild guild)
+    public async Task UnregisterYoutubeAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         var youtubeChannelId = await RequireString(context);
         var guildId = guild.Id;
         var isAlreadyRegistered =

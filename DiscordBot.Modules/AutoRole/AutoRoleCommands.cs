@@ -26,8 +26,9 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
     [Command("autoRole-delete")]
     [Description("Delete an auto role setup")]
     [Parameter(Name = "role", Description = "The role to delete", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
-    public async Task DeleteAutoRoleSetupAsync(SocketSlashCommand context, IGuild guild)
+    public async Task DeleteAutoRoleSetupAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         var role = await RequireRoleAsync(context);
         var setups = (await _businessLogic.RetrieveAllSetupsForGuildAsync(guild.Id)).ToArray();
         if (setups.All(setup => setup.RoleId != role.Id))
@@ -45,8 +46,10 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
 
     [Command("autoRole-list")]
     [Description("Lists all auto roles")]
-    public async Task ListAutoRolesAsync(SocketSlashCommand context, IGuild guild)
+    public async Task ListAutoRolesAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
+
         var setups = await _businessLogic.RetrieveAllSetupsForGuildAsync(guild.Id);
         var output = setups.Select(autoRoleSetup =>
                 new { Role = guild.GetRole(autoRoleSetup.RoleId), Id = autoRoleSetup.RoleId })
@@ -65,8 +68,9 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
     [Description("Assignes a role to every user joinig the server")]
     [Parameter(Name = "role", Description = "The role to assign", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.Role)]
-    public async Task AddAutoRoleAsync(SocketSlashCommand context, IGuild guild)
+    public async Task AddAutoRoleAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.ManageRoles);
         var role = await RequireRoleAsync(context);
         if (role == null)

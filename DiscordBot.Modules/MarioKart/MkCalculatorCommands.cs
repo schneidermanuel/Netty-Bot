@@ -44,7 +44,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         ParameterType = ApplicationCommandOptionType.Integer)]
     [Parameter(Name = "Comment", Description = "Use any comment you want", IsOptional = true,
         ParameterType = ApplicationCommandOptionType.String)]
-    public async Task CalculateAsync(SocketSlashCommand context, IGuild guild)
+    public async Task CalculateAsync(SocketSlashCommand context)
     {
         await RequireArg(context, 6, Localize(nameof(MarioKartRessources.Error_Enter6Numbers)));
         var places = new List<int>();
@@ -79,7 +79,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
     [Command("mkrevert")]
     [Description("Reverts the last Mario Kart Race")]
-    public async Task RevertGameAsync(SocketSlashCommand context, IGuild guild)
+    public async Task RevertGameAsync(SocketSlashCommand context)
     {
         if (!await _manager.CanRevertAsync(context.Channel.Id))
         {
@@ -118,7 +118,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     [Command("mkdisplay")]
     [Description(
         "Creates a link to use in your OBS Browser Source")]
-    public async Task MkDisplayAsync(SocketSlashCommand context, IGuild guild)
+    public async Task MkDisplayAsync(SocketSlashCommand context)
     {
         await context.Channel.SendMessageAsync(
             "https://mk-leaderboard.netty-bot.com?key=" + context.Channel.Id);
@@ -126,7 +126,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
     [Command("mkcomplete")]
     [Description("Completes the current Mario Kart War")]
-    public async Task FinishAsync(SocketSlashCommand context, IGuild guild)
+    public async Task FinishAsync(SocketSlashCommand context)
     {
         var result = _manager.GetFinalResult(context.Channel.Id);
         var games = (await _manager.RetriveHistoryAsync(result.GameId)).ToArray();
@@ -178,7 +178,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         ParameterType = ApplicationCommandOptionType.String)]
     [Parameter(Name = "ccm", Description = "The ccm to display the WR for", IsOptional = true,
         ParameterType = ApplicationCommandOptionType.Integer)]
-    public async Task WorldReccordCommandAsync(SocketSlashCommand context, IGuild guild)
+    public async Task WorldReccordCommandAsync(SocketSlashCommand context)
     {
         await RequireArg(context, 1, Localize(nameof(MarioKartRessources.Error_MkwrSyntax)));
 

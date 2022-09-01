@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Security;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -31,9 +32,20 @@ public abstract class CommandModuleBase : ICommandModule
     private string _language = string.Empty;
     private readonly IModuleDataAccess _dataAccess;
 
-    public async Task InitializeAsync(SocketCommandContext context)
+    public async Task InitializeAsync(SocketSlashCommand context)
     {
         _language = await _dataAccess.GetUserLanguageAsync(context.User.Id);
+    }
+
+    protected async Task<IGuild> RequireGuild(SocketSlashCommand context)
+    {
+        if (context.Channel is IGuildChannel guildChannel)
+        {
+            return guildChannel.Guild;
+        }
+
+        await context.RespondAsync(Localize(nameof(BaseRessources.Error_NotAGuild), typeof(BaseRessources)));
+        throw new InvalidOperationException();
     }
 
     public Dictionary<string, MethodInfo> BuildCommandInfos()

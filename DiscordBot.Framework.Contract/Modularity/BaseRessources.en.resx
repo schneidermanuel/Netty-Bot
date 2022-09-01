@@ -17,4 +17,7 @@
     <data name="Error_NotAnInt" xml:space="preserve">
         <value>The expression '{0}' could not be parsed: expected number</value>
     </data>
+    <data name="Error_NotAGuild" xml:space="preserve">
+        <value>Can only be used on a server</value>
+    </data>
 </root>

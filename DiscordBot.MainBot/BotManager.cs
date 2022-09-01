@@ -62,7 +62,6 @@ public class BotManager
         Client.Ready += ClientReady;
         Client.Log += Log;
         Client.MessageReceived += MessageRecieved;
-        Client.GuildAvailable += GuildAvailable;
         Client.SlashCommandExecuted += SlashCommandRecieved;
         await Client.LoginAsync(TokenType.Bot, BotClientConstants.BotToken);
         Console.WriteLine("Logged in");
@@ -77,29 +76,27 @@ public class BotManager
             await slashCommand.RespondAsync("check https://netty-bot.com/ for help");
             return;
         }
+
         try
         {
-            var guild = ((SocketGuildChannel)slashCommand.Channel).Guild;
-
             var command = _slashCommands.Single(cmd => cmd.Key == slashCommand.CommandName);
             var commandInfo = command.Value;
-            if (!await _dataAccess.IsModuleEnabledForGuild(guild.Id, command.Value.CommandModule.ModuleUniqueIdentifier))
+            try
             {
-                return;
+                await commandInfo.CommandModule.InitializeAsync(slashCommand);
+                commandInfo.MethodInfo.Invoke(commandInfo.CommandModule, new object[] { slashCommand });
             }
-            commandInfo.MethodInfo.Invoke(commandInfo.CommandModule, new object[] { slashCommand, guild });
+            catch (Exception e)
+            {
+                //Ignored
+            }
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
     }
-
-    private async Task GuildAvailable(SocketGuild arg)
-    {
-        _ = RegisterSlashCommandsAsync(arg);
-    }
-
+    
     private async Task MessageRecieved(SocketMessage arg)
     {
         if (!_isReady)
@@ -150,11 +147,12 @@ public class BotManager
         await Client.SetStatusAsync(UserStatus.Online);
         await Client.SetActivityAsync(new Game("Booting..."));
 
+        await RegisterSlashCommandsAsync();
         var builder = new SlashCommandBuilder();
         builder.WithName("help");
         builder.WithDescription("Sends some help");
         await Client.CreateGlobalApplicationCommandAsync(builder.Build());
-        
+
         var postBootTasks = _timedActions.Where(x => x.GetExecutionTime() == ExecutionTime.PostBoot)
             .Select(x => x.ExecuteAsync(Client));
         await Task.WhenAll(postBootTasks);
@@ -163,19 +161,6 @@ public class BotManager
         var hourlyStuffThread = new Thread(HourlyStuff);
         dailyStuffThread.Start();
         hourlyStuffThread.Start();
-        foreach (var clientGuild in Client.Guilds)
-        {
-            try
-            {
-                var commands = await clientGuild.GetApplicationCommandsAsync();
-                // Everything Good, bot has Command Access
-            }
-            catch (Exception e)
-            {
-                // Not Good, Bot does NOT have Command Scope Access
-                Console.WriteLine($"I do not have the access rights from '{clientGuild.Owner}' for '{clientGuild.Name}'");
-            }
-        }
     }
 
     private async void HourlyStuff()
@@ -215,7 +200,7 @@ public class BotManager
         await Task.WhenAll(dailyTasks);
     }
 
-    private async Task RegisterSlashCommandsAsync(IGuild guild)
+    private async Task RegisterSlashCommandsAsync()
     {
         try
         {
@@ -233,17 +218,16 @@ public class BotManager
                     builder.AddOption(parameterAttribute.Name.ToLower(), parameterAttribute.ParameterType,
                         parameterAttribute.Description, !parameterAttribute.IsOptional);
                 }
+
                 try
                 {
-                    await guild.CreateApplicationCommandAsync(builder.Build());
+                    await Client.CreateGlobalApplicationCommandAsync(builder.Build());
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                 }
             }
-
-            Console.WriteLine("Registered Slash Commands on " + guild.Name);
         }
         catch (Exception e)
         {
