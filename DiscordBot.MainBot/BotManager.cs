@@ -146,6 +146,10 @@ public class BotManager
         Client.Ready -= ClientReady;
         await Client.SetStatusAsync(UserStatus.Online);
         await Client.SetActivityAsync(new Game("Booting..."));
+        foreach (var guild in Client.Guilds)
+        {
+            await guild.DeleteApplicationCommandsAsync();
+        }
 
         await RegisterSlashCommandsAsync();
         var builder = new SlashCommandBuilder();
