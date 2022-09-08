@@ -11,9 +11,11 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
     private TwitchAPI _api;
     private Func<StreamerInformation, Task> _callback;
     private List<string> _listening;
+    private Dictionary<string, DateTime> _timeout;
 
     public void Initialize(Func<StreamerInformation, Task> callback)
     {
+        _timeout = new Dictionary<string, DateTime>();
         _listening = new List<string>();
         _client = new TwitchPubSub();
         _client.OnPubSubServiceConnected += ServerConnected;
@@ -60,6 +62,7 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         {
             _client.ListenToVideoPlayback(listening);
         }
+
         _client.Connect();
         await Task.CompletedTask;
     }
@@ -73,6 +76,21 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         }
 
         var channel = data.Data.First();
+
+        if (_timeout.ContainsKey(channel.BroadcasterName) &&
+            _timeout[channel.BroadcasterName] > DateTime.Now.AddMinutes(-30))
+        {
+            Console.WriteLine("In Timeout - not sendung");
+            return;
+        }
+
+        if (!_timeout.ContainsKey(channel.BroadcasterName))
+        {
+            _timeout.Add(channel.BroadcasterName, DateTime.Now);
+        }
+
+        _timeout[channel.BroadcasterName] = DateTime.Now;
+
         var userResponse = await _api.Helix.Users.GetUsersAsync(new List<string> { channel.BroadcasterId });
         Console.WriteLine("STREAM UP: " + channel.BroadcasterName);
         if (!userResponse.Users.Any())
