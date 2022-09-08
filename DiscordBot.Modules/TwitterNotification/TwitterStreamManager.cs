@@ -91,7 +91,8 @@ internal class TwitterStreamManager
                     .GetChannel(registration.ChannelId);
                 var builder = new EmbedBuilder();
                 builder.WithColor(Color.Blue);
-                builder.WithThumbnailUrl("https://unavatar.io/twitter/" + tweet.Author.Username);
+                builder.WithThumbnailUrl("https://unavatar.io/twitter/" + tweet.Author.Username + "?fallback=" +
+                                         DateTimeOffset.Now.ToUnixTimeSeconds());
                 var title = BuildTitle(tweet);
                 builder.WithDescription(tweet.Text);
                 builder.WithCurrentTimestamp();
