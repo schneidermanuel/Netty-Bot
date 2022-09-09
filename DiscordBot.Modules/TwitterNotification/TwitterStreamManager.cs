@@ -7,6 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
 using DiscordBot.DataAccess.Contract.TwitterRegistration.BusinessLogic;
+using DiscordBot.Modules.TwitterNotification.TweetDataExtraction;
 using TwitterSharp.Client;
 using TwitterSharp.Request;
 using TwitterSharp.Request.AdvancedSearch;
@@ -26,18 +27,21 @@ internal class TwitterStreamManager
     private IList<TwitterRegistrationDto> _registrations;
     private readonly ITwitterRegistrationBusinessLogic _businessLogic;
     private readonly TwitterRuleValidator _ruleValidator;
+    private readonly IEnumerable<IExtractionStrategy> _extractionStrategies;
     private Task _task;
 
     public TwitterStreamManager(DiscordSocketClient discordSocketClient, TwitterClient client,
         IList<TwitterRegistrationDto> registrations,
         ITwitterRegistrationBusinessLogic businessLogic,
-        TwitterRuleValidator ruleValidator)
+        TwitterRuleValidator ruleValidator,
+        IEnumerable<IExtractionStrategy> extractionStrategies)
     {
         _discordSocketClient = discordSocketClient;
         _client = client;
         _registrations = registrations;
         _businessLogic = businessLogic;
         _ruleValidator = ruleValidator;
+        _extractionStrategies = extractionStrategies;
         _listenedUsers = new List<string>();
     }
 
@@ -91,13 +95,14 @@ internal class TwitterStreamManager
                     .GetChannel(registration.ChannelId);
                 var builder = new EmbedBuilder();
                 builder.WithColor(Color.Blue);
-                builder.WithThumbnailUrl("https://unavatar.io/twitter/" + tweet.Author.Username + "?fallback=" +
-                                         DateTimeOffset.Now.ToUnixTimeSeconds());
-                var title = BuildTitle(tweet);
-                builder.WithDescription(tweet.Text);
+                var tweetData = ExtractTweetData(tweet);
+                builder.WithThumbnailUrl(tweetData.ProfileImage);
+                builder.WithDescription(tweetData.Text);
                 builder.WithCurrentTimestamp();
-                builder.WithTitle(title);
+                builder.WithTitle(tweetData.Title);
                 builder.WithUrl($"https://twitter.com/{tweet.Author.Username}/status/{tweet.Id}");
+                builder.WithImageUrl(tweetData.MediaUrl);
+
                 await channel.SendMessageAsync(registration.Message, false, builder.Build());
             }
             catch (Exception)
@@ -108,17 +113,12 @@ internal class TwitterStreamManager
         }
     }
 
-    private string BuildTitle(Tweet tweet)
+    private TweetData ExtractTweetData(Tweet tweet)
     {
-        if (Regex.IsMatch(tweet.Text, "^RT @.*:.*"))
-        {
-            var originalUser = tweet.Text.Split(":")[0].Remove(0, 3);
-            return $"{tweet.Author.Name} Retweeted {originalUser}";
-        }
-
-        return $"{tweet.Author.Name} Tweeted";
+        var strategy = _extractionStrategies.Single(strategy => strategy.IsResponsible(tweet));
+        return strategy.Build(tweet);
     }
-
+    
     public async Task RegisterTwitterUserAsync(TwitterRegistrationDto registrationDto)
     {
         var username = registrationDto.Username;

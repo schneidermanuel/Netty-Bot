@@ -64,21 +64,21 @@ internal class TwitterRuleValidator
             switch (ruleParts[i])
             {
                 case IsNormalKey:
-                    if ((IsRetweet(tweet) || IsAnswer(tweet)) ^ isInverted)
+                    if ((tweet.IsRetweet() || tweet.IsAnswer()) ^ isInverted)
                     {
                         return false;
                     }
 
                     break;
                 case IsReply:
-                    if (!IsAnswer(tweet) ^ isInverted)
+                    if (!tweet.IsAnswer() ^ isInverted)
                     {
                         return false;
                     }
 
                     break;
                 case IsRetweetKey:
-                    if (!IsRetweet(tweet) ^ isInverted)
+                    if (!tweet.IsRetweet() ^ isInverted)
                     {
                         return false;
                     }
@@ -103,15 +103,5 @@ internal class TwitterRuleValidator
         }
 
         return true;
-    }
-
-    private bool IsAnswer(Tweet tweet)
-    {
-        return Regex.Match(tweet.Text, @"^@.*").Success;
-    }
-
-    private static bool IsRetweet(Tweet tweet)
-    {
-        return Regex.Match(tweet.Text, @"^RT @.*\:.*").Success;
     }
 }
