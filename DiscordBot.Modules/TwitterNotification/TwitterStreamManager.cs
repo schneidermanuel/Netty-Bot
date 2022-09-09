@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
 using DiscordBot.DataAccess.Contract.TwitterRegistration.BusinessLogic;
-using DiscordBot.Modules.TwitterNotification.TweetDataExtraction;
 using TwitterSharp.Client;
 using TwitterSharp.Request;
 using TwitterSharp.Request.AdvancedSearch;
@@ -27,21 +25,18 @@ internal class TwitterStreamManager
     private IList<TwitterRegistrationDto> _registrations;
     private readonly ITwitterRegistrationBusinessLogic _businessLogic;
     private readonly TwitterRuleValidator _ruleValidator;
-    private readonly IEnumerable<IExtractionStrategy> _extractionStrategies;
     private Task _task;
 
     public TwitterStreamManager(DiscordSocketClient discordSocketClient, TwitterClient client,
         IList<TwitterRegistrationDto> registrations,
         ITwitterRegistrationBusinessLogic businessLogic,
-        TwitterRuleValidator ruleValidator,
-        IEnumerable<IExtractionStrategy> extractionStrategies)
+        TwitterRuleValidator ruleValidator)
     {
         _discordSocketClient = discordSocketClient;
         _client = client;
         _registrations = registrations;
         _businessLogic = businessLogic;
         _ruleValidator = ruleValidator;
-        _extractionStrategies = extractionStrategies;
         _listenedUsers = new List<string>();
     }
 
@@ -93,17 +88,8 @@ internal class TwitterStreamManager
 
                 var channel = (SocketTextChannel)_discordSocketClient.GetGuild(registration.GuildId)
                     .GetChannel(registration.ChannelId);
-                var builder = new EmbedBuilder();
-                builder.WithColor(Color.Blue);
-                var tweetData = ExtractTweetData(tweet);
-                builder.WithThumbnailUrl(tweetData.ProfileImage);
-                builder.WithDescription(tweetData.Text);
-                builder.WithCurrentTimestamp();
-                builder.WithTitle(tweetData.Title);
-                builder.WithUrl($"https://twitter.com/{tweet.Author.Username}/status/{tweet.Id}");
-                builder.WithImageUrl(tweetData.MediaUrl);
 
-                await channel.SendMessageAsync(registration.Message, false, builder.Build());
+                await channel.SendMessageAsync(registration.Message + "\n" + $"https://twitter.com/{tweet.Author.Username}/status/{tweet.Id}");
             }
             catch (Exception)
             {
@@ -111,12 +97,6 @@ internal class TwitterStreamManager
                     $"Registration {registration.GuildId}/{registration.ChannelId}:{registration.Username} could not be processed");
             }
         }
-    }
-
-    private TweetData ExtractTweetData(Tweet tweet)
-    {
-        var strategy = _extractionStrategies.Single(strategy => strategy.IsResponsible(tweet));
-        return strategy.Build(tweet);
     }
     
     public async Task RegisterTwitterUserAsync(TwitterRegistrationDto registrationDto)
