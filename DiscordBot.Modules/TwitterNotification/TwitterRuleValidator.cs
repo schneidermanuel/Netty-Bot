@@ -91,7 +91,7 @@ internal class TwitterRuleValidator
                 case ContainsKey:
                     i++;
                     var word = ruleParts[i];
-                    if (!tweet.Text.Contains(word) ^ isInverted)
+                    if (!tweet.Text.ToLower().Contains(word.ToLower()) ^ isInverted)
                     {
                         return false;
                     }
