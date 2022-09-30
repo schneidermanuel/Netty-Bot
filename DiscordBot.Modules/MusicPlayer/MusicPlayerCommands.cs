@@ -40,16 +40,19 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
         ParameterType = ApplicationCommandOptionType.String)]
     public async Task PlayCommand(SocketSlashCommand context)
     {
+        await context.DeferAsync();
+        var songname = await RequireString(context);
         try
         {
             var guild = await RequireGuild(context);
             var voiceState = context.User as IVoiceState;
-            var songname = await RequireString(context);
             if (!await PlaySongAsync(songname, context.Channel, guild, voiceState)) return;
-            await context.RespondAsync("🤝");
+            await context.ModifyOriginalResponseAsync(options => options.Content = "🤝");
         }
         catch (Exception e)
         {
+            await context.ModifyOriginalResponseAsync(options =>
+                options.Content = string.Format(Localize(nameof(MusicPlayerRessources.Error_SongNotFound)), songname));
             Console.WriteLine(e);
         }
     }
@@ -246,6 +249,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
             await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_TooManyPlaylists)));
             return;
         }
+
         var guild = await RequireGuild(context);
 
         var title = await RequireString(context);
