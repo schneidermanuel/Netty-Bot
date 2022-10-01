@@ -27,7 +27,7 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<AutoRoleModule>();
         builder.RegisterModule<AutoModModule>();
         builder.RegisterModule<MkCalculatorModule>();
-        builder.RegisterModule<ServerCoutnerModule>();
+        // builder.RegisterModule<ServerCoutnerModule>();
         builder.RegisterModule<ConfigurationModule>();
         builder.RegisterModule<TwitterModule>();
     }
