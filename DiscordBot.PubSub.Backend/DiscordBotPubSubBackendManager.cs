@@ -44,14 +44,14 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         {
             var guildId = context.Request.Query["guildId"];
             var userId = context.Request.Query["userId"];
-            if (_client.Guilds.All(guild => guild.Id != guildId))
+            if (_client.Guilds.All(guild => !guild.Id.ToString().Equals(guildId.ToString())))
             {
                 await Responsd(context, "NotAdded");
                 await context.Response.CompleteAsync();
                 return;
             }
 
-            var guild = _client.Guilds.Single(guild => guild.Id == guildId);
+            var guild = _client.Guilds.Single(guild => guild.Id.ToString().Equals(guildId.ToString()));
             if (guild.GetUser(ulong.Parse(userId)).GuildPermissions.Administrator)
             {
                 await Responsd(context, "Normal");
