@@ -2,15 +2,24 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Discord.WebSocket;
 using DiscordBot.Framework.Contract;
 using DiscordBot.PubSub.Backend.Data;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 
 namespace DiscordBot.PubSub.Backend;
 
 internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 {
+    private readonly DiscordSocketClient _client;
     private Func<YoutubeNotification, Task> _callback;
+
+    public DiscordBotPubSubBackendManager(DiscordSocketClient client)
+    {
+        _client = client;
+    }
 
     public void Run(Func<YoutubeNotification, Task> callback)
     {
@@ -22,10 +31,43 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
         app.MapGet("/", ProcessGet);
         app.MapPost("/", ProcessPost);
+        app.MapGet("/GuildStatus", ProcessGuilds);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessGuilds(HttpContext context)
+    {
+        try
+        {
+            var guildId = context.Request.Query["guildId"];
+            var userId = context.Request.Query["userId"];
+            if (_client.Guilds.All(guild => guild.Id != guildId))
+            {
+                await Responsd(context, "NotAdded");
+                await context.Response.CompleteAsync();
+                return;
+            }
+
+            var guild = _client.Guilds.Single(guild => guild.Id == guildId);
+            if (guild.GetUser(ulong.Parse(userId)).GuildPermissions.Administrator)
+            {
+                await Responsd(context, "Normal");
+            }
+            else
+            {
+                await Responsd(context, "MissingPermission");
+            }
+
+            await context.Response.CompleteAsync();
+        }
+        catch
+        {
+            context.Response.StatusCode = 400;
+            await context.Response.CompleteAsync();
+        }
     }
 
     private async Task ProcessPost(HttpContext context)
@@ -66,8 +108,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
             if (!string.IsNullOrEmpty(challenge))
             {
-                var bytes = Encoding.UTF8.GetBytes(challenge);
-                await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+                await Responsd(context, challenge);
             }
 
             await context.Response.CompleteAsync();
@@ -76,6 +117,12 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         {
             Console.WriteLine(e);
         }
+    }
+
+    private static async Task Responsd(HttpContext context, StringValues response)
+    {
+        var bytes = Encoding.UTF8.GetBytes(response);
+        await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
     }
 
     private YoutubeNotification ConvertAtomToSyndication(Stream stream)
