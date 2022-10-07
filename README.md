@@ -1,6 +1,5 @@
-# DiscordBotBeta
+# Netty
 
-> Note: This Bot is currently in beta state. Bugs may and will occur.
 
 ## Donation
 
