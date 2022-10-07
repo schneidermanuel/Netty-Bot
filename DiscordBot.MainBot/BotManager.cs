@@ -145,7 +145,7 @@ public class BotManager
     {
         Client.Ready -= ClientReady;
         await Client.SetStatusAsync(UserStatus.Online);
-        await Client.SetActivityAsync(new StreamingGame("#BrainyCharity 24h Stream!", "https://www.youtube.com/watch?v=0s8HwLTUUD8"));
+        await Client.SetActivityAsync(new Game("Booting..."));
 
         await RegisterSlashCommandsAsync();
         var builder = new SlashCommandBuilder();
