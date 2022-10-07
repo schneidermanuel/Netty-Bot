@@ -141,18 +141,10 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     {
         var result = _manager.GetFinalResult(context.Channel.Id);
         var games = (await _manager.RetriveHistoryAsync(result.GameId)).ToArray();
-        var embedBuilder = new EmbedBuilder();
-        embedBuilder.WithColor(Color.Gold);
-        embedBuilder.WithCurrentTimestamp();
-        embedBuilder.WithTitle("Mario Kart Final Result");
-        embedBuilder.WithThumbnailUrl(
-            "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
-        embedBuilder.WithDescription(BuildFinalDescription(result, games));
-
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
         _manager.EndGame(context.Channel.Id);
         var url = BuildChartUrl(games);
-        await context.RespondAsync(url);
+        ExecuteBashCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
+        await context.RespondWithFileAsync(new FileAttachment("./screenshot.png"));
     }
 
     private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)
