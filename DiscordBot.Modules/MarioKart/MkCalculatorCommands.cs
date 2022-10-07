@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -59,21 +60,31 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var result = _calculator.Calculate(places);
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
+        
+        ExecuteBashCommand($"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
+        await context.RespondWithFileAsync(new FileAttachment("./screenshot.png"));
+    }
 
+    private static void ExecuteBashCommand(string command)
+    {
+        // according to: https://stackoverflow.com/a/15262019/637142
+        // thans to this we will pass everything as one command
+        command = command.Replace("\"", "\"\"");
 
-        var embedBuilder = new EmbedBuilder();
-        embedBuilder.WithColor(Color.Gold);
-        embedBuilder.WithCurrentTimestamp();
-        embedBuilder.WithTitle("Mario Kart Result");
-        embedBuilder.WithThumbnailUrl(await GetThumbnailUrlAsync(comment));
-        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_RaceResult)),
-            result.Points.To3CharString(), result.Difference.To3CharString(),
-            result.EnemyPoints.To3CharString(),
-            sumResult.Points.To3CharString(),
-            sumResult.Difference.To3CharString(),
-            sumResult.EnemyPoints.To3CharString()));
+        var proc = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = "-c \"" + command + "\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            }
+        };
 
-        await context.RespondAsync("", new[] { embedBuilder.Build() });
+        proc.Start();
+        proc.WaitForExit();
     }
 
 

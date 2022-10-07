@@ -164,6 +164,11 @@ public abstract class CommandModuleBase : ICommandModule
         }
     }
 
+    protected string GetPreferedLanguage()
+    {
+        return _language;
+    }
+
     protected string Localize(string ressource, Type ressourceType = null)
     {
         ressourceType ??= RessourceType;
