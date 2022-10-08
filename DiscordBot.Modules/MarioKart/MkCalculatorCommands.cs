@@ -62,22 +62,20 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
-        ExecuteBashCommand($"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
+        TakeScreenshot($"-screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
+        TakeScreenshot("chmod 777 screenshot.png");
         await context.RespondWithFileAsync(new FileAttachment(File.Open("screenshot.png", FileMode.Open), "table.png"));
     }
 
-    private static void ExecuteBashCommand(string command)
+    private static void TakeScreenshot(string arguments)
     {
-        // according to: https://stackoverflow.com/a/15262019/637142
-        // thans to this we will pass everything as one command
-        command = command.Replace("\"", "\"\"");
 
         var proc = new Process
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = "/bin/bash",
-                Arguments = "-c \"" + command + "\"",
+                FileName = "/usr/bin/firefox",
+                Arguments = arguments,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true
@@ -86,6 +84,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
         proc.Start();
         proc.WaitForExit();
+        Console.WriteLine("Screenshot taken");
     }
 
 
@@ -145,7 +144,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         _manager.EndGame(context.Channel.Id);
         var url = BuildChartUrl(games);
         await context.DeferAsync();
-        ExecuteBashCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
+        TakeScreenshot($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
         await context.RespondWithFileAsync(new FileAttachment(File.Open("screenshot.png", FileMode.Open), "table.png"));
     }
 
