@@ -62,20 +62,23 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
-        TakeScreenshot($"-screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
+        TakeScreenshot($"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
         TakeScreenshot("chmod 777 screenshot.png");
         await context.RespondWithFileAsync(new FileAttachment(File.Open("screenshot.png", FileMode.Open), "table.png"));
     }
 
     private static void TakeScreenshot(string arguments)
     {
+        // according to: https://stackoverflow.com/a/15262019/637142
+        // thans to this we will pass everything as one command
+        arguments = arguments.Replace("\"", "\"\"");
 
         var proc = new Process
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = "/usr/bin/firefox",
-                Arguments = arguments,
+                FileName = "/bin/bash",
+                Arguments = "-c \"" + arguments + "\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true
