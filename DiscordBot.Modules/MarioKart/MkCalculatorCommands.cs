@@ -62,8 +62,14 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
-        TakeScreenshot($"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
-        await context.ModifyOriginalResponseAsync(option => option.Attachments = new Optional<IEnumerable<FileAttachment>>(new []{new FileAttachment("screenshot.png")}));
+        TakeScreenshot(
+            $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
+        await context.ModifyOriginalResponseAsync(option =>
+        {
+            option.Content = "Test";
+            option.Attachments =
+                new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
+        });
     }
 
     private static void TakeScreenshot(string arguments)
@@ -147,7 +153,9 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var url = BuildChartUrl(games);
         await context.DeferAsync();
         TakeScreenshot($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
-        await context.ModifyOriginalResponseAsync(option => option.Attachments = new Optional<IEnumerable<FileAttachment>>(new []{new FileAttachment("screenshot.png")}));
+        await context.ModifyOriginalResponseAsync(option =>
+            option.Attachments =
+                new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") }));
     }
 
     private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)
