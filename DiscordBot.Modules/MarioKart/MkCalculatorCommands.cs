@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
         ExecuteBashCommand($"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
-        await context.RespondWithFileAsync(new FileAttachment("./screenshot.png"));
+        await context.RespondWithFileAsync(new FileAttachment(File.Open("screenshot.png", FileMode.Open), "table.png"));
     }
 
     private static void ExecuteBashCommand(string command)
@@ -145,7 +146,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var url = BuildChartUrl(games);
         await context.DeferAsync();
         ExecuteBashCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
-        await context.RespondWithFileAsync(new FileAttachment("./screenshot.png"));
+        await context.RespondWithFileAsync(new FileAttachment(File.Open("screenshot.png", FileMode.Open), "table.png"));
     }
 
     private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)

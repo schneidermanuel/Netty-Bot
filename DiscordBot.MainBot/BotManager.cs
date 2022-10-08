@@ -81,22 +81,15 @@ public class BotManager
         {
             var command = _slashCommands.Single(cmd => cmd.Key == slashCommand.CommandName);
             var commandInfo = command.Value;
-            try
-            {
-                await commandInfo.CommandModule.InitializeAsync(slashCommand);
-                commandInfo.MethodInfo.Invoke(commandInfo.CommandModule, new object[] { slashCommand });
-            }
-            catch (Exception e)
-            {
-                //Ignored
-            }
+            await commandInfo.CommandModule.InitializeAsync(slashCommand);
+            commandInfo.MethodInfo.Invoke(commandInfo.CommandModule, new object[] { slashCommand });
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
     }
-    
+
     private async Task MessageRecieved(SocketMessage arg)
     {
         if (!_isReady)
