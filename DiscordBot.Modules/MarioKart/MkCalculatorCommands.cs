@@ -62,17 +62,17 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
-        TakeScreenshot(
+        ExecuteShellCommand(
             $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
         await context.ModifyOriginalResponseAsync(option =>
         {
-            option.Content = "Test";
+            option.Content = "🤝";
             option.Attachments =
                 new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
         });
     }
 
-    private static void TakeScreenshot(string arguments)
+    private static void ExecuteShellCommand(string arguments)
     {
         // according to: https://stackoverflow.com/a/15262019/637142
         // thans to this we will pass everything as one command
@@ -152,10 +152,13 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         _manager.EndGame(context.Channel.Id);
         var url = BuildChartUrl(games);
         await context.DeferAsync();
-        TakeScreenshot($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
+        ExecuteShellCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
         await context.ModifyOriginalResponseAsync(option =>
+        {
+            option.Content = "🤝";
             option.Attachments =
-                new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") }));
+                new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
+        });
     }
 
     private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)
