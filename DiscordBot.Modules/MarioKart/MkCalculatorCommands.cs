@@ -63,8 +63,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
         TakeScreenshot($"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
-        TakeScreenshot("chmod 777 screenshot.png");
-        await context.RespondWithFileAsync(new FileAttachment(File.Open("screenshot.png", FileMode.Open), "table.png"));
+        await context.ModifyOriginalResponseAsync(option => option.Attachments = new Optional<IEnumerable<FileAttachment>>(new []{new FileAttachment("screenshot.png")}));
     }
 
     private static void TakeScreenshot(string arguments)
@@ -148,7 +147,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var url = BuildChartUrl(games);
         await context.DeferAsync();
         TakeScreenshot($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
-        await context.RespondWithFileAsync(new FileAttachment(File.Open("screenshot.png", FileMode.Open), "table.png"));
+        await context.ModifyOriginalResponseAsync(option => option.Attachments = new Optional<IEnumerable<FileAttachment>>(new []{new FileAttachment("screenshot.png")}));
     }
 
     private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)
