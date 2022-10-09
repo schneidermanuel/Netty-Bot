@@ -32,31 +32,24 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
     [Command("race")]
     [Description("Registers a race to the current Mario Kart War session")]
-    [Parameter(Name = "Player1", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player2", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player3", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player4", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player5", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player6", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Comment", Description = "Use any comment you want", IsOptional = true,
+    [Parameter(Name = "Places", Description = "The space sepperated list of places (1-12)", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
+        [Parameter(Name = "Comment", Description = "A comment", IsOptional = true)]
     public async Task CalculateAsync(SocketSlashCommand context)
     {
-        await RequireArg(context, 6, Localize(nameof(MarioKartRessources.Error_Enter6Numbers)));
-        var places = new List<int>();
-        for (var i = 1; i <= 6; i++)
-        {
-            var place = await RequireIntArg(context, i);
-            places.Add(place);
-        }
+        var placesString = await RequireString(context);
+        var comment = RequireStringOrEmpty(context, 2);
 
-        var comment = RequireStringOrEmpty(context, 7);
+        List<int> places;
+        try
+        {
+            places = placesString.Split(' ').Select(int.Parse).ToList();
+        }
+        catch (Exception)
+        {
+            await context.RespondAsync(Localize(nameof(MarioKartRessources.Error_Enter6Numbers)));
+            return;
+        }
 
         var result = _calculator.Calculate(places);
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
