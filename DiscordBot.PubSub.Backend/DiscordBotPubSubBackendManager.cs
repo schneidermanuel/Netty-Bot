@@ -3,8 +3,11 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Discord.WebSocket;
+using DiscordBot.DataAccess.Contract;
 using DiscordBot.Framework.Contract;
+using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.PubSub.Backend.Data;
+using DiscordBot.PubSub.Backend.Data.Guild;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
@@ -14,11 +17,16 @@ namespace DiscordBot.PubSub.Backend;
 internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 {
     private readonly DiscordSocketClient _client;
+    private readonly IEnumerable<ICommandModule> _modules;
+    private readonly IModuleDataAccess _dataAccess;
     private Func<YoutubeNotification, Task> _callback;
 
-    public DiscordBotPubSubBackendManager(DiscordSocketClient client)
+    public DiscordBotPubSubBackendManager(DiscordSocketClient client, IEnumerable<ICommandModule> modules,
+        IModuleDataAccess dataAccess)
     {
         _client = client;
+        _modules = modules;
+        _dataAccess = dataAccess;
     }
 
     public void Run(Func<YoutubeNotification, Task> callback)
@@ -32,10 +40,48 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/", ProcessGet);
         app.MapPost("/", ProcessPost);
         app.MapGet("/GuildStatus", ProcessGuilds);
+        app.MapGet("/Guild/", ProcessGuild);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessGuild(HttpContext context)
+    {
+        var guildId = context.Request.Query["guildId"];
+        var userId = context.Request.Query["userId"];
+
+        var guild = _client.Guilds.Single(g => g.Id == ulong.Parse(guildId));
+        var user = guild.GetUser(ulong.Parse(userId));
+        if (!user.GuildPermissions.Administrator)
+        {
+            context.Response.StatusCode = 401;
+            await context.Response.CompleteAsync();
+        }
+
+        var moduleIdentifiers = _modules.Select(module => module.ModuleUniqueIdentifier);
+        var modules = new List<Module>();
+        foreach (var module in moduleIdentifiers)
+        {
+            var isEnabled = await _dataAccess.IsModuleEnabledForGuild(guild.Id, module);
+            modules.Add(new Module
+            {
+                Enabled = isEnabled,
+                UniqueKey = module
+            });
+        }
+
+        var responseGuild = new Guild
+        {
+            Name = guild.Name,
+            IconUrl = guild.IconUrl,
+            Modules = modules
+        };
+
+        var json = JsonConvert.SerializeObject(responseGuild);
+        await Responsd(context, json);
+        await context.Response.CompleteAsync();
     }
 
     private async Task ProcessGuilds(HttpContext context)
