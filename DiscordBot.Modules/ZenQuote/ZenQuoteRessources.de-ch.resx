@@ -11,19 +11,16 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Error_AccountAlreadyRegistered" xml:space="preserve">
-        <value>This registration is already present in the database</value>
+    <data name="Error_QuotesAlreadyDisabled" xml:space="preserve">
+        <value>Da isch gar nöd aktiv gsi du Latschi</value>
     </data>
-    <data name="Message_Registered" xml:space="preserve">
-        <value>Registration successful</value>
+    <data name="Error_QuotesAlreadyEnabled" xml:space="preserve">
+        <value>Da isch schoh so wiets wötsch du Latschi</value>
     </data>
-    <data name="Message_Default" xml:space="preserve">
-        <value>{0} just tweeted something</value>
+    <data name="Message_QuoteDisabled" xml:space="preserve">
+        <value>Zitat abgschaltä</value>
     </data>
-    <data name="Error_InvalidRule" xml:space="preserve">
-        <value>The rule is not valid</value>
-    </data>
-    <data name="Error_AccountNotRegistered" xml:space="preserve">
-        <value>This registration does not exist</value>
+    <data name="Message_QuoteEnabled" xml:space="preserve">
+        <value>Zitat igschaltä</value>
     </data>
 </root>

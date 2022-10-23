@@ -1,0 +1,56 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Error_InvlaidPage" xml:space="preserve">
+        <value>Esta página no existe</value>
+    </data>
+    <data name="Error_MustBeInVoice" xml:space="preserve">
+        <value>Primero, debes estar en un Voicechannel</value>
+    </data>
+    <data name="Error_NoMusic" xml:space="preserve">
+        <value>No hay música en este momento</value>
+    </data>
+    <data name="Error_PlaylistNotFound" xml:space="preserve">
+        <value>No se puede encontrar la Playlist. Por favor, utilice la identificación</value>
+    </data>
+    <data name="Error_PlaylistNotOwned" xml:space="preserve">
+        <value>La Playlist '{0}' no te pertenece</value>
+    </data>
+    <data name="Error_SongNotFound" xml:space="preserve">
+        <value>No se ha encontrado ninguna canción con el nombre '{0}'</value>
+    </data>
+    <data name="Error_SpotifyPlaylistNotParsable" xml:space="preserve">
+        <value>No se ha podido cargar la Playlist de Spotify. Por favor, aseg�rese de que el enlace es correcto y que la Playlist se puede ver p�blicamente.</value>
+    </data>
+    <data name="Error_TooManyPlaylists" xml:space="preserve">
+        <value>Ya has creado el máximo número de playlists. Por favor, borre una ya existente</value>
+    </data>
+    <data name="Line_Playlist" xml:space="preserve">
+        <value>{0}: {1} (de {2})</value>
+    </data>
+    <data name="Message_PlaylistCreated" xml:space="preserve">
+        <value>Playlist creada</value>
+    </data>
+    <data name="Message_PlaylistLoaded" xml:space="preserve">
+        <value>Playlist "{0}" cargada ({1}/{2} con éxito)</value>
+    </data>
+    <data name="Status_PlaylistLoading" xml:space="preserve">
+        <value>Descarga la Playlist '{0}' de Spotify... ({1} pistas)</value>
+    </data>
+    <data name="Title_Playlists" xml:space="preserve">
+        <value>Playlists en {0} (Página {1})</value>
+    </data>
+    <data name="Title_QueueTitle" xml:space="preserve">
+        <value>{0} Canciones en cola: (Página {1}/{2})</value>
+    </data>
+</root>

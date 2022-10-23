@@ -15,13 +15,13 @@
         <value>Please enter 6 numbers</value>
     </data>
     <data name="Message_RaceResult" xml:space="preserve">
-        <value>```             Team     Difference   Opponent
-This Round:  {0}      {1}          {2}
-Total:       {3}      {4}          {5}```</value>
+        <value>Team - Difference - Opponent
+This Round: {0} - {1} - {2}
+Total: {3} - {4} - {5}</value>
     </data>
     <data name="Message_FinalResult" xml:space="preserve">
-        <value>```             Team     Difference   Opponent
-Total:       {0}      {1}          {2}```</value>
+        <value>Team - Difference - Opponent
+{0} - {1} - {2}</value>
     </data>
     <data name="Error_MkwrSyntax" xml:space="preserve">
         <value>Please enter Track and CC! (!mkwr  MKS 150)</value>

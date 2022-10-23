@@ -1,0 +1,59 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Error_ConfigUnset" xml:space="preserve">
+        <value>El parámetro '{0}' no está establecido en la regla '{1}'</value>
+    </data>
+    <data name="Error_RuleAlreadyActive" xml:space="preserve">
+        <value>Esta regla no está activa</value>
+    </data>
+    <data name="Error_RuleDoesNotExist" xml:space="preserve">
+        <value>La regla '{0}' no existe</value>
+    </data>
+    <data name="Error_RuleNotActive" xml:space="preserve">
+        <value>La regla '{0}' no está acitva</value>
+    </data>
+    <data name="Identifier_Active" xml:space="preserve">
+        <value>Activo</value>
+    </data>
+    <data name="Identifier_Inactive" xml:space="preserve">
+        <value>Inactivo</value>
+    </data>
+    <data name="Message_RuleActivated" xml:space="preserve">
+        <value>La regla se activó</value>
+    </data>
+    <data name="Message_RuleDisabled" xml:space="preserve">
+        <value>La regla fue desactivada</value>
+    </data>
+    <data name="Message_SavedValue" xml:space="preserve">
+        <value>El valor se ha actualizado</value>
+    </data>
+    <data name="Message_SetValue" xml:space="preserve">
+        <value>El valor actual de '{0}:{1}' es '{2}'</value>
+    </data>
+    <data name="Title_AvailableRules" xml:space="preserve">
+        <value>Reglas disponibles de auto-mod</value>
+    </data>
+    <data name="Title_PossibleConfigs" xml:space="preserve">
+        <value>Configuraciones disponibles de auto-mod para '{0}'</value>
+    </data>
+    <data name="Validation_Spamming" xml:space="preserve">
+        <value>{0}: Estás escribiendo demasiado rápido</value>
+    </data>
+    <data name="Validation_TooManyCaps" xml:space="preserve">
+        <value>{0}:Demasiados Caps (mayúsculas)</value>
+    </data>
+    <data name="Validation_TooManyEmotes" xml:space="preserve">
+        <value>{0}: Demasiados emotes</value>
+    </data>
+</root>

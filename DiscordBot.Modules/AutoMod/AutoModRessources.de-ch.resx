@@ -1,0 +1,59 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Error_ConfigUnset" xml:space="preserve">
+        <value>D Konfiguration '{0}' isch i de Reglä '{1}' nöd gsetzt</value>
+    </data>
+    <data name="Error_RuleAlreadyActive" xml:space="preserve">
+        <value>Die Reglä isch scho i gschalte</value>
+    </data>
+    <data name="Error_RuleDoesNotExist" xml:space="preserve">
+        <value>D Reglä '{0}' gits nöd</value>
+    </data>
+    <data name="Error_RuleNotActive" xml:space="preserve">
+        <value>D Reglä '{0}' isch nöd aktiv</value>
+    </data>
+    <data name="Identifier_Active" xml:space="preserve">
+        <value>Igschaltä</value>
+    </data>
+    <data name="Identifier_Inactive" xml:space="preserve">
+        <value>Abgschaltä</value>
+    </data>
+    <data name="Message_RuleActivated" xml:space="preserve">
+        <value>Reglä igschaltä</value>
+    </data>
+    <data name="Message_RuleDisabled" xml:space="preserve">
+        <value>Reglä abgschalte</value>
+    </data>
+    <data name="Message_SavedValue" xml:space="preserve">
+        <value>Wert gspaicheret</value>
+    </data>
+    <data name="Message_SetValue" xml:space="preserve">
+        <value>Dä Wert '{0}:{1}' isch aktuell uf '{2}' gsetzt</value>
+    </data>
+    <data name="Title_AvailableRules" xml:space="preserve">
+        <value>Vrfüägbari Reglä</value>
+    </data>
+    <data name="Title_PossibleConfigs" xml:space="preserve">
+        <value>Verfüägbari Automod Istellige für '{0}'</value>
+    </data>
+    <data name="Validation_Spamming" xml:space="preserve">
+        <value>{0} du schribsch z schnäll</value>
+    </data>
+    <data name="Validation_TooManyCaps" xml:space="preserve">
+        <value>{0}: z vil Caps</value>
+    </data>
+    <data name="Validation_TooManyEmotes" xml:space="preserve">
+        <value>{0}: z vil Emotes</value>
+    </data>
+</root>

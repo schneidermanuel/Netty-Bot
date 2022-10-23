@@ -11,19 +11,16 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Error_AccountAlreadyRegistered" xml:space="preserve">
-        <value>This registration is already present in the database</value>
+    <data name="Error_EmoteAlreadyAdded" xml:space="preserve">
+        <value>Die Reaktion wird scho verwendet</value>
     </data>
-    <data name="Message_Registered" xml:space="preserve">
-        <value>Registration successful</value>
+    <data name="Error_InvalidRole" xml:space="preserve">
+        <value>Die Rollä gits nöd</value>
     </data>
-    <data name="Message_Default" xml:space="preserve">
-        <value>{0} just tweeted something</value>
+    <data name="Error_NotReplied" xml:space="preserve">
+        <value>Du musch uf e Nochricht antwortä</value>
     </data>
-    <data name="Error_InvalidRule" xml:space="preserve">
-        <value>The rule is not valid</value>
-    </data>
-    <data name="Error_AccountNotRegistered" xml:space="preserve">
-        <value>This registration does not exist</value>
+    <data name="Error_SyntaxError" xml:space="preserve">
+        <value>Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht]</value>
     </data>
 </root>

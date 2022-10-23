@@ -1,0 +1,83 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Error_BirthdayAlreadySaved" xml:space="preserve">
+        <value>Da weissi scho</value>
+    </data>
+    <data name="Error_BirthdaylistAlreadyPresent" xml:space="preserve">
+        <value>Uf dem Server gits scho e Geburtstagslischtä</value>
+    </data>
+    <data name="Error_InvalidFormat" xml:space="preserve">
+        <value>Bitte dä Geburtstag im Format {0}registerBirthday dd.MM ageh.</value>
+    </data>
+    <data name="Error_NoBirthdayChannel" xml:space="preserve">
+        <value>Uf dem Server gits kei Geburtstagslistä</value>
+    </data>
+    <data name="Error_NotificationsAlreadyEnabled" xml:space="preserve">
+        <value>Geburtstagsbenochrichtigungä sind scho aktiv</value>
+    </data>
+    <data name="Error_NotificationsNotEnabled" xml:space="preserve">
+        <value>Do sind Geburtstagsnochrichtä nöd aktiv</value>
+    </data>
+    <data name="Error_RoleNotFound" xml:space="preserve">
+        <value>D Rollä '{0}' gits nöd</value>
+    </data>
+    <data name="Message_BirthdayNotificationsEnabled" xml:space="preserve">
+        <value>Geburtstagsbenochrichtigunge igschaltä</value>
+    </data>
+    <data name="Message_BirthdayRoleSuccess" xml:space="preserve">
+        <value>D Rollä '{0}' wird jetzt immer am Geburtstag vortailt. Da passiert halt immer erst am 5i. </value>
+    </data>
+    <data name="Message_BirthdaySaved" xml:space="preserve">
+        <value>Jetzt weissi wenn du Gebui häsch</value>
+    </data>
+    <data name="Month_1" xml:space="preserve">
+        <value>Januar:</value>
+    </data>
+    <data name="Month_10" xml:space="preserve">
+        <value>Oktober:</value>
+    </data>
+    <data name="Month_11" xml:space="preserve">
+        <value>November:</value>
+    </data>
+    <data name="Month_12" xml:space="preserve">
+        <value>Dezember:</value>
+    </data>
+    <data name="Month_2" xml:space="preserve">
+        <value>Februar:</value>
+    </data>
+    <data name="Month_3" xml:space="preserve">
+        <value>März:</value>
+    </data>
+    <data name="Month_4" xml:space="preserve">
+        <value>April:</value>
+    </data>
+    <data name="Month_5" xml:space="preserve">
+        <value>Mai:</value>
+    </data>
+    <data name="Month_6" xml:space="preserve">
+        <value>Juni:</value>
+    </data>
+    <data name="Month_7" xml:space="preserve">
+        <value>Juli:</value>
+    </data>
+    <data name="Month_8" xml:space="preserve">
+        <value>August:</value>
+    </data>
+    <data name="Month_9" xml:space="preserve">
+        <value>September:</value>
+    </data>
+    <data name="Title_Birthdaylist" xml:space="preserve">
+        <value>**🍰GEBURTSTAGSLISTE🍰**</value>
+    </data>
+</root>
