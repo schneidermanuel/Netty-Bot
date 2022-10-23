@@ -11,4 +11,19 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="Error_AccountAlreadyRegistered" xml:space="preserve">
+        <value>Este registro ya existe</value>
+    </data>
+    <data name="Error_AccountNotRegistered" xml:space="preserve">
+        <value>Este registro no existe</value>
+    </data>
+    <data name="Error_InvalidRule" xml:space="preserve">
+        <value>Esta regla no es válida</value>
+    </data>
+    <data name="Message_Default" xml:space="preserve">
+        <value>{0} acaba de publicar un tuit</value>
+    </data>
+    <data name="Message_Registered" xml:space="preserve">
+        <value>Registro realizada con éxito</value>
+    </data>
 </root>

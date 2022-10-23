@@ -36,7 +36,7 @@
         <value>Du hesch scho z vil Playlists</value>
     </data>
     <data name="Line_Playlist" xml:space="preserve">
-        <value>{0}: {1} (von {2})
+        <value>{0}: {1} (vo {2})
 </value>
     </data>
     <data name="Message_PlaylistCreated" xml:space="preserve">

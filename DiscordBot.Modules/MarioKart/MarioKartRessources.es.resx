@@ -11,4 +11,47 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="Error_CannotParseInformation" xml:space="preserve">
+        <value>Error durante la transferencia de datos</value>
+    </data>
+    <data name="Error_Enter6Numbers" xml:space="preserve">
+        <value>Por favor, introduzca 6 numeros</value>
+    </data>
+    <data name="Error_MkwrSyntax" xml:space="preserve">
+        <value>Por favor, ¡especifique la ruta y  el CC! (!mkwr  MKS 150)</value>
+    </data>
+    <data name="Error_NotRevertable" xml:space="preserve">
+        <value>Actualmente no se puede reiniciar ninguna carrera</value>
+    </data>
+    <data name="Message_FinalResult" xml:space="preserve">
+        <value>Equipo - Diferencia - Oponente {0} - {1} - {2}</value>
+    </data>
+    <data name="Message_RaceResult" xml:space="preserve">
+        <value>Equipo - Diferencia - Oponente Esta vuelta: {0} - {1} - {2}
+Total: {3} - {4} - {5}</value>
+    </data>
+    <data name="WR_Char" xml:space="preserve">
+        <value>Personaje</value>
+    </data>
+    <data name="WR_Glider" xml:space="preserve">
+        <value>Planeador</value>
+    </data>
+    <data name="WR_Kart" xml:space="preserve">
+        <value>Kart</value>
+    </data>
+    <data name="WR_Lap1" xml:space="preserve">
+        <value>Primera ronda</value>
+    </data>
+    <data name="WR_Lap2" xml:space="preserve">
+        <value>Segunda ronda</value>
+    </data>
+    <data name="WR_Lap3" xml:space="preserve">
+        <value>Tercera ronda</value>
+    </data>
+    <data name="WR_Tires" xml:space="preserve">
+        <value>Neumáticos</value>
+    </data>
+    <data name="WR_Title" xml:space="preserve">
+        <value>Récord mundial: {0} - {1} - {2}</value>
+    </data>
 </root>

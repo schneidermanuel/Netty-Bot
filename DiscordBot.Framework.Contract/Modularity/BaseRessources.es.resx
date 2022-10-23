@@ -11,4 +11,10 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="Error_ArgumentCount" xml:space="preserve">
+        <value>No  se dieron suficientes argumentos</value>
+    </data>
+    <data name="Error_NotAnInt" xml:space="preserve">
+        <value>No se ha podido convertir la expresión '{0}'. Se espera: Número</value>
+    </data>
 </root>

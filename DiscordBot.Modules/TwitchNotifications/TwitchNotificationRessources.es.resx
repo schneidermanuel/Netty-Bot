@@ -11,4 +11,19 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="Error_AlreadyRegistered" xml:space="preserve">
+        <value>Las notificaciones ya están activadas para este streamer</value>
+    </data>
+    <data name="Error_RegistrationInvalid" xml:space="preserve">
+        <value>Este registro no existe</value>
+    </data>
+    <data name="Message_NewStream" xml:space="preserve">
+        <value>{0} ha iniciado un Stream</value>
+    </data>
+    <data name="Message_RegistrationSuccess" xml:space="preserve">
+        <value>Registro realizada con éxito</value>
+    </data>
+    <data name="Message_UnregistrationSucess" xml:space="preserve">
+        <value>Registro eliminado</value>
+    </data>
 </root>

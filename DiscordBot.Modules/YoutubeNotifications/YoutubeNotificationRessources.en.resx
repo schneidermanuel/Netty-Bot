@@ -18,7 +18,7 @@
         <value>This youtube channel does not exist. Please use the correct channel id.</value>
     </data>
     <data name="Message_RegistrationSuccess" xml:space="preserve">
-        <value>Registration sucessful</value>
+        <value>Registration successful</value>
     </data>
     <data name="Message_NewVideo" xml:space="preserve">
         <value>{0} uploaded a video</value>

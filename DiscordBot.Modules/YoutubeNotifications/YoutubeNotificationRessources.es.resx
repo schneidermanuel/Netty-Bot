@@ -11,4 +11,22 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="Error_AlreadyRegistered" xml:space="preserve">
+        <value>Las notificaciones ya están activas para este canal</value>
+    </data>
+    <data name="Error_InvalidChannel" xml:space="preserve">
+        <value>Este canal de Youtube no existe. Por favor, utilice el identificador del canal.</value>
+    </data>
+    <data name="Error_InvalidRegistration" xml:space="preserve">
+        <value>Este registro no existe</value>
+    </data>
+    <data name="Message_NewVideo" xml:space="preserve">
+        <value>{0} acaba de subir un nuevo video</value>
+    </data>
+    <data name="Message_RegistrationSuccess" xml:space="preserve">
+        <value>Registro realizada con éxito</value>
+    </data>
+    <data name="Message_UnregistrationSuccss" xml:space="preserve">
+        <value>Registro eliminado</value>
+    </data>
 </root>
