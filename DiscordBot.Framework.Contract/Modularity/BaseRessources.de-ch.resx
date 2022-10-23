@@ -17,4 +17,7 @@
     <data name="Error_NotAnInt" xml:space="preserve">
         <value>De Usdruck '{0}' hani nöd verstandä. erwartet: Zahl</value>
     </data>
+    <data name="Error_NotAGuild" xml:space="preserve">
+        <value>Cha nur uf em Server usgführt werde</value>
+    </data>
 </root>

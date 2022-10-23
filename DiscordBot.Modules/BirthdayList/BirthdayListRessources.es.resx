@@ -30,7 +30,7 @@
         <value>Las notificaciones de cumpleaños no están activas aquí</value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>El rol '{0}' no fue encontrado. Por favor, utilice la identificaci�n</value>
+        <value>El rol '{0}' no fue encontrado. </value>
     </data>
     <data name="Message_BirthdayNotificationsEnabled" xml:space="preserve">
         <value>Se han habilitado las notificaciones de cumpleaños para este canal</value>

@@ -12,9 +12,15 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_InvalidRole" xml:space="preserve">
-        <value>No se ha encontrado ningún rol con el id '{0}'</value>
+        <value>No se ha encontrado ningún rol'</value>
     </data>
     <data name="Error_SyntaxError" xml:space="preserve">
         <value>Error de sintaxis: {0}registerReactionRole [Emote] [ID del rol] [mensaje]</value>
+    </data>
+    <data name="Error_EmoteAlreadyAdded" xml:space="preserve">
+        <value>Esta reacción ya se utiliza en el mensaje</value>
+    </data>
+    <data name="Error_MessageNotFound" xml:space="preserve">
+        <value>Mensaje no encontrado. Por favor,  introduzca la identificación</value>
     </data>
 </root>

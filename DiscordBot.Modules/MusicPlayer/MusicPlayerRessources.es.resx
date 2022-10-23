@@ -30,7 +30,7 @@
         <value>No se ha encontrado ninguna canción con el nombre '{0}'</value>
     </data>
     <data name="Error_SpotifyPlaylistNotParsable" xml:space="preserve">
-        <value>No se ha podido cargar la Playlist de Spotify. Por favor, aseg�rese de que el enlace es correcto y que la Playlist se puede ver p�blicamente.</value>
+        <value>No se ha podido cargar la Playlist de Spotify. Por favor, asegúrese de que el enlace es correcto y que la Playlist se puede ver públicamente.</value>
     </data>
     <data name="Error_TooManyPlaylists" xml:space="preserve">
         <value>Ya has creado el máximo número de playlists. Por favor, borre una ya existente</value>

@@ -21,7 +21,7 @@
         <value>Este rol tiene derechos de administrador y no se distribuye automáticamente</value>
     </data>
     <data name="Error_RoleNotFound" xml:space="preserve">
-        <value>El rol '{0}' no fue encontrado. Por favor, utilice la identificaci�n</value>
+        <value>El rol '{0}' no fue encontrado.</value>
     </data>
     <data name="Message_DeletedRegistration" xml:space="preserve">
         <value>Distribución automáticamente terminada</value>
@@ -30,6 +30,6 @@
         <value>Este rol se distribuye ahora automáticamente</value>
     </data>
     <data name="Title_AutomaticDistributedRoles" xml:space="preserve">
-        <value>Distribuci� autom�ticamente de roles en el servidor</value>
+        <value>Distribució automáticamente de roles en el servidor</value>
     </data>
 </root>

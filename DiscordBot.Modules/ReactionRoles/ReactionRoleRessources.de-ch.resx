@@ -17,8 +17,8 @@
     <data name="Error_InvalidRole" xml:space="preserve">
         <value>Die Rollä gits nöd</value>
     </data>
-    <data name="Error_NotReplied" xml:space="preserve">
-        <value>Du musch uf e Nochricht antwortä</value>
+    <data name="Error_MessageNotFound" xml:space="preserve">
+        <value>Nochricht nöd gfunde. Bitte korrekti ID verwende</value>
     </data>
     <data name="Error_SyntaxError" xml:space="preserve">
         <value>Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht]</value>

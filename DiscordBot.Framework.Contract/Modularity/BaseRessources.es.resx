@@ -17,4 +17,7 @@
     <data name="Error_NotAnInt" xml:space="preserve">
         <value>No se ha podido convertir la expresión '{0}'. Se espera: Número</value>
     </data>
+    <data name="Error_NotAGuild" xml:space="preserve">
+        <value>Solo se puede ejecutar en un servidor</value>
+    </data>
 </root>
