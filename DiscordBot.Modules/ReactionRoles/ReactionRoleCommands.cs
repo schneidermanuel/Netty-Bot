@@ -53,7 +53,7 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
 
         if (message == null)
         {
-            await context.RespondAsync(Localize(nameof(ReactionRoleRessources.Error_NotReplied)));
+            await context.RespondAsync(Localize(nameof(ReactionRoleRessources.Error_MessageNotFound)));
             return;
         }
 

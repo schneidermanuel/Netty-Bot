@@ -78,11 +78,11 @@ namespace DiscordBot.Modules.ReactionRoles {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Antworte auf die Nachricht, zu welcher eine Reaktionsrolle hinzugefügt werden soll..
+        ///   Looks up a localized string similar to Nachricht nicht gefunden. Bitte ID angeben.
         /// </summary>
-        internal static string Error_NotReplied {
+        internal static string Error_MessageNotFound {
             get {
-                return ResourceManager.GetString("Error_NotReplied", resourceCulture);
+                return ResourceManager.GetString("Error_MessageNotFound", resourceCulture);
             }
         }
         

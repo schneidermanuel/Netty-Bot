@@ -188,9 +188,9 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
             {
                 await _lavaNode.GetPlayer(context.Guild).StopAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //Ignored
+                Console.WriteLine(e.Message);
             }
 
             await _manager.ClearQueueAsync(context.Guild);

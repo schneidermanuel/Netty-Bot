@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -18,16 +11,16 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Error_SyntaxError" xml:space="preserve">
-        <value>Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht]</value>
-    </data>
     <data name="Error_InvalidRole" xml:space="preserve">
-        <value>Rolle nicht gefunden</value>
+        <value>No se ha encontrado ningún rol'</value>
     </data>
-    <data name="Error_MessageNotFound" xml:space="preserve">
-        <value>Nachricht nicht gefunden. Bitte ID angeben</value>
+    <data name="Error_SyntaxError" xml:space="preserve">
+        <value>Error de sintaxis: {0}registerReactionRole [Emote] [ID del rol] [mensaje]</value>
     </data>
     <data name="Error_EmoteAlreadyAdded" xml:space="preserve">
-        <value>Diese Reaktion wird auf der Nachricht bereits verwendet</value>
+        <value>Esta reacción ya se utiliza en el mensaje</value>
+    </data>
+    <data name="Error_MessageNotFound" xml:space="preserve">
+        <value>Mensaje no encontrado. Por favor,  introduzca la identificación</value>
     </data>
 </root>

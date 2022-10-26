@@ -1,0 +1,83 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Error_BirthdayAlreadySaved" xml:space="preserve">
+        <value>Tu cumpleaños ya está guardado</value>
+    </data>
+    <data name="Error_BirthdaylistAlreadyPresent" xml:space="preserve">
+        <value>Ya existe una lista de cumpleaños en este servidor</value>
+    </data>
+    <data name="Error_InvalidFormat" xml:space="preserve">
+        <value>Por favor, introduzca la fecha de nacimiento en el formato {0}registerBirthday dd.MM</value>
+    </data>
+    <data name="Error_NoBirthdayChannel" xml:space="preserve">
+        <value>No se ha establecido ningún canal con una lista de cumplea�os</value>
+    </data>
+    <data name="Error_NotificationsAlreadyEnabled" xml:space="preserve">
+        <value>Las notificaciones de cumpleaños ya están activas en este servidor</value>
+    </data>
+    <data name="Error_NotificationsNotEnabled" xml:space="preserve">
+        <value>Las notificaciones de cumpleaños no están activas aquí</value>
+    </data>
+    <data name="Error_RoleNotFound" xml:space="preserve">
+        <value>El rol '{0}' no fue encontrado. </value>
+    </data>
+    <data name="Message_BirthdayNotificationsEnabled" xml:space="preserve">
+        <value>Se han habilitado las notificaciones de cumpleaños para este canal</value>
+    </data>
+    <data name="Message_BirthdayRoleSuccess" xml:space="preserve">
+        <value>El rol '{0}' se distribuye automáticamente en los cumpleaños. El rol será distribuido y retirado a las 05:00 CET</value>
+    </data>
+    <data name="Message_BirthdaySaved" xml:space="preserve">
+        <value>Tu cumpleaños ha sido guardado</value>
+    </data>
+    <data name="Month_1" xml:space="preserve">
+        <value>Enero:</value>
+    </data>
+    <data name="Month_10" xml:space="preserve">
+        <value>Octubre:</value>
+    </data>
+    <data name="Month_11" xml:space="preserve">
+        <value>Noviembre:</value>
+    </data>
+    <data name="Month_12" xml:space="preserve">
+        <value>Diciembre:</value>
+    </data>
+    <data name="Month_2" xml:space="preserve">
+        <value>Febrero:</value>
+    </data>
+    <data name="Month_3" xml:space="preserve">
+        <value>Marzo:</value>
+    </data>
+    <data name="Month_4" xml:space="preserve">
+        <value>Abril:</value>
+    </data>
+    <data name="Month_5" xml:space="preserve">
+        <value>Mayo:</value>
+    </data>
+    <data name="Month_6" xml:space="preserve">
+        <value>Junio:</value>
+    </data>
+    <data name="Month_7" xml:space="preserve">
+        <value>Julio:</value>
+    </data>
+    <data name="Month_8" xml:space="preserve">
+        <value>Agosto:</value>
+    </data>
+    <data name="Month_9" xml:space="preserve">
+        <value>Septiembre:</value>
+    </data>
+    <data name="Title_Birthdaylist" xml:space="preserve">
+        <value>**🍰LISTA DE CUMPLEAÑOS🍰**</value>
+    </data>
+</root>

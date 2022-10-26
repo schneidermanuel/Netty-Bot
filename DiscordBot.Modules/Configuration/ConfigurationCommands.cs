@@ -16,7 +16,7 @@ internal class ConfigurationCommands : CommandModuleBase, ICommandModule
 {
     private readonly IUserConfigurationBusinessLogic _userConfigurationBusinessLogic;
     private readonly IGuildConfigBusinessLogic _guildConfigBusinessLogic;
-    private static string[] _languages = { "de", "en" };
+    private static string[] _languages = { "de", "en", "ch", "es" };
 
     public ConfigurationCommands(IModuleDataAccess dataAccess,
         IUserConfigurationBusinessLogic userConfigurationBusinessLogic,

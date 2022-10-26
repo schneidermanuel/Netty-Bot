@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -30,50 +32,60 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
     [Command("race")]
     [Description("Registers a race to the current Mario Kart War session")]
-    [Parameter(Name = "Player1", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player2", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player3", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player4", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player5", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Player6", Description = "The Position of the Player (1-12)", IsOptional = false,
-        ParameterType = ApplicationCommandOptionType.Integer)]
-    [Parameter(Name = "Comment", Description = "Use any comment you want", IsOptional = true,
+    [Parameter(Name = "Places", Description = "The space sepperated list of places (1-12)", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
+        [Parameter(Name = "Comment", Description = "A comment", IsOptional = true)]
     public async Task CalculateAsync(SocketSlashCommand context)
     {
-        await RequireArg(context, 6, Localize(nameof(MarioKartRessources.Error_Enter6Numbers)));
-        var places = new List<int>();
-        for (var i = 1; i <= 6; i++)
-        {
-            var place = await RequireIntArg(context, i);
-            places.Add(place);
-        }
+        var placesString = await RequireString(context);
+        var comment = RequireStringOrEmpty(context, 2);
 
-        var comment = RequireStringOrEmpty(context, 7);
+        List<int> places;
+        try
+        {
+            places = placesString.Split(' ').Select(int.Parse).ToList();
+        }
+        catch (Exception)
+        {
+            await context.RespondAsync(Localize(nameof(MarioKartRessources.Error_Enter6Numbers)));
+            return;
+        }
 
         var result = _calculator.Calculate(places);
         await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
+        await context.DeferAsync();
+        ExecuteShellCommand(
+            $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
+        await context.ModifyOriginalResponseAsync(option =>
+        {
+            option.Content = "🤝";
+            option.Attachments =
+                new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
+        });
+    }
 
+    private static void ExecuteShellCommand(string arguments)
+    {
+        // according to: https://stackoverflow.com/a/15262019/637142
+        // thans to this we will pass everything as one command
+        arguments = arguments.Replace("\"", "\"\"");
 
-        var embedBuilder = new EmbedBuilder();
-        embedBuilder.WithColor(Color.Gold);
-        embedBuilder.WithCurrentTimestamp();
-        embedBuilder.WithTitle("Mario Kart Result");
-        embedBuilder.WithThumbnailUrl(await GetThumbnailUrlAsync(comment));
-        embedBuilder.WithDescription(string.Format(Localize(nameof(MarioKartRessources.Message_RaceResult)),
-            result.Points.To3CharString(), result.Difference.To3CharString(),
-            result.EnemyPoints.To3CharString(),
-            sumResult.Points.To3CharString(),
-            sumResult.Difference.To3CharString(),
-            sumResult.EnemyPoints.To3CharString()));
+        var proc = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = "-c \"" + arguments + "\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            }
+        };
 
-        await context.RespondAsync("", new[] { embedBuilder.Build() });
+        proc.Start();
+        proc.WaitForExit();
+        Console.WriteLine("Screenshot taken");
     }
 
 
@@ -130,18 +142,16 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     {
         var result = _manager.GetFinalResult(context.Channel.Id);
         var games = (await _manager.RetriveHistoryAsync(result.GameId)).ToArray();
-        var embedBuilder = new EmbedBuilder();
-        embedBuilder.WithColor(Color.Gold);
-        embedBuilder.WithCurrentTimestamp();
-        embedBuilder.WithTitle("Mario Kart Final Result");
-        embedBuilder.WithThumbnailUrl(
-            "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png");
-        embedBuilder.WithDescription(BuildFinalDescription(result, games));
-
-        await context.Channel.SendMessageAsync("", false, embedBuilder.Build());
         _manager.EndGame(context.Channel.Id);
         var url = BuildChartUrl(games);
-        await context.RespondAsync(url);
+        await context.DeferAsync();
+        ExecuteShellCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
+        await context.ModifyOriginalResponseAsync(option =>
+        {
+            option.Content = "🤝";
+            option.Attachments =
+                new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
+        });
     }
 
     private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)

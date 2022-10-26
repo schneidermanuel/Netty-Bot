@@ -12,21 +12,21 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Error_AlreadyRegistered" xml:space="preserve">
-        <value>Notification for this channel are already enabled.</value>
+        <value>Für de Kanal sind Benochrichtigungä scho igschaltä</value>
     </data>
     <data name="Error_InvalidChannel" xml:space="preserve">
-        <value>This youtube channel does not exist. Please use the correct channel id.</value>
-    </data>
-    <data name="Message_RegistrationSuccess" xml:space="preserve">
-        <value>Registration successful</value>
-    </data>
-    <data name="Message_NewVideo" xml:space="preserve">
-        <value>{0} uploaded a video</value>
+        <value>DDe Youtube Kanal gits nöd. Bitte ID verwende</value>
     </data>
     <data name="Error_InvalidRegistration" xml:space="preserve">
-        <value>This registration does not exist</value>
+        <value>Die Regischtriärig gits nöd.</value>
+    </data>
+    <data name="Message_NewVideo" xml:space="preserve">
+        <value>De {0} hät gad e Video ufe glade</value>
+    </data>
+    <data name="Message_RegistrationSuccess" xml:space="preserve">
+        <value>Registrierig erfolgrich</value>
     </data>
     <data name="Message_UnregistrationSuccss" xml:space="preserve">
-        <value>Registration removed</value>
+        <value>Regischtriärig glöscht</value>
     </data>
 </root>

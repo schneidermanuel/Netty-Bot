@@ -18,7 +18,7 @@
         <value>Registration successful</value>
     </data>
     <data name="Message_Default" xml:space="preserve">
-        <value>{0} just tweeted smoething</value>
+        <value>{0} just tweeted something</value>
     </data>
     <data name="Error_InvalidRule" xml:space="preserve">
         <value>The rule is not valid</value>

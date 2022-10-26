@@ -164,10 +164,16 @@ public abstract class CommandModuleBase : ICommandModule
         }
     }
 
+    protected string GetPreferedLanguage()
+    {
+        return _language;
+    }
+
     protected string Localize(string ressource, Type ressourceType = null)
     {
         ressourceType ??= RessourceType;
-        var language = _language;
+        //Horrible hack                      ~BrainyXS
+        var language = _language == "ch" ? "de-ch" : _language;
         lock (ressourceType)
         {
             var cultureProperty = ressourceType.GetProperty("Culture", BindingFlags.NonPublic | BindingFlags.Static);

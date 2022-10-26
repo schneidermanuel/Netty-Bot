@@ -11,16 +11,16 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="Error_SyntaxError" xml:space="preserve">
-        <value>Syntax error: {0}registerReactionRole [emote] [roleId] [message]</value>
+    <data name="Error_QuotesAlreadyDisabled" xml:space="preserve">
+        <value>Citas ya están desactivadas en este canal</value>
     </data>
-    <data name="Error_InvalidRole" xml:space="preserve">
-        <value>Role not found</value>
+    <data name="Error_QuotesAlreadyEnabled" xml:space="preserve">
+        <value>Citas ya están activadas en este canal</value>
     </data>
-    <data name="Error_MessageNotFound" xml:space="preserve">
-        <value>Message Not found. Please enter ID</value>
+    <data name="Message_QuoteDisabled" xml:space="preserve">
+        <value>Citas diarias desactivadas</value>
     </data>
-    <data name="Error_EmoteAlreadyAdded" xml:space="preserve">
-        <value>This reaction is already in use on the selected message</value>
+    <data name="Message_QuoteEnabled" xml:space="preserve">
+        <value>Citas diarias activadas</value>
     </data>
 </root>
