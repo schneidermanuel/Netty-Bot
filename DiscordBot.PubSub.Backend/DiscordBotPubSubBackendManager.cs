@@ -52,36 +52,54 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         var guildId = context.Request.Query["guildId"];
         var userId = context.Request.Query["userId"];
 
-        var guild = _client.Guilds.Single(g => g.Id == ulong.Parse(guildId));
-        var user = guild.GetUser(ulong.Parse(userId));
-        if (!user.GuildPermissions.Administrator)
+        try
         {
-            context.Response.StatusCode = 401;
+            if (_client.Guilds.Any(guild => guild.Id == ulong.Parse(guildId.ToString())))
+            {
+                await Responsd(context, "Guild does not exist", 400);
+                await context.Response.CompleteAsync();
+                return;
+            }
+
+            var guild = _client.Guilds.Single(g => g.Id == ulong.Parse(guildId));
+            var user = guild.GetUser(ulong.Parse(userId));
+            if (!user.GuildPermissions.Administrator)
+            {
+                context.Response.StatusCode = 401;
+                await context.Response.CompleteAsync();
+                return;
+            }
+
+            var moduleIdentifiers = _modules.Select(module => module.ModuleUniqueIdentifier);
+            var modules = new List<Module>();
+            foreach (var module in moduleIdentifiers)
+            {
+                var isEnabled = await _dataAccess.IsModuleEnabledForGuild(guild.Id, module);
+                modules.Add(new Module
+                {
+                    Enabled = isEnabled,
+                    UniqueKey = module
+                });
+            }
+
+            var responseGuild = new Guild
+            {
+                Name = guild.Name,
+                IconUrl = guild.IconUrl,
+                Modules = modules
+            };
+
+            var json = JsonConvert.SerializeObject(responseGuild);
+            await Responsd(context, json);
+        }
+        catch (Exception e)
+        {
+            context.Response.StatusCode = 500;
+        }
+        finally
+        {
             await context.Response.CompleteAsync();
         }
-
-        var moduleIdentifiers = _modules.Select(module => module.ModuleUniqueIdentifier);
-        var modules = new List<Module>();
-        foreach (var module in moduleIdentifiers)
-        {
-            var isEnabled = await _dataAccess.IsModuleEnabledForGuild(guild.Id, module);
-            modules.Add(new Module
-            {
-                Enabled = isEnabled,
-                UniqueKey = module
-            });
-        }
-
-        var responseGuild = new Guild
-        {
-            Name = guild.Name,
-            IconUrl = guild.IconUrl,
-            Modules = modules
-        };
-
-        var json = JsonConvert.SerializeObject(responseGuild);
-        await Responsd(context, json);
-        await context.Response.CompleteAsync();
     }
 
     private async Task ProcessGuilds(HttpContext context)
@@ -165,9 +183,10 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         }
     }
 
-    private static async Task Responsd(HttpContext context, StringValues response)
+    private static async Task Responsd(HttpContext context, StringValues response, int statusCode = 200)
     {
         var bytes = Encoding.UTF8.GetBytes(response);
+        context.Response.StatusCode = statusCode;
         await context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
     }
 
