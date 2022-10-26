@@ -49,19 +49,19 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
     private async Task ProcessGuild(HttpContext context)
     {
-        var guildId = context.Request.Query["guildId"];
-        var userId = context.Request.Query["userId"];
-
         try
         {
-            if (_client.Guilds.Any(guild => guild.Id == ulong.Parse(guildId.ToString())))
+            var guildId = context.Request.Query["guildId"];
+            var userId = context.Request.Query["userId"];
+
+            if (_client.Guilds.All(guild => !guild.Id.ToString().Equals(guildId.ToString())))
             {
                 await Responsd(context, "Guild does not exist", 400);
                 await context.Response.CompleteAsync();
                 return;
             }
 
-            var guild = _client.Guilds.Single(g => g.Id == ulong.Parse(guildId));
+            var guild = _client.Guilds.Single(guild => guild.Id.ToString().Equals(guildId.ToString()));
             var user = guild.GetUser(ulong.Parse(userId));
             if (!user.GuildPermissions.Administrator)
             {
