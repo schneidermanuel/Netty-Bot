@@ -120,6 +120,11 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     {
         try
         {
+            var checksumHeader = context.Request.Headers["X-Hub-Signature"];
+            Console.WriteLine("========================");
+            Console.WriteLine("CHECKSUM HEADER " + checksumHeader);
+            Console.WriteLine("========================");
+            Console.WriteLine("GUID " + YoutubePubSubSecret.Secret);
             var stream = context.Request.Body;
             var data = ConvertAtomToSyndication(stream);
             if (data != null)
