@@ -32,9 +32,9 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
     [Command("race")]
     [Description("Registers a race to the current Mario Kart War session")]
-    [Parameter(Name = "Places", Description = "The space sepperated list of places (1-12)", IsOptional = false,
+    [Parameter(Name = "Places", Description = "The space sepperated list of places", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-        [Parameter(Name = "Comment", Description = "A comment", IsOptional = true)]
+    [Parameter(Name = "Comment", Description = "A comment", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
     public async Task CalculateAsync(SocketSlashCommand context)
     {
         var placesString = await RequireString(context);

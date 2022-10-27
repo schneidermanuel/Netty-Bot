@@ -13,6 +13,7 @@ public class YoutubePubSubSecret
         {
             var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(body));
             var hash = Encoding.UTF8.GetString(hashBytes);
+            Console.WriteLine("Computed Hash " + hash);
             return signature.Equals(hash);
         }
     }
