@@ -7,10 +7,13 @@ public class YoutubePubSubSecret
 {
     public static string Secret { get; } = Guid.NewGuid().ToString();
 
-    public static bool Check(string hash)
+    public static bool Check(string body, string signature)
     {
-        using var sha1 = SHA1.Create();
-        var correctHash = Convert.ToHexString(sha1.ComputeHash(Encoding.UTF8.GetBytes(Secret)));
-        return hash.Equals(correctHash);
+        using (var hmac = new HMACSHA1(Encoding.UTF8.GetBytes(Secret)))
+        {
+            var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(body));
+            var hash = Encoding.UTF8.GetString(hashBytes);
+            return signature.Equals(hash);
+        }
     }
 }
