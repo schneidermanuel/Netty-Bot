@@ -13,7 +13,7 @@ public class YoutubePubSubSecret
         {
             if (string.IsNullOrEmpty(_secret))
             {
-                _secret = new Guid().ToString();
+                _secret = Guid.NewGuid().ToString();
             }
 
             return _secret;
@@ -26,7 +26,6 @@ public class YoutubePubSubSecret
         {
             var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(body));
             var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            Console.WriteLine("Computed Hash " + hash);
             return signature.Equals(hash);
         }
     }

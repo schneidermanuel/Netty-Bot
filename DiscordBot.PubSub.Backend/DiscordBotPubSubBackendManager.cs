@@ -134,7 +134,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             var checksumHeader = context.Request.Headers["X-Hub-Signature"];
             var signature = checksumHeader.ToString().Split('=')[1];
             var stream = context.Request.Body;
-            var body = string.Empty;
+            string body;
             using (var reader = new StreamReader(stream))
             {
                 body = await reader.ReadToEndAsync();
@@ -142,13 +142,12 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
             var isValid = YoutubePubSubSecret.Check(body, signature);
 
-            Console.WriteLine("============================");
-            Console.WriteLine("BODY");
-            Console.WriteLine(body);
-            Console.WriteLine("SIG " + signature);
-            Console.WriteLine("SEC " + YoutubePubSubSecret.Secret);
-            Console.WriteLine("VALID " + isValid);
-
+            if (!isValid)
+            {
+                await context.Response.CompleteAsync();
+                return;
+            }
+            
             await using (var newStream = GenerateStreamFromString(body))
             {
                 var data = ConvertAtomToSyndication(newStream);
