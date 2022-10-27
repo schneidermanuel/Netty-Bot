@@ -147,6 +147,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             Console.WriteLine(body);
             Console.WriteLine("SIG " + signature);
             Console.WriteLine("SEC " + YoutubePubSubSecret.Secret);
+            Console.WriteLine("VALID " + isValid);
 
             await using (var newStream = GenerateStreamFromString(body))
             {
