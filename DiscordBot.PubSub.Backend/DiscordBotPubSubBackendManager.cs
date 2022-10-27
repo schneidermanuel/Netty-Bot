@@ -134,23 +134,54 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         }
     }
 
+    public static Stream GenerateStreamFromString(string s)
+    {
+        var stream = new MemoryStream();
+        var writer = new StreamWriter(stream);
+        writer.Write(s);
+        writer.Flush();
+        stream.Position = 0;
+        return stream;
+    }
+
+
     private async Task ProcessPost(HttpContext context)
     {
         try
         {
+            var checksumHeader = context.Request.Headers["X-Hub-Signature"];
+            var signature = checksumHeader.ToString().Split('=')[1];
             var stream = context.Request.Body;
-            var data = ConvertAtomToSyndication(stream);
-            if (data != null)
+            string body;
+            using (var reader = new StreamReader(stream))
             {
-                if (data.IsNewVideo)
-                {
-                    await _callback.Invoke(data);
-                }
+                body = await reader.ReadToEndAsync();
+            }
 
-                context.Response.StatusCode = 200;
+            var isValid = YoutubePubSubSecret.Check(body, signature);
+
+            if (!isValid)
+            {
                 await context.Response.CompleteAsync();
                 return;
             }
+            
+            await using (var newStream = GenerateStreamFromString(body))
+            {
+                var data = ConvertAtomToSyndication(newStream);
+                if (data != null)
+                {
+                    if (data.IsNewVideo)
+                    {
+                        await _callback.Invoke(data);
+                    }
+
+                    context.Response.StatusCode = 200;
+                    await context.Response.CompleteAsync();
+                    return;
+                }
+            }
+
 
             context.Response.StatusCode = 400;
             await context.Response.CompleteAsync();

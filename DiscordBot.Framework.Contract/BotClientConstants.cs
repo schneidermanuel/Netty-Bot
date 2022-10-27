@@ -15,5 +15,5 @@ public static class BotClientConstants
     public static string TwitterBearerToken { get; set; }
     public static string SpotifyClientId { get; set; }
     public static string SpotifyClientSecret { get; set; }
-
+    public static string PubSubHubHubSecret { get; set; }
 }
