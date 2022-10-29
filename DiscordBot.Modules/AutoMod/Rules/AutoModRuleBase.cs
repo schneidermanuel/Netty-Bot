@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
+using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using MySqlX.XDevAPI.Common;
 
 namespace DiscordBot.Modules.AutoMod.Rules;
@@ -31,9 +32,9 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
             : ConfigurationValueType.Unavailable;
     }
 
-    public Dictionary<string, string> GetConfigurations()
+    public Dictionary<string, ConfigurationValueType> GetConfigurations()
     {
-        return _keys.ToDictionary(key => key.Key, key => ValidationHelper.MapValueTypeToString(key.Value));
+        return _keys;
     }
 
     public string GetConfig(ulong guildId, string key)

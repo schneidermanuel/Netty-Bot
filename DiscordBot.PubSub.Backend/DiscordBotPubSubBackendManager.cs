@@ -6,11 +6,14 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.PubSub.Backend.Data;
 using DiscordBot.PubSub.Backend.Data.Guild;
+using DiscordBot.PubSub.Backend.Data.Guild.AutoModRule;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace DiscordBot.PubSub.Backend;
 
@@ -18,14 +21,18 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 {
     private readonly DiscordSocketClient _client;
     private readonly IEnumerable<ICommandModule> _modules;
+    private readonly IEnumerable<IGuildAutoModRule> _autoModRules;
     private readonly IModuleDataAccess _dataAccess;
     private Func<YoutubeNotification, Task> _callback;
 
-    public DiscordBotPubSubBackendManager(DiscordSocketClient client, IEnumerable<ICommandModule> modules,
+    public DiscordBotPubSubBackendManager(DiscordSocketClient client,
+        IEnumerable<ICommandModule> modules,
+        IEnumerable<IGuildAutoModRule> autoModRules,
         IModuleDataAccess dataAccess)
     {
         _client = client;
         _modules = modules;
+        _autoModRules = autoModRules;
         _dataAccess = dataAccess;
     }
 
@@ -41,10 +48,30 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapPost("/", ProcessPost);
         app.MapGet("/GuildStatus", ProcessGuilds);
         app.MapGet("/Guild/", ProcessGuild);
+        app.MapGet("/Modules/AutoModConfig/listConfigs", AutoModListConfigs);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task AutoModListConfigs(HttpContext context)
+    {
+        var keys = _autoModRules
+            .Select(rule => new AutoModConfig
+            {
+                RuleKey = rule.RuleIdentifier,
+                Configs = rule.GetConfigurations().Select(x => new AutoModConfigConfiguration
+                {
+                    Key = x.Key,
+                    Type = x.Value.ToString()
+                }).ToArray()
+            })
+            .ToArray();
+
+        var json = JsonConvert.SerializeObject(keys);
+        await Responsd(context, json);
+        await context.Response.CompleteAsync();
     }
 
     private async Task ProcessGuild(HttpContext context)
@@ -165,7 +192,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
                 await context.Response.CompleteAsync();
                 return;
             }
-            
+
             await using (var newStream = GenerateStreamFromString(body))
             {
                 var data = ConvertAtomToSyndication(newStream);

@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 
-namespace DiscordBot.Modules.AutoMod.Rules;
+namespace DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 
-internal interface IGuildAutoModRule
+public interface IGuildAutoModRule
 {
     string RuleIdentifier { get; }
     IRuleViolationAction ExecuteRule(ICommandContext context);
@@ -15,6 +15,6 @@ internal interface IGuildAutoModRule
     void SetValue(ulong guildId, string key, string value);
     Task InitializeAsync();
     ConfigurationValueType GetValueTypeOfKey(string key);
-    Dictionary<string, string> GetConfigurations();
+    Dictionary<string, ConfigurationValueType> GetConfigurations();
     string GetConfig(ulong guildId, string key);
 }
