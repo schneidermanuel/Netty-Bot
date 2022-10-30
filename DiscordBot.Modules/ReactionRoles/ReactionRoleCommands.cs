@@ -14,14 +14,14 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
 {
     private readonly IModuleDataAccess _dataAccess;
     private readonly ReactionRoleManager _manager;
-    private readonly IReactionRoleBusinessLogic _businessLogic;
+    private readonly IReactionRoleDomain _domain;
 
     public ReactionRoleCommands(IModuleDataAccess dataAccess, ReactionRoleManager manager,
-        IReactionRoleBusinessLogic businessLogic) : base(dataAccess)
+        IReactionRoleDomain domain) : base(dataAccess)
     {
         _dataAccess = dataAccess;
         _manager = manager;
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
 
     protected override Type RessourceType => typeof(ReactionRoleRessources);
@@ -67,7 +67,7 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
             return;
         }
 
-        if (!await _businessLogic.CanAddReactionRoleAsync(message.Id, emote))
+        if (!await _domain.CanAddReactionRoleAsync(message.Id, emote))
         {
             await context.RespondAsync(Localize(nameof(ReactionRoleRessources.Error_EmoteAlreadyAdded)));
             return;
@@ -84,7 +84,7 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
             RoleId = role.Id
         };
         _manager.ReactionRoles.Add(reactionRole);
-        await _businessLogic.SaveReactionRoleAsync(reactionRole);
+        await _domain.SaveReactionRoleAsync(reactionRole);
         await context.RespondAsync("🤝");
     }
 
@@ -138,7 +138,7 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
             RoleId = role.Id
         };
         _manager.ReactionRoles.Add(reactionRole);
-        await _businessLogic.SaveReactionRoleAsync(reactionRole);
+        await _domain.SaveReactionRoleAsync(reactionRole);
         await context.RespondAsync("🤝");
     }
 

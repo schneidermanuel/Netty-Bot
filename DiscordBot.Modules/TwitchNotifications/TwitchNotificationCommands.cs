@@ -13,13 +13,13 @@ namespace DiscordBot.Modules.TwitchNotifications;
 internal class TwitchNotificationCommands : CommandModuleBase, ICommandModule
 {
     private readonly TwitchNotificationsManager _manager;
-    private readonly ITwitchNotificationsBusinessLogic _businessLogic;
+    private readonly ITwitchNotificationsDomain _domain;
 
     public TwitchNotificationCommands(IModuleDataAccess dataAccess, TwitchNotificationsManager manager,
-        ITwitchNotificationsBusinessLogic businessLogic) : base(dataAccess)
+        ITwitchNotificationsDomain domain) : base(dataAccess)
     {
         _manager = manager;
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
 
     [Command("registerTwitch")]
@@ -33,7 +33,7 @@ internal class TwitchNotificationCommands : CommandModuleBase, ICommandModule
         var username = await RequireString(context);
         var channelId = context.Channel.Id;
         var guildId = guild.Id;
-        var isAlreadyRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, guildId);
+        var isAlreadyRegistered = await _domain.IsStreamerInGuildAlreadyRegisteredAsync(username, guildId);
         if (isAlreadyRegistered)
         {
             await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
@@ -53,7 +53,7 @@ internal class TwitchNotificationCommands : CommandModuleBase, ICommandModule
             ChannelId = channelId,
             GuildId = guildId
         };
-        await _businessLogic.SaveRegistrationAsync(registration);
+        await _domain.SaveRegistrationAsync(registration);
         await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Message_RegistrationSuccess)));
         await _manager.AddUserAsync(registration);
     }
@@ -66,14 +66,14 @@ internal class TwitchNotificationCommands : CommandModuleBase, ICommandModule
         var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
-        var isRegistered = await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(username, guild.Id);
+        var isRegistered = await _domain.IsStreamerInGuildAlreadyRegisteredAsync(username, guild.Id);
         if (!isRegistered)
         {
             await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Error_RegistrationInvalid)));
             return;
         }
 
-        await _businessLogic.DeleteRegistrationAsync(username, guild.Id);
+        await _domain.DeleteRegistrationAsync(username, guild.Id);
         await context.RespondAsync(Localize(nameof(TwitchNotificationRessources.Message_UnregistrationSucess)));
         _manager.RemoveUser(username, guild.Id);
     }

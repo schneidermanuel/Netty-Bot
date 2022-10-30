@@ -11,15 +11,15 @@ namespace DiscordBot.Modules.TwitchNotifications;
 
 internal class TwitchNotificationsManager
 {
-    private readonly ITwitchNotificationsBusinessLogic _businessLogic;
+    private readonly ITwitchNotificationsDomain _domain;
     private readonly ITwitchPubsubManager _pubsubManager;
     private readonly DiscordSocketClient _client;
     private List<TwitchNotificationRegistration> _registrations;
 
-    public TwitchNotificationsManager(ITwitchNotificationsBusinessLogic businessLogic,
+    public TwitchNotificationsManager(ITwitchNotificationsDomain domain,
         ITwitchPubsubManager pubsubManager, DiscordSocketClient client)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _pubsubManager = pubsubManager;
         _client = client;
         _registrations = new List<TwitchNotificationRegistration>();
@@ -27,7 +27,7 @@ internal class TwitchNotificationsManager
 
     public async Task Initialize()
     {
-        var registrations = await _businessLogic.RetrieveAllRegistrationsAsync();
+        var registrations = await _domain.RetrieveAllRegistrationsAsync();
         _registrations.Clear();
         _registrations.AddRange(registrations);
         foreach (var registration in _registrations)

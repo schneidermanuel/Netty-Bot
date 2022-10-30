@@ -7,16 +7,16 @@ namespace DiscordBot.Modules.MarioKart;
 
 internal class MkBootStep : ITimedAction
 {
-    private readonly IMkGameBusinessLogic _businessLogic;
+    private readonly IMkGameDomain _domain;
     public ExecutionTime GetExecutionTime() => ExecutionTime.PostBoot;
 
-    public MkBootStep(IMkGameBusinessLogic businessLogic)
+    public MkBootStep(IMkGameDomain domain)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
 
     public async Task ExecuteAsync(DiscordSocketClient client)
     {
-        await _businessLogic.ClearAllAsync();
+        await _domain.ClearAllAsync();
     }
 }

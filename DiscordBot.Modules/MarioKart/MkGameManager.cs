@@ -6,12 +6,12 @@ namespace DiscordBot.Modules.MarioKart;
 
 internal class MkManager
 {
-    private readonly IMkGameBusinessLogic _businessLogic;
+    private readonly IMkGameDomain _domain;
     private readonly Dictionary<ulong, MkResult> _runningGames = new();
 
-    public MkManager(IMkGameBusinessLogic businessLogic)
+    public MkManager(IMkGameDomain domain)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
     
     public async Task RegisterResultAsync(MkResult result, ulong channel, string comment)
@@ -24,7 +24,7 @@ internal class MkManager
         var game = _runningGames[channel];
         game.Points += result.Points;
         game.EnemyPoints += result.EnemyPoints;
-        var gameId = await _businessLogic.SaveOrUpdateAsync(channel, game);
+        var gameId = await _domain.SaveOrUpdateAsync(channel, game);
         _runningGames[channel].GameId = gameId;
         var history = new MkHistoryItem
         {
@@ -34,7 +34,7 @@ internal class MkManager
             TeamPoints = result.Points,
             GameId = gameId
         };
-        await _businessLogic.SaveHistoryItemAsync(history);
+        await _domain.SaveHistoryItemAsync(history);
     }
     
     public MkResult GetFinalResult(ulong channelId)
@@ -53,7 +53,7 @@ internal class MkManager
         if (_runningGames.ContainsKey(channelId))
         {
             _runningGames.Remove(channelId);
-            _businessLogic.ClearAsync(channelId);
+            _domain.ClearAsync(channelId);
         }
     }
 
@@ -65,13 +65,13 @@ internal class MkManager
         }
 
         var gameId = _runningGames[channelId].GameId;
-        return await _businessLogic.CanRevertAsync(gameId);
+        return await _domain.CanRevertAsync(gameId);
     }
 
     public async Task RevertGameAsync(ulong channelId)
     {
         var gameId = _runningGames[channelId].GameId;
-        var historyItem = await _businessLogic.RevertGameAsync(gameId);
+        var historyItem = await _domain.RevertGameAsync(gameId);
 
         var result = _runningGames[channelId];
         result.Points -= historyItem.TeamPoints;
@@ -81,6 +81,6 @@ internal class MkManager
 
     public async Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId)
     {
-        return await _businessLogic.RetriveHistoryAsync(gameId);
+        return await _domain.RetriveHistoryAsync(gameId);
     }
 }

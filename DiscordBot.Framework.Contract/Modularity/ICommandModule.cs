@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using Discord.Commands;
 using Discord.WebSocket;
 
 namespace DiscordBot.Framework.Contract.Modularity;

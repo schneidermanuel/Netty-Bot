@@ -10,12 +10,12 @@ namespace DiscordBot.Modules.AutoMod;
 
 internal class AutoModManager
 {
-    private readonly IAutoModBusinessLogic _businessLogic;
+    private readonly IAutoModDomain _domain;
     private readonly IEnumerable<IGuildAutoModRule> _rules;
 
-    public AutoModManager(IAutoModBusinessLogic businessLogic, IEnumerable<IGuildAutoModRule> rules)
+    public AutoModManager(IAutoModDomain domain, IEnumerable<IGuildAutoModRule> rules)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _rules = rules;
     }
 
@@ -61,7 +61,7 @@ internal class AutoModManager
 
         var rule = _rules.Single(rule => rule.RuleIdentifier == module);
         rule.RegisterGuild(guildId);
-        await _businessLogic.SetEnabled(module, guildId, true);
+        await _domain.SetEnabled(module, guildId, true);
     }
 
     public async Task DisableRuleAsync(string module, ulong guildId)
@@ -73,7 +73,7 @@ internal class AutoModManager
 
         var rule = _rules.Single(rule => rule.RuleIdentifier == module);
         rule.UnregisterGuild(guildId);
-        await _businessLogic.SetEnabled(module, guildId, false);
+        await _domain.SetEnabled(module, guildId, false);
     }
 
     public ConfigurationValueType GetValueTypeForRuleAndKey(string ruleKey, string key)
@@ -97,7 +97,7 @@ internal class AutoModManager
 
         var rule = _rules.Single(rule => rule.RuleIdentifier == module);
         rule.SetValue(guildId, key, value);
-        await _businessLogic.SetValue(module, guildId, key, value);
+        await _domain.SetValue(module, guildId, key, value);
     }
 
     public Dictionary<string, bool> GetModules(ulong guildId)

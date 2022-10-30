@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod;
@@ -19,7 +18,7 @@ internal class CapsLockAutoModRule : AutoModRuleBase
     private const int DefaultIncrementCount = 5;
 
 
-    public CapsLockAutoModRule(IAutoModBusinessLogic businessLogic) : base(businessLogic)
+    public CapsLockAutoModRule(IAutoModDomain domain) : base(domain)
     {
     }
 

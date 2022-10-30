@@ -7,18 +7,18 @@ namespace DiscordBot.Modules.ReactionRoles;
 
 public class ReactionRoleBootStep : IBootStep
 {
-    private readonly IReactionRoleBusinessLogic _businessLogic;
+    private readonly IReactionRoleDomain _domain;
     private readonly ReactionRoleManager _manager;
 
-    public ReactionRoleBootStep(IReactionRoleBusinessLogic businessLogic, ReactionRoleManager manager)
+    public ReactionRoleBootStep(IReactionRoleDomain domain, ReactionRoleManager manager)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _manager = manager;
     }
 
     public async Task BootAsync()
     {
-        var roles = await _businessLogic.RetrieveAllReactionRoleDatasAsync();
+        var roles = await _domain.RetrieveAllReactionRoleDatasAsync();
         _manager.ReactionRoles = roles.ToList();
     }
 

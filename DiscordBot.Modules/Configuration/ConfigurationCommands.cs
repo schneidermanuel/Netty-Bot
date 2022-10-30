@@ -14,16 +14,16 @@ namespace DiscordBot.Modules.Configuration;
 
 internal class ConfigurationCommands : CommandModuleBase, ICommandModule
 {
-    private readonly IUserConfigurationBusinessLogic _userConfigurationBusinessLogic;
-    private readonly IGuildConfigBusinessLogic _guildConfigBusinessLogic;
+    private readonly IUserConfigurationDomain _userConfigurationDomain;
+    private readonly IGuildConfigDomain _guildConfigDomain;
     private static string[] _languages = { "de", "en", "ch", "es" };
 
     public ConfigurationCommands(IModuleDataAccess dataAccess,
-        IUserConfigurationBusinessLogic userConfigurationBusinessLogic,
-        IGuildConfigBusinessLogic guildConfigBusinessLogic) : base(dataAccess)
+        IUserConfigurationDomain userConfigurationDomain,
+        IGuildConfigDomain guildConfigDomain) : base(dataAccess)
     {
-        _userConfigurationBusinessLogic = userConfigurationBusinessLogic;
-        _guildConfigBusinessLogic = guildConfigBusinessLogic;
+        _userConfigurationDomain = userConfigurationDomain;
+        _guildConfigDomain = guildConfigDomain;
     }
 
     protected override Type RessourceType => typeof(ConfigurationRessources);
@@ -43,7 +43,7 @@ internal class ConfigurationCommands : CommandModuleBase, ICommandModule
         }
 
         await context.RespondAsync("🤝");
-        await _userConfigurationBusinessLogic.SaveLanguageAsync(context.User.Id, language);
+        await _userConfigurationDomain.SaveLanguageAsync(context.User.Id, language);
     }
 
     [Command("prefix")]
@@ -64,7 +64,7 @@ internal class ConfigurationCommands : CommandModuleBase, ICommandModule
         }
 
         var newPrefix = prefix[0];
-        await _guildConfigBusinessLogic.SavePrefixAsync(guild.Id, newPrefix);
+        await _guildConfigDomain.SavePrefixAsync(guild.Id, newPrefix);
         await context.RespondAsync("🤝");
     }
 

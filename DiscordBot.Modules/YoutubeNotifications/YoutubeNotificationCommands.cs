@@ -12,14 +12,14 @@ namespace DiscordBot.Modules.YoutubeNotifications;
 
 internal class YoutubeNotificationCommands : CommandModuleBase, ICommandModule
 {
-    private readonly IYoutubeNotificationBusinessLogic _businessLogic;
+    private readonly IYoutubeNotificationDomain _domain;
     private readonly YoutubeNotificationManager _manager;
 
-    public YoutubeNotificationCommands(IModuleDataAccess dataAccess, IYoutubeNotificationBusinessLogic businessLogic,
+    public YoutubeNotificationCommands(IModuleDataAccess dataAccess, IYoutubeNotificationDomain domain,
         YoutubeNotificationManager manager) :
         base(dataAccess)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _manager = manager;
     }
     
@@ -41,7 +41,7 @@ internal class YoutubeNotificationCommands : CommandModuleBase, ICommandModule
         var message = RequireStringOrEmpty(context, 2).Trim();
 
         var isAlreadyRegistered =
-            await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(youtubeChannelId, guildId);
+            await _domain.IsStreamerInGuildAlreadyRegisteredAsync(youtubeChannelId, guildId);
         if (isAlreadyRegistered)
         {
             await context.RespondAsync(Localize(nameof(YoutubeNotificationRessources.Error_AlreadyRegistered)));
@@ -68,7 +68,7 @@ internal class YoutubeNotificationCommands : CommandModuleBase, ICommandModule
             GuildId = guildId,
             YoutubeChannelId = youtubeChannelId
         };
-        var id = await _businessLogic.SaveRegistrationAsync(registration);
+        var id = await _domain.SaveRegistrationAsync(registration);
         registration.RegistrationId = id;
         await _manager.RegisterChannelAsync(registration);
         await context.RespondAsync(Localize(nameof(YoutubeNotificationRessources.Message_RegistrationSuccess)));
@@ -83,14 +83,14 @@ internal class YoutubeNotificationCommands : CommandModuleBase, ICommandModule
         var youtubeChannelId = await RequireString(context);
         var guildId = guild.Id;
         var isAlreadyRegistered =
-            await _businessLogic.IsStreamerInGuildAlreadyRegisteredAsync(youtubeChannelId, guildId);
+            await _domain.IsStreamerInGuildAlreadyRegisteredAsync(youtubeChannelId, guildId);
         if (!isAlreadyRegistered)
         {
             await context.RespondAsync(Localize(nameof(YoutubeNotificationRessources.Error_InvalidRegistration)));
             return;
         }
 
-        await _businessLogic.DeleteRegistrationAsync(youtubeChannelId, guildId);
+        await _domain.DeleteRegistrationAsync(youtubeChannelId, guildId);
         await context.RespondAsync(Localize(nameof(YoutubeNotificationRessources.Message_UnregistrationSuccss)));
         _manager.RemoveRegistration(youtubeChannelId, guildId);
     }

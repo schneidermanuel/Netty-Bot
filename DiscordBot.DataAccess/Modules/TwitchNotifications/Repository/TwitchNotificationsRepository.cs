@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
-using DiscordBot.DataAccess.Modules.TwitchNotifications.BusinessLogic;
+using DiscordBot.DataAccess.Modules.TwitchNotifications.Domain;
 using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Linq;
 

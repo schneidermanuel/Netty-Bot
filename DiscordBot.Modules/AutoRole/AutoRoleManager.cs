@@ -8,17 +8,17 @@ namespace DiscordBot.Modules.AutoRole;
 
 internal class AutoRoleManager
 {
-    private readonly IAutoRoleBusinessLogic _businessLogic;
+    private readonly IAutoRoleDomain _domain;
     private IEnumerable<AutoRoleSetup> _setups;
 
-    public AutoRoleManager(IAutoRoleBusinessLogic businessLogic)
+    public AutoRoleManager(IAutoRoleDomain domain)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
 
     public async Task RefreshSetupsAsync()
     {
-        _setups = await _businessLogic.RetrieveAllSetupsAsync();
+        _setups = await _domain.RetrieveAllSetupsAsync();
     }
 
     public async Task UserJoinedGuild(SocketGuildUser user)

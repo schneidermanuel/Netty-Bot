@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
-using Discord;
 using DiscordBot.DataAccess;
 using DiscordBot.Framework;
 using DiscordBot.Framework.BootSteps;

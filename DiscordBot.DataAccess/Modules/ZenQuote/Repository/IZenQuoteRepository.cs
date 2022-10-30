@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DiscordBot.DataAccess.Modules.ZenQuote.BusinessLogic;
+using DiscordBot.DataAccess.Modules.ZenQuote.Domain;
 
 namespace DiscordBot.DataAccess.Modules.ZenQuote.Repository;
 

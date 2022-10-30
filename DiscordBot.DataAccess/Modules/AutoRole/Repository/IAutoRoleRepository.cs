@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DiscordBot.DataAccess.Modules.AutoRole.BusinessLogic;
+using DiscordBot.DataAccess.Modules.AutoRole.Domain;
 
 namespace DiscordBot.DataAccess.Modules.AutoRole.Repository;
 

@@ -1,28 +1,27 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
-using DiscordBot.DataAccess.Contract.TwitterRegistration.BusinessLogic;
+using DiscordBot.DataAccess.Contract.TwitterRegistration.Domain;
 using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.TwitterNotification;
 
 internal class TwitterRegistrationCommands : CommandModuleBase, ICommandModule
 {
-    private readonly ITwitterRegistrationBusinessLogic _businessLogic;
+    private readonly ITwitterRegistrationDomain _domain;
     private readonly TwitterStreamManager _manager;
     private readonly TwitterRuleValidator _ruleValidator;
 
-    public TwitterRegistrationCommands(IModuleDataAccess dataAccess, ITwitterRegistrationBusinessLogic businessLogic,
+    public TwitterRegistrationCommands(IModuleDataAccess dataAccess, ITwitterRegistrationDomain domain,
         TwitterStreamManager manager, TwitterRuleValidator ruleValidator) :
         base(dataAccess)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _manager = manager;
         _ruleValidator = ruleValidator;
     }
@@ -40,7 +39,7 @@ internal class TwitterRegistrationCommands : CommandModuleBase, ICommandModule
         var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
-        if (await _businessLogic.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))
+        if (await _domain.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))
         {
             await context.RespondAsync(
                 Localize(nameof(TwitterNotificationRessources.Error_AccountAlreadyRegistered)));
@@ -65,7 +64,7 @@ internal class TwitterRegistrationCommands : CommandModuleBase, ICommandModule
             RuleFilter = rule
         };
 
-        await _businessLogic.RegisterTwitterAsync(dto);
+        await _domain.RegisterTwitterAsync(dto);
         await context.RespondAsync(Localize(nameof(TwitterNotificationRessources.Message_Registered)));
         await _manager.RegisterTwitterUserAsync(dto);
     }
@@ -78,13 +77,13 @@ internal class TwitterRegistrationCommands : CommandModuleBase, ICommandModule
         var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
         var username = await RequireString(context);
-        if (!await _businessLogic.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))
+        if (!await _domain.IsAccountRegisteredOnChannelAsync(guild.Id, context.Channel.Id, username))
         {
             await context.RespondAsync(
                 Localize(nameof(TwitterNotificationRessources.Error_AccountNotRegistered)));
             return;
         }
-        await _businessLogic.UnregisterTwitterAsync(guild.Id, context.Channel.Id, username);
+        await _domain.UnregisterTwitterAsync(guild.Id, context.Channel.Id, username);
         await context.RespondAsync("🤝");
     }
     

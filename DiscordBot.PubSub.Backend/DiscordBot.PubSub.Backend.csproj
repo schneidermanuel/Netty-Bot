@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\DiscordBot.DataAccess\DiscordBot.DataAccess.csproj" />
       <ProjectReference Include="..\DiscordBot.Framework.Contract\DiscordBot.Framework.Contract.csproj" />
     </ItemGroup>
 

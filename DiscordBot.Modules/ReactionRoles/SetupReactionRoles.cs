@@ -9,12 +9,12 @@ namespace DiscordBot.Modules.ReactionRoles;
 public class SetupReactionRoles : ITimedAction
 {
     private readonly ReactionRoleManager _manager;
-    private readonly IReactionRoleBusinessLogic _businessLogic;
+    private readonly IReactionRoleDomain _domain;
 
-    public SetupReactionRoles(ReactionRoleManager manager, IReactionRoleBusinessLogic businessLogic)
+    public SetupReactionRoles(ReactionRoleManager manager, IReactionRoleDomain domain)
     {
         _manager = manager;
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
 
     public ExecutionTime GetExecutionTime()

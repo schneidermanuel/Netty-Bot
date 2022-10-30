@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
-using DiscordBot.DataAccess.Modules.MusicPlayer.BusinessLogic;
+using DiscordBot.DataAccess.Modules.MusicPlayer.Domain;
 using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Linq;
 

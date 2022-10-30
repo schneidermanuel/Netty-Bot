@@ -17,16 +17,16 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
 {
     private readonly LavaNode _lavaNode;
     private readonly MusicManager _manager;
-    private readonly IMusicPlayerBusinessLogic _businessLogic;
+    private readonly IMusicPlayerDomain _domain;
     private readonly SpotifyApiManager _spotifyApiManager;
 
     public MusicPlayerCommands(IModuleDataAccess dataAccess, LavaNode lavaNode, MusicManager manager,
-        IMusicPlayerBusinessLogic businessLogic, SpotifyApiManager spotifyApiManager) :
+        IMusicPlayerDomain domain, SpotifyApiManager spotifyApiManager) :
         base(dataAccess)
     {
         _lavaNode = lavaNode;
         _manager = manager;
-        _businessLogic = businessLogic;
+        _domain = domain;
         _spotifyApiManager = spotifyApiManager;
     }
 
@@ -243,7 +243,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
     public async Task SaveQueueToDatabaseAsync(SocketSlashCommand context)
     {
         var userId = context.User.Id;
-        var canUserCreatePlaylist = await _businessLogic.CanUserCreatePlaylistAsync(userId);
+        var canUserCreatePlaylist = await _domain.CanUserCreatePlaylistAsync(userId);
         if (!canUserCreatePlaylist)
         {
             await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_TooManyPlaylists)));
@@ -254,7 +254,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
 
         var title = await RequireString(context);
         var playlist = _manager.CreatePlaylist(title, guild.Id, userId);
-        await _businessLogic.SavePlaylistAsync(playlist);
+        await _domain.SavePlaylistAsync(playlist);
         await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Message_PlaylistCreated)));
     }
 
@@ -267,7 +267,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
         var guild = await RequireGuild(context);
 
         var skipPages = RequireIntArgOrDefault(context, 1, 1) - 1;
-        var playlists = await _businessLogic.RetrieveAllPlaylistsAsync();
+        var playlists = await _domain.RetrieveAllPlaylistsAsync();
         var playlistsWithUserOnServer = new List<Playlist>();
         foreach (var playlist in playlists)
         {
@@ -312,7 +312,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
 
         var playlistId = await RequireIntArg(context);
 
-        var playlist = await _businessLogic.RetrieveSinglePlaylistAsync(playlistId);
+        var playlist = await _domain.RetrieveSinglePlaylistAsync(playlistId);
         if (playlist == null)
         {
             await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_PlaylistNotFound)));
@@ -340,7 +340,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
     {
         var playlistId = await RequireLongArg(context);
 
-        var playlist = await _businessLogic.RetrieveSinglePlaylistAsync(playlistId);
+        var playlist = await _domain.RetrieveSinglePlaylistAsync(playlistId);
         if (playlist == null)
         {
             await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_PlaylistNotFound)));
@@ -354,7 +354,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
             return;
         }
 
-        await _businessLogic.DeletePlaylistAsync(playlistId);
+        await _domain.DeletePlaylistAsync(playlistId);
         await context.RespondAsync("🤝");
     }
 

@@ -7,14 +7,14 @@ namespace DiscordBot.DataAccess;
 
 public class ModuleDataAccess : IModuleDataAccess
 {
-    private readonly IUserConfigurationBusinessLogic _configurationBusinessLogic;
-    private readonly IGuildConfigBusinessLogic _guildConfigBusinessLogic;
+    private readonly IUserConfigurationDomain _configurationDomain;
+    private readonly IGuildConfigDomain _guildConfigDomain;
 
-    public ModuleDataAccess(IUserConfigurationBusinessLogic configurationBusinessLogic,
-        IGuildConfigBusinessLogic guildConfigBusinessLogic)
+    public ModuleDataAccess(IUserConfigurationDomain configurationDomain,
+        IGuildConfigDomain guildConfigDomain)
     {
-        _configurationBusinessLogic = configurationBusinessLogic;
-        _guildConfigBusinessLogic = guildConfigBusinessLogic;
+        _configurationDomain = configurationDomain;
+        _guildConfigDomain = guildConfigDomain;
     }
 
     public async Task<bool> IsModuleEnabledForGuild(ulong guildId, string moduleUniqueKey)
@@ -25,16 +25,16 @@ public class ModuleDataAccess : IModuleDataAccess
 
     public async Task<char> GetServerPrefixAsync(ulong guildId)
     {
-        return await _guildConfigBusinessLogic.GetPrefixAsync(guildId);
+        return await _guildConfigDomain.GetPrefixAsync(guildId);
     }
 
     public async Task<string> GetUserLanguageAsync(ulong userId)
     {
-        return await _configurationBusinessLogic.GetPreferedLanguageAsync(userId);
+        return await _configurationDomain.GetPreferedLanguageAsync(userId);
     }
 
     public async Task SetGuildPrefixAsync(ulong guildId, char prefix)
     {
-        await _guildConfigBusinessLogic.SavePrefixAsync(guildId, prefix);
+        await _guildConfigDomain.SavePrefixAsync(guildId, prefix);
     }
 }

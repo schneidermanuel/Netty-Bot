@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using DiscordBot.DataAccess.Contract.UserConfiguration;
-using DiscordBot.DataAccess.Modules.UserConfiguration.BusinessLogic;
+using DiscordBot.DataAccess.Modules.UserConfiguration.Domain;
 using DiscordBot.DataAccess.Modules.UserConfiguration.Repository;
 
 namespace DiscordBot.DataAccess.Modules.UserConfiguration;
@@ -12,7 +12,7 @@ internal class UserConfigurationModule : Module
         base.Load(builder);
 
         builder.RegisterType<UserConfigurationRepository>().As<IUserConfigurationRepository>();
-        builder.RegisterType<UserConfigurationBusinessLogic>().As<IUserConfigurationBusinessLogic>();
+        builder.RegisterType<UserConfigurationDomain>().As<IUserConfigurationDomain>();
         builder.RegisterType<UserConfigurationCache>().SingleInstance();
     }
 }

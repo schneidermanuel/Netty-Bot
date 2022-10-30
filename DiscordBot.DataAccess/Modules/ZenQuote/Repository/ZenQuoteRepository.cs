@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
-using DiscordBot.DataAccess.Modules.ZenQuote.BusinessLogic;
+using DiscordBot.DataAccess.Modules.ZenQuote.Domain;
 using DiscordBot.DataAccess.NHibernate;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

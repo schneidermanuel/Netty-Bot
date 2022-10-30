@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
-using DiscordBot.DataAccess.Modules.GuildConfig.BusinessLogic;
+using DiscordBot.DataAccess.Modules.GuildConfig.Domain;
 using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Linq;
 

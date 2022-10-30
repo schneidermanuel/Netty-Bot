@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.TimedAction;
 

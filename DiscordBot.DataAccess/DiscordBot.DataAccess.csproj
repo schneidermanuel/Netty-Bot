@@ -73,6 +73,8 @@
       <EmbeddedResource Include="Entities\ZenQuoteRegistrationEntity.hbm.xml" />
       <None Remove="Entities\PlaylistEntity.hbm.xml" />
       <EmbeddedResource Include="Entities\PlaylistEntity.hbm.xml" />
+      <None Remove="Entities\WebConfigEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\WebConfigEntity.hbm.xml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -85,5 +87,5 @@
     <ItemGroup>
       <Compile Remove="Modules\ReactionRoles\Repository\IReactionRolesRepository.cs" />
     </ItemGroup>
-
+    
 </Project>

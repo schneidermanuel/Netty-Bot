@@ -8,11 +8,11 @@ namespace DiscordBot.Modules.ZenQuote;
 
 public class ZenQuoteTask : ITimedAction
 {
-    private readonly IZenQuoteBusinessLogic _businessLogic;
+    private readonly IZenQuoteDomain _domain;
 
-    public ZenQuoteTask(IZenQuoteBusinessLogic businessLogic)
+    public ZenQuoteTask(IZenQuoteDomain domain)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
 
     public ExecutionTime GetExecutionTime()
@@ -22,8 +22,8 @@ public class ZenQuoteTask : ITimedAction
 
     public async Task ExecuteAsync(DiscordSocketClient client)
     {
-        var registrations = await _businessLogic.LoadAllRegistrations();
-        var quote = await _businessLogic.RetrieveQuoteOfTheDayAsync();
+        var registrations = await _domain.LoadAllRegistrations();
+        var quote = await _domain.RetrieveQuoteOfTheDayAsync();
         foreach (var registration in registrations)
         {
             try
@@ -36,7 +36,7 @@ public class ZenQuoteTask : ITimedAction
             catch (NullReferenceException e)
             {
                 Console.WriteLine(e);
-                await _businessLogic.RemoveRegistrationAsync(registration.Id);
+                await _domain.RemoveRegistrationAsync(registration.Id);
             }
         }
     }

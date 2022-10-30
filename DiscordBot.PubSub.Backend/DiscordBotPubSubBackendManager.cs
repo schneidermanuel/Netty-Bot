@@ -4,6 +4,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
+using DiscordBot.DataAccess.Modules.WebAccess.Domain;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
@@ -13,7 +14,6 @@ using DiscordBot.PubSub.Backend.Data.Guild.AutoModRule;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace DiscordBot.PubSub.Backend;
 
@@ -22,17 +22,20 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly DiscordSocketClient _client;
     private readonly IEnumerable<ICommandModule> _modules;
     private readonly IEnumerable<IGuildAutoModRule> _autoModRules;
+    private readonly IWebAccessDomain _webAccessDomain;
     private readonly IModuleDataAccess _dataAccess;
     private Func<YoutubeNotification, Task> _callback;
 
     public DiscordBotPubSubBackendManager(DiscordSocketClient client,
         IEnumerable<ICommandModule> modules,
         IEnumerable<IGuildAutoModRule> autoModRules,
+        IWebAccessDomain webAccessDomain,
         IModuleDataAccess dataAccess)
     {
         _client = client;
         _modules = modules;
         _autoModRules = autoModRules;
+        _webAccessDomain = webAccessDomain;
         _dataAccess = dataAccess;
     }
 
@@ -49,10 +52,48 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/GuildStatus", ProcessGuilds);
         app.MapGet("/Guild/", ProcessGuild);
         app.MapGet("/Modules/AutoModConfig/listConfigs", AutoModListConfigs);
+        app.MapGet("/Modules/AutoModConfig/Server", AutoModGetServerConfig);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task RequireAuthenticationAsync(HttpContext context)
+    {
+        if (context.Request.Headers.ContainsKey("X-Verification-Guid"))
+        {
+            var headerGuild = context.Response.Headers["X-Verification-Guid"].ToString();
+            var databaseGuid = await _webAccessDomain.GetCurrentGuid();
+
+            if (!headerGuild.Equals(databaseGuid))
+            {
+                context.Response.StatusCode = 401;
+                await context.Response.CompleteAsync();
+                throw new UnauthorizedAccessException();
+            }
+        }
+        else
+        {
+            context.Response.StatusCode = 401;
+            await context.Response.CompleteAsync();
+            throw new UnauthorizedAccessException();
+        }
+    }
+
+    private async Task AutoModGetServerConfig(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+        try
+        {
+            var guildId = context.Request.Query["guildId"];
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            context.Response.StatusCode = 500;
+            await context.Response.CompleteAsync();
+        }
     }
 
     private async Task AutoModListConfigs(HttpContext context)
@@ -76,6 +117,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
     private async Task ProcessGuild(HttpContext context)
     {
+        await RequireAuthenticationAsync(context);
         try
         {
             var guildId = context.Request.Query["guildId"];
@@ -133,6 +175,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     {
         try
         {
+            await RequireAuthenticationAsync(context);
             var guildId = context.Request.Query["guildId"];
             var userId = context.Request.Query["userId"];
             if (_client.Guilds.All(guild => !guild.Id.ToString().Equals(guildId.ToString())))

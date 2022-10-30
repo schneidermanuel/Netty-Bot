@@ -15,7 +15,7 @@ internal class SpamAutoModRule : AutoModRuleBase
 
     private Dictionary<ulong, GuildMessageObservation> _guildObservations;
 
-    public SpamAutoModRule(IAutoModBusinessLogic businessLogic) : base(businessLogic)
+    public SpamAutoModRule(IAutoModDomain domain) : base(domain)
     {
         _guildObservations = new Dictionary<ulong, GuildMessageObservation>();
     }

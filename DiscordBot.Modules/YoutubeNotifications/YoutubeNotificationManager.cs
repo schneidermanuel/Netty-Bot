@@ -15,18 +15,18 @@ namespace DiscordBot.Modules.YoutubeNotifications;
 
 internal class YoutubeNotificationManager
 {
-    private readonly IYoutubeNotificationBusinessLogic _businessLogic;
+    private readonly IYoutubeNotificationDomain _domain;
     private readonly IYoutubePubSubRegistrator _registrator;
     private readonly DiscordSocketClient _client;
     private YouTubeService _api;
     private List<YoutubeNotificationRegistration> _registrations;
     private List<string> _cache;
 
-    public YoutubeNotificationManager(IYoutubeNotificationBusinessLogic businessLogic,
+    public YoutubeNotificationManager(IYoutubeNotificationDomain domain,
         IYoutubePubSubRegistrator registrator,
         DiscordSocketClient client)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _registrator = registrator;
         _client = client;
     }
@@ -60,7 +60,7 @@ internal class YoutubeNotificationManager
     public async Task RefreshAllRegistrations()
     {
         _registrations.Clear();
-        var registrations = await _businessLogic.RetrieveAllRegistrationsAsync();
+        var registrations = await _domain.RetrieveAllRegistrationsAsync();
         _registrations.AddRange(registrations);
         foreach (var registration in _registrations)
         {

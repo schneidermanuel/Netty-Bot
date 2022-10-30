@@ -5,22 +5,21 @@ using Discord.Commands;
 using DiscordBot.DataAccess.Contract.AutoMod;
 using DiscordBot.DataAccess.Contract.AutoMod.Violation;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
-using MySqlX.XDevAPI.Common;
 
 namespace DiscordBot.Modules.AutoMod.Rules;
 
 internal abstract class AutoModRuleBase : IGuildAutoModRule
 {
-    private readonly IAutoModBusinessLogic _businessLogic;
+    private readonly IAutoModDomain _domain;
     protected IList<ulong> Guilds { get; set; }
     protected Dictionary<ulong, GuildRuleConfiguration> Configs { get; set; }
     protected abstract Dictionary<string, ConfigurationValueType> _keys { get; }
     public abstract string RuleIdentifier { get; }
 
 
-    protected AutoModRuleBase(IAutoModBusinessLogic businessLogic)
+    protected AutoModRuleBase(IAutoModDomain domain)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         Configs = new Dictionary<ulong, GuildRuleConfiguration>();
         Guilds = new List<ulong>();
     }
@@ -90,11 +89,11 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
 
     public async Task InitializeAsync()
     {
-        var guilds = await _businessLogic.GetGuildIdsWithModuleEnabled(RuleIdentifier);
+        var guilds = await _domain.GetGuildIdsWithModuleEnabled(RuleIdentifier);
         Guilds = guilds.ToList();
         foreach (var enabledGuild in Guilds)
         {
-            var keyValuePairs = await _businessLogic.GetConfigurationsForGuildAndRule(enabledGuild, RuleIdentifier);
+            var keyValuePairs = await _domain.GetConfigurationsForGuildAndRule(enabledGuild, RuleIdentifier);
             foreach (var keyValuePair in keyValuePairs)
             {
                 if (!Configs.ContainsKey(enabledGuild))

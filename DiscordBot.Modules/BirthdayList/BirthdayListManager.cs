@@ -10,13 +10,13 @@ namespace DiscordBot.Modules.BirthdayList;
 
 public class BirthdayListManager
 {
-    private readonly IGeburtstagListBusinessLogic _businessLogic;
+    private readonly IGeburtstagListDomain _domain;
     private readonly DiscordSocketClient _client;
     private List<Birthday> _birthdays;
 
-    public BirthdayListManager(IGeburtstagListBusinessLogic businessLogic, DiscordSocketClient client)
+    public BirthdayListManager(IGeburtstagListDomain domain, DiscordSocketClient client)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _client = client;
     }
 
@@ -87,7 +87,7 @@ public class BirthdayListManager
         var output = new Dictionary<string, DateTime>();
         if (_birthdays == null)
         {
-            _birthdays = await _businessLogic.GetAllGeburtstageAsync();
+            _birthdays = await _domain.GetAllGeburtstageAsync();
 
         }
         foreach (var birthday in _birthdays.OrderBy(x => x.Geburtsdatum))
@@ -109,8 +109,8 @@ public class BirthdayListManager
 
     public async Task RefreshAllBirthdayChannel()
     {
-        _birthdays = await _businessLogic.GetAllGeburtstageAsync();
-        var channels = await _businessLogic.GetAllGeburtstagsChannelAsync();
+        _birthdays = await _domain.GetAllGeburtstageAsync();
+        var channels = await _domain.GetAllGeburtstagsChannelAsync();
         foreach (var channel in channels)
         {
             await RefreshSingleBirthdayChannel(channel);
@@ -121,7 +121,7 @@ public class BirthdayListManager
     {
         var birthdays = _birthdays.Where(x =>
             x.Geburtsdatum.Day == DateTime.Now.Day && x.Geburtsdatum.Month == DateTime.Now.Month);
-        var subbedChannel = (await _businessLogic.GetAllSubbedChannelAsync()).ToList();
+        var subbedChannel = (await _domain.GetAllSubbedChannelAsync()).ToList();
         foreach (var birthday in birthdays)
         {
             foreach (var subChannel in subbedChannel)
@@ -139,9 +139,9 @@ public class BirthdayListManager
                         (SocketTextChannel)guild.GetChannel(subChannel.ChannelId);
                     var message = $"🍰HURRA🍰\n{user.Mention} hat heute Geburtstag!";
                     await channel.SendMessageAsync(message);
-                    if (await _businessLogic.HasGuildSetupBirthdayRoleAsync(guild.Id))
+                    if (await _domain.HasGuildSetupBirthdayRoleAsync(guild.Id))
                     {
-                        var roleId = await _businessLogic.RetrieveBirthdayRoleIdForGuildAsync(guild.Id);
+                        var roleId = await _domain.RetrieveBirthdayRoleIdForGuildAsync(guild.Id);
                         if (user.Roles.Any(role => role.Id == roleId))
                         {
                             continue;
@@ -149,7 +149,7 @@ public class BirthdayListManager
 
                         var role = guild.GetRole(roleId);
                         await user.AddRoleAsync(role);
-                        await _businessLogic.InsertBirthdayRoleAssotiation(guild.Id, user.Id);
+                        await _domain.InsertBirthdayRoleAssotiation(guild.Id, user.Id);
                         Console.WriteLine($"[BIRTHDAY ROLE] Added '{role.Name}' to '{user.Username}'");
                     }
                 }
@@ -157,7 +157,7 @@ public class BirthdayListManager
                 {
                     Console.WriteLine(
                         $"Cannot process Sub of {subChannel.GuildId}/{subChannel.ChannelId}, Delete from DB!");
-                    await _businessLogic.DeleteSubbedChannelAsync(subChannel.GuildId, subChannel.ChannelId);
+                    await _domain.DeleteSubbedChannelAsync(subChannel.GuildId, subChannel.ChannelId);
                 }
             }
         }
@@ -165,8 +165,8 @@ public class BirthdayListManager
 
     public async Task RemoveBirthdayRolesFromUsers()
     {
-        var birthdayRoleAssociations = await _businessLogic.RetrieveAllBirthdayRoleAssotiations();
-        var birthdayRoleSetups = (await _businessLogic.RetrieveAllBirthdayRoleSetupsAsync()).ToList();
+        var birthdayRoleAssociations = await _domain.RetrieveAllBirthdayRoleAssotiations();
+        var birthdayRoleSetups = (await _domain.RetrieveAllBirthdayRoleSetupsAsync()).ToList();
         foreach (var birthdayRoleAssociation in birthdayRoleAssociations)
         {
             if (birthdayRoleSetups.All(setup => setup.GuildId != birthdayRoleAssociation.GuildId))
@@ -181,7 +181,7 @@ public class BirthdayListManager
                 var setup = birthdayRoleSetups.Single(setup => setup.GuildId == birthdayRoleAssociation.GuildId);
                 var role = guild.GetRole(setup.RoleId);
                 await user.RemoveRoleAsync(role);
-                await _businessLogic.DeleteAssociationAsync(birthdayRoleAssociation);
+                await _domain.DeleteAssociationAsync(birthdayRoleAssociation);
                 Console.WriteLine($"[BIRTHDAY ROLE] - Removed '{role.Name}' from '{user.Username}'");
             }
             catch

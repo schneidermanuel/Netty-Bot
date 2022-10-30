@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
-using DiscordBot.DataAccess.Modules.MkCalculator.BusinessLogic;
+using DiscordBot.DataAccess.Modules.MkCalculator.Domain;
 using DiscordBot.DataAccess.NHibernate;
 using NHibernate;
 using NHibernate.Linq;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DiscordBot.DataAccess.Modules.GeburtstagList.BusinessLogic;
+using DiscordBot.DataAccess.Modules.GeburtstagList.Domain;
 
 namespace DiscordBot.DataAccess.Modules.GeburtstagList.Repository;
 

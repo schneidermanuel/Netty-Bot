@@ -21,7 +21,7 @@ internal class EmoteSpamAutoModRule : AutoModRuleBase
         { ValidationHelper.ActionKey, ConfigurationValueType.ActionValue }
     };
 
-    public EmoteSpamAutoModRule(IAutoModBusinessLogic businessLogic) : base(businessLogic)
+    public EmoteSpamAutoModRule(IAutoModDomain domain) : base(domain)
     {
     }
 

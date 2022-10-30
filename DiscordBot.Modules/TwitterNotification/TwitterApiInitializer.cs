@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord.WebSocket;
 using DiscordBot.Framework.Contract.TimedAction;
 

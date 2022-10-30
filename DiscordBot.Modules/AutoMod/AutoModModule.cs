@@ -3,7 +3,6 @@ using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.Framework.Contract.TimedAction;
 using DiscordBot.Modules.AutoMod.KeyValueValidationStrategies;
-using DiscordBot.Modules.AutoMod.Rules;
 using DiscordBot.Modules.AutoMod.Rules.Rules;
 
 namespace DiscordBot.Modules.AutoMod;

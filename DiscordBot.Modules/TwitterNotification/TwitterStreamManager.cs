@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
-using DiscordBot.DataAccess.Contract.TwitterRegistration.BusinessLogic;
+using DiscordBot.DataAccess.Contract.TwitterRegistration.Domain;
 using TwitterSharp.Client;
 using TwitterSharp.Request;
 using TwitterSharp.Request.AdvancedSearch;
@@ -23,26 +22,26 @@ internal class TwitterStreamManager
     private readonly TwitterClient _client;
     private IList<string> _listenedUsers;
     private IList<TwitterRegistrationDto> _registrations;
-    private readonly ITwitterRegistrationBusinessLogic _businessLogic;
+    private readonly ITwitterRegistrationDomain _domain;
     private readonly TwitterRuleValidator _ruleValidator;
     private Task _task;
 
     public TwitterStreamManager(DiscordSocketClient discordSocketClient, TwitterClient client,
         IList<TwitterRegistrationDto> registrations,
-        ITwitterRegistrationBusinessLogic businessLogic,
+        ITwitterRegistrationDomain domain,
         TwitterRuleValidator ruleValidator)
     {
         _discordSocketClient = discordSocketClient;
         _client = client;
         _registrations = registrations;
-        _businessLogic = businessLogic;
+        _domain = domain;
         _ruleValidator = ruleValidator;
         _listenedUsers = new List<string>();
     }
 
     public async Task InitializeAsync()
     {
-        var regs = (await _businessLogic.RetrieveAllRegistartionsAsync()).ToList();
+        var regs = (await _domain.RetrieveAllRegistartionsAsync()).ToList();
 
         _ = Task.Run(async () =>
         {

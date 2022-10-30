@@ -13,11 +13,11 @@ namespace DiscordBot.Modules.ZenQuote;
 
 public class ZenQuoteCommands : CommandModuleBase, ICommandModule
 {
-    private readonly IZenQuoteBusinessLogic _businessLogic;
+    private readonly IZenQuoteDomain _domain;
 
-    public ZenQuoteCommands(IModuleDataAccess dataAccess, IZenQuoteBusinessLogic businessLogic) : base(dataAccess)
+    public ZenQuoteCommands(IModuleDataAccess dataAccess, IZenQuoteDomain domain) : base(dataAccess)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
     }
 
     protected override Type RessourceType => typeof(ZenQuoteRessources);
@@ -31,7 +31,7 @@ public class ZenQuoteCommands : CommandModuleBase, ICommandModule
 
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
-        var registrations = await _businessLogic.LoadAllRegistrations();
+        var registrations = await _domain.LoadAllRegistrations();
         if (registrations.Any(reg => reg.Channelid == context.Channel.Id && reg.GuildId == guild.Id))
         {
             await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Error_QuotesAlreadyEnabled)));
@@ -46,7 +46,7 @@ public class ZenQuoteCommands : CommandModuleBase, ICommandModule
             Id = 0,
             GuildId = guildId
         };
-        await _businessLogic.SaveRegistrationAsync(registration);
+        await _domain.SaveRegistrationAsync(registration);
         await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteEnabled)));
     }
 
@@ -56,7 +56,7 @@ public class ZenQuoteCommands : CommandModuleBase, ICommandModule
     {
         var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
-        var registrations = await _businessLogic.LoadAllRegistrations();
+        var registrations = await _domain.LoadAllRegistrations();
         var regForChannel = registrations.Where(reg => reg.GuildId == guild.Id &&
                                                        reg.Channelid == context.Channel.Id).ToList();
         if (!regForChannel.Any())
@@ -65,7 +65,7 @@ public class ZenQuoteCommands : CommandModuleBase, ICommandModule
             return;
         }
 
-        await _businessLogic.RemoveRegistrationAsync(regForChannel.Single().Id);
+        await _domain.RemoveRegistrationAsync(regForChannel.Single().Id);
         await context.RespondAsync(Localize(nameof(ZenQuoteRessources.Message_QuoteDisabled)));
     }
 }

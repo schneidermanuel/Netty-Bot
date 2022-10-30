@@ -10,6 +10,7 @@ using DiscordBot.DataAccess.Modules.ReactionRoles;
 using DiscordBot.DataAccess.Modules.TwitchNotifications;
 using DiscordBot.DataAccess.Modules.TwitterRegistration;
 using DiscordBot.DataAccess.Modules.UserConfiguration;
+using DiscordBot.DataAccess.Modules.WebAccess;
 using DiscordBot.DataAccess.Modules.YoutubeNotifications;
 using DiscordBot.DataAccess.Modules.ZenQuote;
 using DiscordBot.DataAccess.NHibernate;
@@ -34,5 +35,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<UserConfigurationModule>();
         builder.RegisterModule<GuildConfigModule>();
         builder.RegisterModule<TwitterRegistrationModule>();
+        builder.RegisterModule<WebAccessModule>();
     }
 }

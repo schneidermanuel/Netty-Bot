@@ -13,13 +13,13 @@ namespace DiscordBot.Modules.AutoRole;
 
 internal class AutoRoleCommands : CommandModuleBase, ICommandModule
 {
-    private readonly IAutoRoleBusinessLogic _businessLogic;
+    private readonly IAutoRoleDomain _domain;
     private readonly AutoRoleManager _manager;
 
-    public AutoRoleCommands(IModuleDataAccess dataAccess, IAutoRoleBusinessLogic businessLogic, AutoRoleManager manager)
+    public AutoRoleCommands(IModuleDataAccess dataAccess, IAutoRoleDomain domain, AutoRoleManager manager)
         : base(dataAccess)
     {
-        _businessLogic = businessLogic;
+        _domain = domain;
         _manager = manager;
     }
     
@@ -30,7 +30,7 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
     {
         var guild = await RequireGuild(context);
         var role = await RequireRoleAsync(context);
-        var setups = (await _businessLogic.RetrieveAllSetupsForGuildAsync(guild.Id)).ToArray();
+        var setups = (await _domain.RetrieveAllSetupsForGuildAsync(guild.Id)).ToArray();
         if (setups.All(setup => setup.RoleId != role.Id))
         {
             await context.RespondAsync(string.Format(Localize(nameof(AutoRoleRessources.Error_InvalidRole)),
@@ -39,7 +39,7 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
         }
 
         var setupToDelete = setups.Single(setup => setup.RoleId == role.Id);
-        await _businessLogic.DeleteSetupAsync(setupToDelete.AutoRoleSetupId);
+        await _domain.DeleteSetupAsync(setupToDelete.AutoRoleSetupId);
         await context.RespondAsync(Localize(nameof(AutoRoleRessources.Message_DeletedRegistration)));
         await _manager.RefreshSetupsAsync();
     }
@@ -50,7 +50,7 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
     {
         var guild = await RequireGuild(context);
 
-        var setups = await _businessLogic.RetrieveAllSetupsForGuildAsync(guild.Id);
+        var setups = await _domain.RetrieveAllSetupsForGuildAsync(guild.Id);
         var output = setups.Select(autoRoleSetup =>
                 new { Role = guild.GetRole(autoRoleSetup.RoleId), Id = autoRoleSetup.RoleId })
             .Aggregate(string.Empty, (current, role) => current + $"{role.Role?.Name ?? "missingRole"} ({role.Id})\n");
@@ -88,7 +88,7 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
 
         var guildId = guild.Id;
 
-        var canCreateSetup = await _businessLogic.CanCreateAutoRoleAsync(guildId, role.Id);
+        var canCreateSetup = await _domain.CanCreateAutoRoleAsync(guildId, role.Id);
         if (!canCreateSetup)
         {
             await context.RespondAsync(Localize(nameof(AutoRoleRessources.Message_NewAutoRole)));
@@ -101,7 +101,7 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
             GuildId = guildId,
             RoleId = role.Id
         };
-        await _businessLogic.SaveSetupAsync(setup);
+        await _domain.SaveSetupAsync(setup);
         await _manager.RefreshSetupsAsync();
         await context.RespondAsync("🤝");
     }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DiscordBot.DataAccess.Modules.MusicPlayer.BusinessLogic;
+using DiscordBot.DataAccess.Modules.MusicPlayer.Domain;
 
 namespace DiscordBot.DataAccess.Modules.MusicPlayer.Repository;
 
