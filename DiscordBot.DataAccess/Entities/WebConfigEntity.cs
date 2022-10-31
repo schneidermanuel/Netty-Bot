@@ -2,6 +2,6 @@
 
 public class WebConfigEntity
 {
-    public virtual string Key { get; set; }
+    public virtual string Identifier { get; set; }
     public virtual string Value { get; set; }
 }
