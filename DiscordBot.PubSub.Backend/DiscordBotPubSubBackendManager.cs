@@ -65,6 +65,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         {
             var headerGuild = context.Response.Headers["X-Verification-Guid"].ToString();
             var databaseGuid = await _webAccessDomain.GetCurrentGuid();
+            Console.WriteLine("Header: " + headerGuild);
+            Console.WriteLine("DB: " + databaseGuid);
 
             if (!headerGuild.Equals(databaseGuid))
             {
