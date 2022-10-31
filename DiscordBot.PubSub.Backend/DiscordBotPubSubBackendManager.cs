@@ -173,9 +173,10 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
     private async Task ProcessGuilds(HttpContext context)
     {
+        await RequireAuthenticationAsync(context);
+
         try
         {
-            await RequireAuthenticationAsync(context);
             var guildId = context.Request.Query["guildId"];
             var userId = context.Request.Query["userId"];
             if (_client.Guilds.All(guild => !guild.Id.ToString().Equals(guildId.ToString())))
