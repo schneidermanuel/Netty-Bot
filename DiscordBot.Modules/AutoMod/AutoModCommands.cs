@@ -110,8 +110,7 @@ internal class AutoModCommands : CommandModuleBase, ICommandModule
             }
             else
             {
-                await context.RespondAsync(
-                    string.Format(Localize(nameof(AutoModRessources.Message_SetValue)), module, key, value));
+                await context.RespondAsync((Localize(nameof(AutoModRessources.Message_SavedValue))));
             }
 
             return;

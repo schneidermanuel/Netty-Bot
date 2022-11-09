@@ -47,6 +47,25 @@ internal class AutoModDomain : IAutoModDomain
         await _repository.SetValue(module, guildId, key, value);
     }
 
+    public async Task<IReadOnlyCollection<AutoModRule>> GetAllConfigsForGuildAsync(ulong guildId)
+    {
+        var ruleDatas = await _repository.GetAllConfigsForGuildAsync(guildId.ToString());
+        return ruleDatas
+            .GroupBy(data => data.RuleKey)
+            .Select(group =>
+                new AutoModRule
+                {
+                    RuleKey = group.Key,
+                    Configs = group.Select(data =>
+                        new AutoModConfig
+                        {
+                            Key = data.ConfigKey,
+                            Value = data.Value
+                        }).ToArray()
+                })
+            .ToArray();
+    }
+
     private string MapBool(bool value)
     {
         return value ? "TRUE" : "FALSE";

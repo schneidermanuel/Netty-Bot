@@ -47,6 +47,11 @@ internal abstract class AutoModRuleBase : IGuildAutoModRule
         return null;
     }
 
+    public void UnsetAllValues(ulong guildId)
+    {
+        Configs.Clear();
+    }
+
     public void SetValue(ulong guildId, string key, string value)
     {
         if (!Configs.ContainsKey(guildId))

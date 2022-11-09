@@ -17,4 +17,5 @@ public interface IGuildAutoModRule
     ConfigurationValueType GetValueTypeOfKey(string key);
     Dictionary<string, ConfigurationValueType> GetConfigurations();
     string GetConfig(ulong guildId, string key);
+    void UnsetAllValues(ulong guildId);
 }

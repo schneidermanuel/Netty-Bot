@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modules.AutoMod;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.Framework.Contract.TimedAction;
 using DiscordBot.Modules.AutoMod.KeyValueValidationStrategies;
@@ -25,5 +26,7 @@ internal class AutoModModule : Module
         builder.RegisterType<IntValueKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
         builder.RegisterType<AnyValueKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
         builder.RegisterType<ActionKeyValueValidationStrategy>().As<IKeyValueValidationStrategy>();
+
+        builder.RegisterType<AutoModRefresher>().As<IAutoModRefresher>();
     }
 }

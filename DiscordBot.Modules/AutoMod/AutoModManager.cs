@@ -116,4 +116,10 @@ internal class AutoModManager
         var rule = _rules.SingleOrDefault(rule => rule.RuleIdentifier == module);
         return rule?.GetConfig(guildId, key);
     }
+
+    public void UnsetAllValues(string rulKey, ulong guildId)
+    {
+        var rule = _rules.SingleOrDefault(rule => rule.RuleIdentifier == rulKey);
+        rule?.UnsetAllValues(guildId);
+    }
 }

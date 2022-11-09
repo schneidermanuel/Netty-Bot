@@ -77,4 +77,17 @@ internal class AutoModRepository : IAutoModRepository
             return value;
         }
     }
+
+    public async Task<IReadOnlyCollection<AutoModRuleData>> GetAllConfigsForGuildAsync(string guildId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var entities = await session.Query<AutoModConfigurationEntity>()
+                .Where(entity => entity.GuildId == guildId)
+                .ToListAsync();
+            return entities.Select(entity =>
+                    new AutoModRuleData(entity.RuleKey, entity.ConfigurationKey, entity.ConfigurationValue))
+                .ToArray();
+        }
+    }
 }
