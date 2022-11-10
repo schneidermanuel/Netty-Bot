@@ -100,27 +100,30 @@ internal class AutoModCommands : CommandModuleBase, ICommandModule
 
         var key = await RequireString(context, 2);
         var value = (await RequireString(context, 3)).Trim();
-        if (string.IsNullOrEmpty(value))
-        {
-            value = _manager.GetConfigValue(module, guild.Id, key);
-            if (value == null)
-            {
-                await context.RespondAsync(
-                    string.Format(Localize(nameof(AutoModRessources.Error_ConfigUnset)), key, module));
-            }
-            else
-            {
-                await context.RespondAsync((Localize(nameof(AutoModRessources.Message_SavedValue))));
-            }
-
-            return;
-        }
-
         var type = _manager.GetValueTypeForRuleAndKey(module, key);
         await ValidateKeyValuePair(type, module, key, value, context);
 
         await _manager.SetValue(module, key, value, guild.Id);
-        await context.RespondAsync(Localize(nameof(AutoModRessources.Message_SetValue)));
+        await context.RespondAsync(Localize(nameof(AutoModRessources.Message_SavedValue)));
+    }
+
+    [Command("autoMod-getConfig")]
+    [Description("Reads the Configuration of an AutoModRule")]
+    [Parameter(Name = "rule", Description = "Key of the Rule", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "config", Description = "Config to read", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task GetAutoModConfigCommand(SocketSlashCommand context)
+    {
+        var guild = await RequireGuild(context);
+        await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
+        var guildId = guild.Id;
+
+        var module = await RequireString(context);
+        var config = await RequireString(context, 1);
+
+        var value = _manager.GetConfigValue(module, guildId, config);
+        await context.RespondAsync(string.Format(Localize(nameof(AutoModRessources.Message_SetValue)), module, config, value));
     }
 
     private async Task ValidateKeyValuePair(ConfigurationValueType type, string module, string key, string value,
