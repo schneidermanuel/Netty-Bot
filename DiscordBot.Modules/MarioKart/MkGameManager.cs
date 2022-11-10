@@ -13,8 +13,8 @@ internal class MkManager
     {
         _domain = domain;
     }
-    
-    public async Task RegisterResultAsync(MkResult result, ulong channel, string comment)
+
+    public async Task RegisterResultAsync(MkResult result, ulong channel, ulong guild, string comment)
     {
         if (!_runningGames.ContainsKey(channel))
         {
@@ -24,7 +24,7 @@ internal class MkManager
         var game = _runningGames[channel];
         game.Points += result.Points;
         game.EnemyPoints += result.EnemyPoints;
-        var gameId = await _domain.SaveOrUpdateAsync(channel, game);
+        var gameId = await _domain.SaveOrUpdateAsync(channel, guild, game);
         _runningGames[channel].GameId = gameId;
         var history = new MkHistoryItem
         {
@@ -36,7 +36,7 @@ internal class MkManager
         };
         await _domain.SaveHistoryItemAsync(history);
     }
-    
+
     public MkResult GetFinalResult(ulong channelId)
     {
         if (!_runningGames.ContainsKey(channelId))
@@ -46,15 +46,6 @@ internal class MkManager
 
         var game = _runningGames[channelId];
         return game;
-    }
-
-    public void EndGame(ulong channelId)
-    {
-        if (_runningGames.ContainsKey(channelId))
-        {
-            _runningGames.Remove(channelId);
-            _domain.ClearAsync(channelId);
-        }
     }
 
     public async Task<bool> CanRevertAsync(ulong channelId)
@@ -76,11 +67,19 @@ internal class MkManager
         var result = _runningGames[channelId];
         result.Points -= historyItem.TeamPoints;
         result.EnemyPoints -= historyItem.EnemyPoints;
-
     }
 
     public async Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId)
     {
         return await _domain.RetriveHistoryAsync(gameId);
+    }
+
+    public async Task EndGameAsync(ulong channelId)
+    {
+        if (_runningGames.ContainsKey(channelId))
+        {
+            _runningGames.Remove(channelId);
+            await _domain.ClearAsync(channelId);
+        }
     }
 }

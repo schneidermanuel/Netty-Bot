@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace DiscordBot.DataAccess.Modules.AutoMod.Domain;
+﻿namespace DiscordBot.DataAccess.Modules.AutoMod.Domain;
 
 internal class AutoModRuleData
 {

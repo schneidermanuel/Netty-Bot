@@ -6,6 +6,9 @@
             <generator class="increment"/>
         </id>
         <property name="ChannelId" type="String" column="channelId"/>
+        <property name="GameName" type="String" column="gameName"/>
+        <property name="GuildId" type="String" column="guildId"/>
+        <property name="IsCompleted" type="bool" column="isCompleted"/>
         <property name="TeamPoints" type="int" column="teamPoints"/>
         <property name="EnemyPoints" type="int" column="enemyPoints"/>
     </class>

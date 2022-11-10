@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -36,6 +35,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     [Parameter(Name = "Comment", Description = "A comment", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
     public async Task CalculateAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         var placesString = await RequireString(context);
         var comment = RequireStringOrEmpty(context, 2);
 
@@ -51,7 +51,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         }
 
         var result = _calculator.Calculate(places);
-        await _manager.RegisterResultAsync(result, context.Channel.Id, comment);
+        await _manager.RegisterResultAsync(result, context.Channel.Id, guild.Id, comment);
         var sumResult = _manager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
         ExecuteShellCommand(
@@ -112,19 +112,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
         await context.RespondAsync("", new[] { embedBuilder.Build() });
     }
-
-    private async Task<string> GetThumbnailUrlAsync(string comment)
-    {
-        var words = comment.Split(' ');
-        var courseCode = words.FirstOrDefault()?.Trim().ToLower() ?? string.Empty;
-
-        var url = $"https://www.mkleaderboards.com/images/mk8/{courseCode}.jpg";
-        var client = new HttpClient();
-        var response = await client.GetAsync(url);
-        return response.IsSuccessStatusCode
-            ? url
-            : "https://www.kindpng.com/picc/m/494-4940057_mario-kart-8-icon-hd-png-download.png";
-    }
+    
 
     [Command("mkdisplay")]
     [Description(
@@ -139,9 +127,10 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     [Description("Completes the current Mario Kart War")]
     public async Task FinishAsync(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         var result = _manager.GetFinalResult(context.Channel.Id);
         var games = (await _manager.RetriveHistoryAsync(result.GameId)).ToArray();
-        _manager.EndGame(context.Channel.Id);
+        await _manager.EndGameAsync(context.Channel.Id);
         var url = BuildChartUrl(games);
         await context.DeferAsync();
         ExecuteShellCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
@@ -14,19 +15,14 @@ internal class MkGameDomain : IMkGameDomain
         _repository = repository;
     }
 
-    public async Task ClearAllAsync()
-    {
-        await _repository.ClearAllAsync();
-    }
-
     public async Task ClearAsync(ulong channelId)
     {
         await _repository.ClearAsync(channelId.ToString());
     }
 
-    public async Task<long> SaveOrUpdateAsync(ulong channelId, MkResult gameToSave)
+    public async Task<long> SaveOrUpdateAsync(ulong channelId, ulong guildId, MkResult gameToSave)
     {
-        return await _repository.SaveOrUpdateAsync(MapToData(channelId, gameToSave));
+        return await _repository.SaveOrUpdateAsync(MapToData(channelId, guildId, gameToSave));
     }
 
     public async Task SaveHistoryItemAsync(MkHistoryItem history)
@@ -65,14 +61,21 @@ internal class MkGameDomain : IMkGameDomain
         });
     }
 
+    public async Task AutoCompleteOldGames(DateTime dueDate)
+    {
+        await _repository.AutoCompleteOldGames(dueDate);
+    }
+
     private HistoryItemData MapToHistoryData(MkHistoryItem history)
     {
         return new HistoryItemData(history.Id, history.GameId, history.TeamPoints, history.EnemyPoints,
             history.Comment);
     }
 
-    private MarioKartRunningGameData MapToData(ulong userId, MkResult gameToSave)
+    private MarioKartRunningGameData MapToData(ulong channelId, ulong guildId, MkResult gameToSave)
     {
-        return new MarioKartRunningGameData(0, userId.ToString(), gameToSave.Points, gameToSave.EnemyPoints);
+        return new MarioKartRunningGameData(0, channelId.ToString(), guildId.ToString(), gameToSave.Points,
+            gameToSave.EnemyPoints,
+            $"Mario Kart match {DateTime.Now:dd.MM.yyyy hh:mm}", false);
     }
 }
