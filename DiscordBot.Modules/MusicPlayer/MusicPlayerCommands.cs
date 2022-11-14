@@ -174,11 +174,13 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
     }
 
     [Command("stop")]
-    public async Task ClearCommand(ICommandContext context)
+    [Description("Stops the current playback")]
+    public async Task ClearCommand(SocketSlashCommand context)
     {
+        var guild = await RequireGuild(context);
         try
         {
-            if (!_lavaNode.HasPlayer(context.Guild))
+            if (!_lavaNode.HasPlayer(guild))
             {
                 await context.Channel.SendMessageAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
                 return;
@@ -186,16 +188,16 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
 
             try
             {
-                await _lavaNode.GetPlayer(context.Guild).StopAsync();
+                await _lavaNode.GetPlayer(guild).StopAsync();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
 
-            await _manager.ClearQueueAsync(context.Guild);
+            await _manager.ClearQueueAsync(guild);
 
-            await context.Message.AddReactionAsync(Emoji.Parse("🤝"));
+            await context.RespondAsync("🤝");
         }
         catch (Exception e)
         {
