@@ -70,12 +70,14 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         var guildIdString = context.Request.Query["guildId"];
         var guildId = ulong.Parse(guildIdString);
         var socketRoles = _client.GetGuild(guildId)?.Roles ?? new List<SocketRole>();
-        var roles = socketRoles.Select(role => new GuildRole
-        {
-            Id = role.Id.ToString(),
-            Name = role.Name,
-            IsAdmin = role.Permissions.Administrator
-        });
+        var roles = socketRoles
+            .Where(role => !role.IsManaged)
+            .Select(role => new GuildRole
+            {
+                Id = role.Id.ToString(),
+                Name = role.Name,
+                IsAdmin = role.Permissions.Administrator,
+            });
         var json = JsonConvert.SerializeObject(roles);
         await Responsd(context, json);
         await context.Response.CompleteAsync();
