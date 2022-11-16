@@ -57,10 +57,28 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/", ProcessGuild);
         app.MapGet("/Modules/AutoModConfig/listConfigs", AutoModListConfigs);
         app.MapPut("/Modules/Refresh/AutoMod", RefreshAutoMod);
+        app.MapGet("/Guild/Roles", ProcessGuildRoles);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessGuildRoles(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+        var guildIdString = context.Request.Query["guildId"];
+        var guildId = ulong.Parse(guildIdString);
+        var socketRoles = _client.GetGuild(guildId)?.Roles ?? new List<SocketRole>();
+        var roles = socketRoles.Select(role => new GuildRole
+        {
+            Id = role.Id.ToString(),
+            Name = role.Name,
+            IsAdmin = role.Permissions.Administrator
+        });
+        var json = JsonConvert.SerializeObject(roles);
+        await Responsd(context, json);
+        await context.Response.CompleteAsync();
     }
 
     private async Task RefreshAutoMod(HttpContext context)
