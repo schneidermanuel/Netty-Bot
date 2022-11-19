@@ -9,7 +9,7 @@ namespace DiscordBot.Modules.AutoRole;
 internal class AutoRoleManager
 {
     private readonly IAutoRoleDomain _domain;
-    private IEnumerable<AutoRoleSetup> _setups;
+    private IList<AutoRoleSetup> _setups;
 
     public AutoRoleManager(IAutoRoleDomain domain)
     {
@@ -18,7 +18,24 @@ internal class AutoRoleManager
 
     public async Task RefreshSetupsAsync()
     {
-        _setups = await _domain.RetrieveAllSetupsAsync();
+        _setups = (await _domain.RetrieveAllSetupsAsync()).ToList();
+    }
+
+    public async Task RefreshGuildAsync(ulong guildId)
+    {
+        var newSetupsTask = _domain.RetrieveAllSetupsForGuildAsync(guildId);
+
+        var setupsForGuild = _setups.Where(setup => setup.GuildId == guildId);
+        foreach (var autoRoleSetup in setupsForGuild)
+        {
+            _setups.Remove(autoRoleSetup);
+        }
+
+        var newSetups = await newSetupsTask;
+        foreach (var autoRoleSetup in newSetups)
+        {
+            _setups.Add(autoRoleSetup);
+        }
     }
 
     public async Task UserJoinedGuild(SocketGuildUser user)

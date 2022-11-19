@@ -10,5 +10,6 @@ namespace DiscordBot.DataAccess.Contract.ReactionRoles
         Task SaveReactionRoleAsync(ReactionRole reactionRole);
         Task DeleteReactionRoleAsync(long reactionRoleId);
         Task<bool> CanAddReactionRoleAsync(ulong messageId, IEmote emote);
+        Task<IEnumerable<ReactionRole>> RetrieveReactionRolesForGuildAsync(ulong guildId);
     }
 }

@@ -41,7 +41,7 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
         var setupToDelete = setups.Single(setup => setup.RoleId == role.Id);
         await _domain.DeleteSetupAsync(setupToDelete.AutoRoleSetupId);
         await context.RespondAsync(Localize(nameof(AutoRoleRessources.Message_DeletedRegistration)));
-        await _manager.RefreshSetupsAsync();
+        await _manager.RefreshGuildAsync(guild.Id);
     }
 
     [Command("autoRole-list")]
@@ -102,7 +102,7 @@ internal class AutoRoleCommands : CommandModuleBase, ICommandModule
             RoleId = role.Id
         };
         await _domain.SaveSetupAsync(setup);
-        await _manager.RefreshSetupsAsync();
+        await _manager.RefreshGuildAsync(guildId);
         await context.RespondAsync("🤝");
     }
 

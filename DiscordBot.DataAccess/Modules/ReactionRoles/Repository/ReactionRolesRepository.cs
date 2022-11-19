@@ -68,6 +68,17 @@ internal class ReactionRolesRepository : IReactionRolesRepository
         }
     }
 
+    public async Task<IEnumerable<ReactionRoleData>> RetrieveAllReactionRoleForGuildAsync(ulong guildId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var reactionRoles = (await session.Query<ReactionRoleEntity>()
+                .Where(entity => entity.GuildId == guildId.ToString())
+                .ToListAsync()).Select(MapToData);
+            return reactionRoles;
+        }
+    }
+
     private ReactionRoleData MapToData(ReactionRoleEntity entity)
     {
         return new ReactionRoleData(entity.ReactionRoleId, entity.GuildId, entity.ChannelId, entity.MessageId,

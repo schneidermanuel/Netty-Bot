@@ -2,19 +2,23 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
+using DiscordBot.DataAccess.Contract.ReactionRoles;
 using DiscordBot.DataAccess.Modules.WebAccess.Domain;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modules.AutoMod;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
+using DiscordBot.Framework.Contract.Modules.AutoRole;
 using DiscordBot.PubSub.Backend.Data;
 using DiscordBot.PubSub.Backend.Data.Guild;
 using DiscordBot.PubSub.Backend.Data.Guild.AutoModRule;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using ReactionRole = DiscordBot.PubSub.Backend.Data.Guild.ReactionRole.ReactionRole;
 
 namespace DiscordBot.PubSub.Backend;
 
@@ -26,6 +30,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IWebAccessDomain _webAccessDomain;
     private readonly IModuleDataAccess _dataAccess;
     private readonly IAutoModRefresher _autoModRefresher;
+    private readonly IAutoRoleRefresher _autoRoleRefresher;
+    private readonly IReactionRoleDomain _reactionRoleDomain;
     private Func<YoutubeNotification, Task> _callback;
 
     public DiscordBotPubSubBackendManager(DiscordSocketClient client,
@@ -33,7 +39,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IEnumerable<IGuildAutoModRule> autoModRules,
         IWebAccessDomain webAccessDomain,
         IModuleDataAccess dataAccess,
-        IAutoModRefresher autoModRefresher)
+        IAutoModRefresher autoModRefresher,
+        IAutoRoleRefresher autoRoleRefresher,
+        IReactionRoleDomain reactionRoleDomain)
     {
         _client = client;
         _modules = modules;
@@ -41,6 +49,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _webAccessDomain = webAccessDomain;
         _dataAccess = dataAccess;
         _autoModRefresher = autoModRefresher;
+        _autoRoleRefresher = autoRoleRefresher;
+        _reactionRoleDomain = reactionRoleDomain;
     }
 
     public void Run(Func<YoutubeNotification, Task> callback)
@@ -58,10 +68,82 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Modules/AutoModConfig/listConfigs", AutoModListConfigs);
         app.MapPut("/Modules/Refresh/AutoMod", RefreshAutoMod);
         app.MapGet("/Guild/Roles", ProcessGuildRoles);
+        app.MapPut("/AutoRole", RefreshAutoRole);
+        app.MapGet("/Guild/ReactionRoles", ProcessReactionRoles);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessReactionRoles(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        var reactionRoles = await _reactionRoleDomain.RetrieveReactionRolesForGuildAsync(guildId);
+        var list = new List<ReactionRole>();
+        var guild = _client.GetGuild(guildId);
+        foreach (var reactionRole in reactionRoles)
+        {
+            try
+            {
+                await MapReactionRolesAsync(guild, reactionRole, list);
+            }
+            catch (Exception e)
+            {
+                // Ignored for now
+            }
+        }
+
+        await Responsd(context, JsonConvert.SerializeObject(list));
+    }
+
+    private static async Task MapReactionRolesAsync(SocketGuild guild,
+        DataAccess.Contract.ReactionRoles.ReactionRole reactionRole, List<ReactionRole> list)
+    {
+        var channel = guild.GetChannel(reactionRole.ChannelId);
+        var channelName = channel.Name;
+        var message = await ((SocketTextChannel)channel).GetMessageAsync(reactionRole.MessageId);
+        var content = message.Content;
+        if (message.Embeds.Any())
+        {
+            content += $"\n{message.Embeds.First().Description}";
+        }
+
+        if (reactionRole.Emote is Emote guildEmote)
+        {
+            var role = new ReactionRole
+            {
+                Id = reactionRole.Id,
+                ChannelName = channelName,
+                MessageContent = content,
+                IsUrlEmote = true,
+                UnicodeEmote = null,
+                Url = guildEmote.Url
+            };
+            list.Add(role);
+        }
+        else if (reactionRole.Emote is Emoji emoji)
+        {
+            var role = new ReactionRole
+            {
+                Id = reactionRole.Id,
+                ChannelName = channelName,
+                MessageContent = content,
+                IsUrlEmote = false,
+                Url = null,
+                UnicodeEmote = emoji.ToString()
+            };
+            list.Add(role);
+        }
+    }
+
+    private async Task RefreshAutoRole(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        await _autoRoleRefresher.RefreshAsync(guildId);
     }
 
     private async Task ProcessGuildRoles(HttpContext context)

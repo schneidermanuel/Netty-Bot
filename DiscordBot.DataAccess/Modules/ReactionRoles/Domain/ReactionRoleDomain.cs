@@ -21,10 +21,10 @@ internal class ReactionRoleDomain : IReactionRoleDomain
         return data.Select(x => new ReactionRole
         {
             Id = x.ReactionRoleId,
-            ChannelId = ulong.Parse((string)x.ChannelId),
-            GuildId = ulong.Parse((string)x.GuildId),
-            MessageId = ulong.Parse((string)x.MessageId),
-            RoleId = ulong.Parse((string)x.RoleId),
+            ChannelId = ulong.Parse(x.ChannelId),
+            GuildId = ulong.Parse(x.GuildId),
+            MessageId = ulong.Parse(x.MessageId),
+            RoleId = ulong.Parse(x.RoleId),
             Emote = x.IsEmoji ? new Emoji(x.EmojiId) : Emote.Parse(x.EmojiId)
         });
     }
@@ -44,5 +44,20 @@ internal class ReactionRoleDomain : IReactionRoleDomain
     public async Task<bool> CanAddReactionRoleAsync(ulong messageId, IEmote emote)
     {
         return await _repository.CanAddReactionRoleAsync(messageId.ToString(), emote);
+    }
+
+    public async Task<IEnumerable<ReactionRole>> RetrieveReactionRolesForGuildAsync(ulong guildId)
+    {
+        var data = await _repository.RetrieveAllReactionRoleForGuildAsync(guildId);
+        return data.Select(x => new ReactionRole
+        {
+            Id = x.ReactionRoleId,
+            ChannelId = ulong.Parse(x.ChannelId),
+            GuildId = ulong.Parse(x.GuildId),
+            MessageId = ulong.Parse(x.MessageId),
+            RoleId = ulong.Parse(x.RoleId),
+            Emote = x.IsEmoji ? new Emoji(x.EmojiId) : Emote.Parse(x.EmojiId)
+        });
+
     }
 }

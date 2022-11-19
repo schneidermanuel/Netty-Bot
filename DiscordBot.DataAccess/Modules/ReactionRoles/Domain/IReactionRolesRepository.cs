@@ -10,4 +10,5 @@ internal interface IReactionRolesRepository
     Task SaveReactionRoleAsync(ReactionRoleData data);
     Task DeleteReactionRoleAsync(long reactionRoleId);
     Task<bool> CanAddReactionRoleAsync(string messageId, IEmote emote);
+    Task<IEnumerable<ReactionRoleData>> RetrieveAllReactionRoleForGuildAsync(ulong guildId);
 }
