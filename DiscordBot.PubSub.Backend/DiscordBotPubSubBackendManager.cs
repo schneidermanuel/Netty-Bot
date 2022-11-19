@@ -120,7 +120,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
                 MessageContent = content,
                 IsUrlEmote = true,
                 UnicodeEmote = null,
-                Url = guildEmote.Url
+                Url = guildEmote.Url,
+                RoleId = reactionRole.RoleId
             };
             list.Add(role);
         }
@@ -133,7 +134,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
                 MessageContent = content,
                 IsUrlEmote = false,
                 Url = null,
-                UnicodeEmote = emoji.ToString()
+                UnicodeEmote = emoji.ToString(), 
+                RoleId = reactionRole.RoleId
             };
             list.Add(role);
         }
