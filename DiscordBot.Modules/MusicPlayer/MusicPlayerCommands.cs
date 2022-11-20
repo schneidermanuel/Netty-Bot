@@ -70,6 +70,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
             return;
         }
 
+        await context.DeferAsync();
         var playlistUrl = await RequireString(context);
         try
         {
@@ -87,13 +88,14 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
 
             var count = results.Count(result => result);
 
-            await context.RespondAsync(string.Format(
+            await context.ModifyOriginalResponseAsync(options => options.Content = string.Format(
                 Localize(nameof(MusicPlayerRessources.Message_PlaylistLoaded)), playlist.Name, count + 1,
                 playlist.TrackCount));
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            await context.Channel.SendMessageAsync(
+            Console.WriteLine(e);
+            await context.ModifyOriginalResponseAsync(options => options.Content =
                 Localize(nameof(MusicPlayerRessources.Error_SpotifyPlaylistNotParsable)));
         }
     }
@@ -147,19 +149,22 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
     public async Task Queue(SocketSlashCommand context)
     {
         var guild = await RequireGuild(context);
+        await context.DeferAsync();
 
         var skipPages = RequireIntArgOrDefault(context, 1, 1) - 1;
         var songCount = _manager.GetSongCount(guild);
         if (songCount == 0)
         {
-            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
+            await context.ModifyOriginalResponseAsync(options =>
+                options.Content = Localize(nameof(MusicPlayerRessources.Error_NoMusic)));
             return;
         }
 
         var pageCount = (songCount / 10) + 1;
         if (skipPages > pageCount)
         {
-            await context.RespondAsync(Localize(nameof(MusicPlayerRessources.Error_InvlaidPage)));
+            await context.ModifyOriginalResponseAsync(options =>
+                options.Content = Localize(nameof(MusicPlayerRessources.Error_InvlaidPage)));
             return;
         }
 
@@ -170,7 +175,11 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
         embedBuilder.WithCurrentTimestamp();
         embedBuilder.WithTitle(string.Format(Localize(nameof(MusicPlayerRessources.Title_QueueTitle)), songCount,
             skipPages + 1, pageCount));
-        await context.RespondAsync(string.Empty, new[] { embedBuilder.Build() });
+        await context.ModifyOriginalResponseAsync(options =>
+        {
+            options.Content = "🤝";
+            options.Embeds = new[] { embedBuilder.Build() };
+        });
     }
 
     [Command("stop")]
