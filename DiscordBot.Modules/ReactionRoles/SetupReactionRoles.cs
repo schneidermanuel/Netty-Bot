@@ -9,12 +9,10 @@ namespace DiscordBot.Modules.ReactionRoles;
 public class SetupReactionRoles : ITimedAction
 {
     private readonly ReactionRoleManager _manager;
-    private readonly IReactionRoleDomain _domain;
 
-    public SetupReactionRoles(ReactionRoleManager manager, IReactionRoleDomain domain)
+    public SetupReactionRoles(ReactionRoleManager manager)
     {
         _manager = manager;
-        _domain = domain;
     }
 
     public ExecutionTime GetExecutionTime()
@@ -26,14 +24,7 @@ public class SetupReactionRoles : ITimedAction
     {
         foreach (var reactionRole in _manager.ReactionRoles)
         {
-            try
-            {
-                await ProcessReactionRole(reactionRole, client);
-            }
-            catch (NullReferenceException e)
-            {
-                await _domain.DeleteReactionRoleAsync(reactionRole.Id);
-            }
+            await _manager.ProcessReactionRole(reactionRole);
         }
 
         client.ReactionAdded += async (message, channel, reaction) =>
@@ -44,17 +35,5 @@ public class SetupReactionRoles : ITimedAction
         {
             await _manager.ReactionRemoved(message, reaction);
         };
-    }
-
-    private async Task ProcessReactionRole(ReactionRole reactionRole, DiscordSocketClient client)
-    {
-        var guild = client.GetGuild(reactionRole.GuildId);
-        var message =
-            await ((ISocketMessageChannel) guild.GetChannel(reactionRole.ChannelId))
-                .GetMessageAsync(reactionRole.MessageId);
-        var emote = reactionRole.Emote;
-        await message.RemoveAllReactionsForEmoteAsync(emote);
-        await Task.Delay(2000);
-        await message.AddReactionAsync(emote);
     }
 }

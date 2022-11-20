@@ -70,12 +70,21 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/Roles", ProcessGuildRoles);
         app.MapPut("/AutoRole", RefreshAutoRole);
         app.MapGet("/Guild/ReactionRoles", ProcessReactionRoles);
-        app.Map("/Guild/Channels", ProcessChannels);
-        app.Map("/Guild/Emoji", ProcessEmoji);
+        app.MapGet("/Guild/Channels", ProcessChannels);
+        app.MapGet("/Guild/Emoji", ProcessEmoji);
+        app.MapPost("/Modules/Refresh/ReactionRole", RefreshReactionRole);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task RefreshReactionRole(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        
     }
 
     private async Task ProcessEmoji(HttpContext context)

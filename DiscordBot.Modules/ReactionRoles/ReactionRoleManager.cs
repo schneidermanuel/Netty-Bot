@@ -10,6 +10,15 @@ namespace DiscordBot.Modules.ReactionRoles;
 
 public class ReactionRoleManager
 {
+    private readonly DiscordSocketClient _client;
+    private readonly IReactionRoleDomain _domain;
+
+    public ReactionRoleManager(DiscordSocketClient client, IReactionRoleDomain domain)
+    {
+        _client = client;
+        _domain = domain;
+    }
+
     public List<ReactionRole> ReactionRoles;
 
     public async Task ReactionAdded(Cacheable<IUserMessage, ulong> message,
@@ -22,7 +31,8 @@ public class ReactionRoleManager
         }
     }
 
-    private static async Task ProcessReactionRoleAsync(Cacheable<IUserMessage, ulong> message, SocketReaction reaction, ReactionRole reactionRole)
+    private static async Task ProcessReactionRoleAsync(Cacheable<IUserMessage, ulong> message, SocketReaction reaction,
+        ReactionRole reactionRole)
     {
         if (reaction.Emote.Name != reactionRole.Emote.Name)
         {
@@ -62,7 +72,45 @@ public class ReactionRoleManager
         if (ReactionRoles.Any(rr => rr.Emote.Equals(reaction.Emote) && rr.MessageId == message.Id))
         {
             await (await message.GetOrDownloadAsync()).AddReactionAsync(reaction.Emote,
-                new RequestOptions {RetryMode = RetryMode.AlwaysRetry});
+                new RequestOptions { RetryMode = RetryMode.AlwaysRetry });
+        }
+    }
+
+    public async Task RefreshGuildAsync(ulong guildId, IEnumerable<ReactionRole> reactionRoles)
+    {
+        var rolesOfGuild = ReactionRoles.Where(r => r.GuildId == guildId);
+        foreach (var reactionRole in rolesOfGuild)
+        {
+            ReactionRoles.Remove(reactionRole);
+        }
+
+        foreach (var reactionRole in reactionRoles)
+        {
+            if (await ProcessReactionRole(reactionRole))
+            {
+                ReactionRoles.Add(reactionRole);
+            }
+        }
+    }
+
+    public async Task<bool> ProcessReactionRole(ReactionRole reactionRole)
+    {
+        try
+        {
+            var guild = _client.GetGuild(reactionRole.GuildId);
+            var message =
+                await ((ISocketMessageChannel)guild.GetChannel(reactionRole.ChannelId))
+                    .GetMessageAsync(reactionRole.MessageId);
+            var emote = reactionRole.Emote;
+            await message.RemoveAllReactionsForEmoteAsync(emote);
+            await Task.Delay(2000);
+            await message.AddReactionAsync(emote);
+            return true;
+        }
+        catch (Exception e)
+        {
+            await _domain.DeleteReactionRoleAsync(reactionRole.Id);
+            return false;
         }
     }
 }
