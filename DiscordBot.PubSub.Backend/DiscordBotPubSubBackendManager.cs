@@ -12,6 +12,7 @@ using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modules.AutoMod;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.Framework.Contract.Modules.AutoRole;
+using DiscordBot.Framework.Contract.Modules.ReactionRoles;
 using DiscordBot.PubSub.Backend.Data;
 using DiscordBot.PubSub.Backend.Data.Guild;
 using DiscordBot.PubSub.Backend.Data.Guild.AutoModRule;
@@ -32,6 +33,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IAutoModRefresher _autoModRefresher;
     private readonly IAutoRoleRefresher _autoRoleRefresher;
     private readonly IReactionRoleDomain _reactionRoleDomain;
+    private readonly IReactionRoleRefresher _reactionRoleRefresher;
     private Func<YoutubeNotification, Task> _callback;
 
     public DiscordBotPubSubBackendManager(DiscordSocketClient client,
@@ -41,7 +43,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IModuleDataAccess dataAccess,
         IAutoModRefresher autoModRefresher,
         IAutoRoleRefresher autoRoleRefresher,
-        IReactionRoleDomain reactionRoleDomain)
+        IReactionRoleDomain reactionRoleDomain,
+        IReactionRoleRefresher reactionRoleRefresher)
     {
         _client = client;
         _modules = modules;
@@ -51,6 +54,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _autoModRefresher = autoModRefresher;
         _autoRoleRefresher = autoRoleRefresher;
         _reactionRoleDomain = reactionRoleDomain;
+        _reactionRoleRefresher = reactionRoleRefresher;
     }
 
     public void Run(Func<YoutubeNotification, Task> callback)
@@ -70,12 +74,22 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/Roles", ProcessGuildRoles);
         app.MapPut("/AutoRole", RefreshAutoRole);
         app.MapGet("/Guild/ReactionRoles", ProcessReactionRoles);
-        app.Map("/Guild/Channels", ProcessChannels);
-        app.Map("/Guild/Emoji", ProcessEmoji);
+        app.MapGet("/Guild/Channels", ProcessChannels);
+        app.MapGet("/Guild/Emoji", ProcessEmoji);
+        app.MapPost("/Modules/Refresh/ReactionRole", RefreshReactionRole);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task RefreshReactionRole(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        await _reactionRoleRefresher.RefreshAsync(guildId);
+
     }
 
     private async Task ProcessEmoji(HttpContext context)
