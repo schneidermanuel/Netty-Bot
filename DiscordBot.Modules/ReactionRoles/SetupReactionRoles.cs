@@ -32,7 +32,7 @@ public class SetupReactionRoles : ITimedAction
             }
             catch (NullReferenceException e)
             {
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
+                await _domain.DeleteReactionRoleAsync(reactionRole.Id);
             }
         }
 
