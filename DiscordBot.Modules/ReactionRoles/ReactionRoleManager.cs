@@ -78,7 +78,7 @@ public class ReactionRoleManager
 
     public async Task RefreshGuildAsync(ulong guildId, IEnumerable<ReactionRole> reactionRoles)
     {
-        var rolesOfGuild = ReactionRoles.Where(r => r.GuildId == guildId);
+        var rolesOfGuild = ReactionRoles.Where(r => r.GuildId == guildId).ToArray();
         foreach (var reactionRole in rolesOfGuild)
         {
             ReactionRoles.Remove(reactionRole);
@@ -109,6 +109,7 @@ public class ReactionRoleManager
         }
         catch (Exception e)
         {
+            Console.WriteLine(e);
             await _domain.DeleteReactionRoleAsync(reactionRole.Id);
             return false;
         }

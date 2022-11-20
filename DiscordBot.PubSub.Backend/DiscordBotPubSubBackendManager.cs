@@ -76,7 +76,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/ReactionRoles", ProcessReactionRoles);
         app.MapGet("/Guild/Channels", ProcessChannels);
         app.MapGet("/Guild/Emoji", ProcessEmoji);
-        app.MapPost("/Modules/Refresh/ReactionRole", RefreshReactionRole);
+        app.MapPut("/Modules/Refresh/ReactionRole", RefreshReactionRole);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
@@ -117,7 +117,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
         var textChannel = guild.TextChannels.Select(channel => new Channel
         {
-            ChannelId = channel.Id,
+            ChannelId = channel.Id.ToString(),
             ChannelName = channel.Name
         });
         await Responsd(context, JsonConvert.SerializeObject(textChannel));
