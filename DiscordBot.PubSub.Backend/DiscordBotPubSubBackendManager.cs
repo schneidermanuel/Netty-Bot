@@ -71,10 +71,27 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapPut("/AutoRole", RefreshAutoRole);
         app.MapGet("/Guild/ReactionRoles", ProcessReactionRoles);
         app.Map("/Guild/Channels", ProcessChannels);
+        app.Map("/Guild/Emoji", ProcessEmoji);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessEmoji(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        var guild = _client.GetGuild(guildId);
+
+        var emoji = guild.Emotes.Select(emote => new Data.Guild.ReactionRole.Emoji
+        {
+            Id = emote.Id,
+            Name = emote.ToString(),
+            Url = emote.Url
+        });
+        await Responsd(context, JsonConvert.SerializeObject(emoji));
     }
 
     private async Task ProcessChannels(HttpContext context)
