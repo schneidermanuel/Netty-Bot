@@ -70,6 +70,7 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
             return;
         }
 
+        await context.DeferAsync();
         var playlistUrl = await RequireString(context);
         try
         {
@@ -87,13 +88,14 @@ internal class MusicPlayerCommands : CommandModuleBase, ICommandModule
 
             var count = results.Count(result => result);
 
-            await context.RespondAsync(string.Format(
+            await context.ModifyOriginalResponseAsync(options => options.Content = string.Format(
                 Localize(nameof(MusicPlayerRessources.Message_PlaylistLoaded)), playlist.Name, count + 1,
                 playlist.TrackCount));
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            await context.Channel.SendMessageAsync(
+            Console.WriteLine(e);
+            await context.ModifyOriginalResponseAsync(options => options.Content =
                 Localize(nameof(MusicPlayerRessources.Error_SpotifyPlaylistNotParsable)));
         }
     }
