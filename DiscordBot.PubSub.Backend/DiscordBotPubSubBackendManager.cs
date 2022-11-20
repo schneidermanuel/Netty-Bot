@@ -70,10 +70,26 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/Roles", ProcessGuildRoles);
         app.MapPut("/AutoRole", RefreshAutoRole);
         app.MapGet("/Guild/ReactionRoles", ProcessReactionRoles);
+        app.Map("/Guild/Channels", ProcessChannels);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessChannels(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        var guild = _client.GetGuild(guildId);
+
+        var textChannel = guild.TextChannels.Select(channel => new Channel
+        {
+            ChannelId = channel.Id,
+            ChannelName = channel.Name
+        });
+        await Responsd(context, JsonConvert.SerializeObject(textChannel));
     }
 
     private async Task ProcessReactionRoles(HttpContext context)
@@ -134,7 +150,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
                 MessageContent = content,
                 IsUrlEmote = false,
                 Url = null,
-                UnicodeEmote = emoji.ToString(), 
+                UnicodeEmote = emoji.ToString(),
                 RoleId = reactionRole.RoleId
             };
             list.Add(role);
