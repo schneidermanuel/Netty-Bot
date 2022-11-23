@@ -9,5 +9,6 @@ namespace DiscordBot.DataAccess.Contract.ZenQuote
         Task<string> RetrieveQuoteOfTheDayAsync();
         Task SaveRegistrationAsync(ZenQuoteRegistration registration);
         Task RemoveRegistrationAsync(long registrationId);
+        Task<IEnumerable<ZenQuoteRegistration>> LoadAllRegistrationsForGuildAsync(ulong guildId);
     }
 }

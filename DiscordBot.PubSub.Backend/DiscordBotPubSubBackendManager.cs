@@ -6,6 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
+using DiscordBot.DataAccess.Contract.ZenQuote;
 using DiscordBot.DataAccess.Modules.WebAccess.Domain;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
@@ -19,6 +20,7 @@ using DiscordBot.PubSub.Backend.Data.Guild.AutoModRule;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using ReactionRole = DiscordBot.PubSub.Backend.Data.Guild.ReactionRole.ReactionRole;
 
 namespace DiscordBot.PubSub.Backend;
@@ -34,6 +36,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IAutoRoleRefresher _autoRoleRefresher;
     private readonly IReactionRoleDomain _reactionRoleDomain;
     private readonly IReactionRoleRefresher _reactionRoleRefresher;
+    private readonly IZenQuoteDomain _zenQuoteDomain;
     private Func<YoutubeNotification, Task> _callback;
 
     public DiscordBotPubSubBackendManager(DiscordSocketClient client,
@@ -44,7 +47,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IAutoModRefresher autoModRefresher,
         IAutoRoleRefresher autoRoleRefresher,
         IReactionRoleDomain reactionRoleDomain,
-        IReactionRoleRefresher reactionRoleRefresher)
+        IReactionRoleRefresher reactionRoleRefresher,
+        IZenQuoteDomain zenQuoteDomain)
     {
         _client = client;
         _modules = modules;
@@ -55,6 +59,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _autoRoleRefresher = autoRoleRefresher;
         _reactionRoleDomain = reactionRoleDomain;
         _reactionRoleRefresher = reactionRoleRefresher;
+        _zenQuoteDomain = zenQuoteDomain;
     }
 
     public void Run(Func<YoutubeNotification, Task> callback)
@@ -77,10 +82,31 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/Channels", ProcessChannels);
         app.MapGet("/Guild/Emoji", ProcessEmoji);
         app.MapPut("/Modules/Refresh/ReactionRole", RefreshReactionRole);
+        app.MapGet("/Guild/ZenQuotes", ProcessZenQuotes);
 
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessZenQuotes(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        var registrations = await _zenQuoteDomain.LoadAllRegistrationsForGuildAsync(guildId);
+        var guild = _client.GetGuild(guildId);
+        var datas = (from registration in registrations
+                join guildTextChannel in guild.TextChannels
+                    on registration.Channelid equals guildTextChannel.Id
+                select new ZenQuote
+                {
+                    ChannelId = registration.Channelid.ToString(),
+                    RegistrationId = registration.Id
+                })
+            .ToArray();
+
+        await Responsd(context, JsonConvert.SerializeObject(datas));
     }
 
     private async Task RefreshReactionRole(HttpContext context)
@@ -89,7 +115,6 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
         await _reactionRoleRefresher.RefreshAsync(guildId);
-
     }
 
     private async Task ProcessEmoji(HttpContext context)
