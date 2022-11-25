@@ -6,6 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
+using DiscordBot.DataAccess.Contract.ZenQuote;
 using DiscordBot.DataAccess.Modules.WebAccess.Domain;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
@@ -82,7 +83,6 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/Emoji", ProcessEmoji);
         app.MapPut("/Modules/Refresh/ReactionRole", RefreshReactionRole);
         app.MapPut("/Modules/Refresh/Youtube", RefreshYoutube);
-
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();

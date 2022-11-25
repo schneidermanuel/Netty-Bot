@@ -10,4 +10,5 @@ internal interface IZenQuoteRepository
     Task<string> RetrieveQuoteOfTheDayAsync();
     Task SaveRegistrationAsync(ZenQuoteRegistrationData registration);
     Task RemoveRegistrationAsync(long registrationId);
+    Task<IEnumerable<ZenQuoteRegistrationData>> LoadAllRegistrationsForGuildAsync(string guildId);
 }
