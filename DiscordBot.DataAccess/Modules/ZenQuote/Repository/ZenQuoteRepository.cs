@@ -65,6 +65,18 @@ internal class ZenQuoteRepository : IZenQuoteRepository
         }
     }
 
+    public async Task<IEnumerable<ZenQuoteRegistrationData>> LoadAllRegistrationsForGuildAsync(string guildId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var entities = await session.Query<ZenQuoteRegistrationEntity>()
+                .Where(entity => entity.GuildId == guildId)
+                .ToListAsync();
+            var datas = entities.Select(MapToData);
+            return datas;
+        }
+    }
+
     private ZenQuoteRegistrationData MapToData(ZenQuoteRegistrationEntity entity)
     {
         return new ZenQuoteRegistrationData(entity.Id, entity.GuildId, entity.ChannelId);

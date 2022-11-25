@@ -38,6 +38,13 @@ internal class ZenQuoteDomain : IZenQuoteDomain
         await _repository.RemoveRegistrationAsync(registrationId);
     }
 
+    public async Task<IEnumerable<ZenQuoteRegistration>> LoadAllRegistrationsForGuildAsync(ulong guildId)
+    {
+        var data = await _repository.LoadAllRegistrationsForGuildAsync(guildId.ToString());
+        var domains = data.Select(MapToDomain);
+        return domains;
+    }
+
     private ZenQuoteRegistration MapToDomain(ZenQuoteRegistrationData data)
     {
         return new ZenQuoteRegistration
