@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
 using DiscordBot.Framework.Contract.Modules.ReactionRoles;
 
@@ -19,6 +20,5 @@ internal class ReactionRolesRefresher : IReactionRoleRefresher
     {
         var roles = await _domain.RetrieveReactionRolesForGuildAsync(guildId);
         await _manager.RefreshGuildAsync(guildId, roles);
-        
     }
 }

@@ -9,4 +9,5 @@ public interface IYoutubeNotificationDomain
     Task<long> SaveRegistrationAsync(YoutubeNotificationRegistration registration);
     Task DeleteRegistrationAsync(string youtubeChannelId, ulong guildId);
     Task<IEnumerable<YoutubeNotificationRegistration>> RetrieveAllRegistrationsAsync();
+    Task<IEnumerable<YoutubeNotificationRegistration>> RetrieveRegistrationsByGuildIdAsync(ulong guildId);
 }

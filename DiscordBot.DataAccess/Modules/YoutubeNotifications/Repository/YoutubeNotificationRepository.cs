@@ -70,6 +70,16 @@ internal class YoutubeNotificationRepository : IYoutubeNotificationRepository
         }
     }
 
+    public async Task<IEnumerable<YoutubeNotificationData>> RetrieveRegistrationsByGuildIdAsync(string guildId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var query = session.Query<YoutubeNotificationRegistrationEntity>()
+                .Where(entity => entity.GuildId == guildId);
+            return (await query.ToListAsync()).Select(MapToData);
+        }
+    }
+
     private YoutubeNotificationData MapToData(YoutubeNotificationRegistrationEntity entity)
     {
         return new YoutubeNotificationData(entity.Id, entity.GuildId, entity.ChannelId, entity.Message,

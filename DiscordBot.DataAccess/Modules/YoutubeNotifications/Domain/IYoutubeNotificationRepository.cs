@@ -9,4 +9,5 @@ internal interface IYoutubeNotificationRepository
     Task<long> SaveRegistrationAsync(YoutubeNotificationData data);
     Task DeleteRegistrationAsync(string youtubeChannelId, ulong guildId);
     Task<IEnumerable<YoutubeNotificationData>> RetrieveAllRegistrationsAsync();
+    Task<IEnumerable<YoutubeNotificationData>> RetrieveRegistrationsByGuildIdAsync(string guildId);
 }

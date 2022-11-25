@@ -70,6 +70,25 @@ internal class YoutubeNotificationManager
         _cache.Clear();
     }
 
+    public async Task RefreshGuildAsync(ulong guildId)
+    {
+        var registrationsTask = _domain.RetrieveRegistrationsByGuildIdAsync(guildId);
+
+        var guildRegistrations = _registrations.Where(reg => reg.GuildId == guildId).ToArray();
+        foreach (var registration in guildRegistrations)
+        {
+            _registrations.Remove(registration);
+        }
+
+        var registrations = await registrationsTask;
+        foreach (var registration in registrations)
+        {
+            _registrations.Add(registration);
+            await _registrator.SubscribeAsync(registration.YoutubeChannelId);
+        }
+
+    }
+
     public void RemoveRegistration(string youtubeChannelId, ulong guildId)
     {
         _registrations.RemoveAll(reg => reg.YoutubeChannelId == youtubeChannelId && reg.GuildId == guildId);
@@ -92,7 +111,6 @@ internal class YoutubeNotificationManager
         var userResultTask = userRequest.ExecuteAsync();
 
         var videoRequest = _api.Videos.List("snippet");
-        Console.WriteLine("CALLBACK");
         Console.WriteLine(notification.VideoId);
         videoRequest.Id = notification.VideoId;
         var videoRequestTask = videoRequest.ExecuteAsync();

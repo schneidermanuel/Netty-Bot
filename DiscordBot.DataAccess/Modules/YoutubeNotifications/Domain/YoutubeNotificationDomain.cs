@@ -37,6 +37,12 @@ internal class YoutubeNotificationDomain : IYoutubeNotificationDomain
         return datas.Select(MapToDto);
     }
 
+    public async Task<IEnumerable<YoutubeNotificationRegistration>> RetrieveRegistrationsByGuildIdAsync(ulong guildId)
+    {
+        var datas = await _repository.RetrieveRegistrationsByGuildIdAsync(guildId.ToString());
+        return datas.Select(MapToDto);
+    }
+
     private YoutubeNotificationRegistration MapToDto(YoutubeNotificationData data)
     {
         return new YoutubeNotificationRegistration
