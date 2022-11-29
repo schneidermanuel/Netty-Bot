@@ -58,12 +58,12 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
     public async Task ReconnectAsync()
     {
         _client.Disconnect();
+        _client.Connect();
         foreach (var listening in _listening)
         {
             _client.ListenToVideoPlayback(listening);
         }
 
-        _client.Connect();
         await Task.CompletedTask;
     }
 
