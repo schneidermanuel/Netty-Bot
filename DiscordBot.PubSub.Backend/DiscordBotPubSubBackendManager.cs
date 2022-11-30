@@ -98,7 +98,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         await RequireAuthenticationAsync(context);
 
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        await _twitchRefresher.RefreshAsync(guildId);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync(); 
+        _ = _twitchRefresher.RefreshAsync(guildId);
     }
 
     private async Task RefreshYoutube(HttpContext context)
@@ -106,7 +108,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         await RequireAuthenticationAsync(context);
 
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        await _youtubeRefresher.RefreshGuildAsync(guildId);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync();
+        _ = _youtubeRefresher.RefreshGuildAsync(guildId);
     }
 
     private async Task RefreshReactionRole(HttpContext context)
@@ -114,7 +118,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         await RequireAuthenticationAsync(context);
 
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        await _reactionRoleRefresher.RefreshAsync(guildId);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync();
+        _ = _reactionRoleRefresher.RefreshAsync(guildId);
     }
 
     private async Task ProcessEmoji(HttpContext context)
@@ -131,6 +137,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             Url = emote.Url
         });
         await Responsd(context, JsonConvert.SerializeObject(emoji));
+        await context.Response.CompleteAsync();
     }
 
     private async Task ProcessChannels(HttpContext context)
@@ -146,6 +153,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             ChannelName = channel.Name
         });
         await Responsd(context, JsonConvert.SerializeObject(textChannel));
+        await context.Response.CompleteAsync();
     }
 
     private async Task ProcessReactionRoles(HttpContext context)
@@ -169,6 +177,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         }
 
         await Responsd(context, JsonConvert.SerializeObject(list));
+        await context.Response.CompleteAsync();
     }
 
     private static async Task MapReactionRolesAsync(SocketGuild guild,
@@ -211,13 +220,17 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             };
             list.Add(role);
         }
+
     }
 
     private async Task RefreshAutoRole(HttpContext context)
     {
         await RequireAuthenticationAsync(context);
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        await _autoRoleRefresher.RefreshAsync(guildId);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync();
+
+        _ = _autoRoleRefresher.RefreshAsync(guildId);
     }
 
     private async Task ProcessGuildRoles(HttpContext context)
@@ -244,9 +257,10 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         await RequireAuthenticationAsync(context);
         var guildIdString = context.Request.Query["guildId"];
         var guildId = ulong.Parse(guildIdString);
+        context.Response.StatusCode = 202;
         await context.Response.CompleteAsync();
 
-        await _autoModRefresher.RefreshGuildAsync(guildId);
+        _ = _autoModRefresher.RefreshGuildAsync(guildId);
     }
 
     private async Task RequireAuthenticationAsync(HttpContext context)
