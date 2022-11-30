@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modules.TwitchRegistrations;
 using DiscordBot.Framework.Contract.TimedAction;
 
 namespace DiscordBot.Modules.TwitchNotifications;
@@ -15,5 +16,6 @@ internal class TwitchNotificationsModule : Module
         builder.RegisterType<TwitchNotificationCommands>().As<ICommandModule>();
         builder.RegisterType<TwitchNotificationReconnectStep>().As<ITimedAction>();
         builder.RegisterType<TwitchNotificationsManager>().AsSelf().SingleInstance();
+        builder.RegisterType<TwitchRefresher>().As<ITwitchRefresher>();
     }
 }

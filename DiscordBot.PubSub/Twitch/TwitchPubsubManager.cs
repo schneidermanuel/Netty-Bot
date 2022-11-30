@@ -47,6 +47,8 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
                 _client.ListenToVideoPlayback(id);
                 _listening.Add(id);
                 Console.WriteLine("[Twitch] Listening to " + channelName);
+                _client.Disconnect();
+                _client.Connect();
             }
         }
         catch (Exception)
@@ -58,6 +60,11 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
     public async Task ReconnectAsync()
     {
         _client.Disconnect();
+        Console.WriteLine("[Twitch] Reconnecting...");
+        _client = new TwitchPubSub();
+        _client.OnPubSubServiceConnected += ServerConnected;
+        _client.OnStreamUp += StreamUp;
+
         _client.Connect();
         foreach (var listening in _listening)
         {

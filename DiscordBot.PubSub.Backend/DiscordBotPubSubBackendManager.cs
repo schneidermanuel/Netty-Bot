@@ -14,6 +14,7 @@ using DiscordBot.Framework.Contract.Modules.AutoMod;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.Framework.Contract.Modules.AutoRole;
 using DiscordBot.Framework.Contract.Modules.ReactionRoles;
+using DiscordBot.Framework.Contract.Modules.TwitchRegistrations;
 using DiscordBot.Framework.Contract.Modules.YoutubeRegistrations;
 using DiscordBot.PubSub.Backend.Data;
 using DiscordBot.PubSub.Backend.Data.Guild;
@@ -37,6 +38,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IReactionRoleDomain _reactionRoleDomain;
     private readonly IReactionRoleRefresher _reactionRoleRefresher;
     private readonly IYoutubeRefresher _youtubeRefresher;
+    private readonly ITwitchRefresher _twitchRefresher;
     private Func<YoutubeNotification, Task> _callback;
 
     public DiscordBotPubSubBackendManager(DiscordSocketClient client,
@@ -48,7 +50,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IAutoRoleRefresher autoRoleRefresher,
         IReactionRoleDomain reactionRoleDomain,
         IReactionRoleRefresher reactionRoleRefresher,
-        IYoutubeRefresher youtubeRefresher)
+        IYoutubeRefresher youtubeRefresher,
+        ITwitchRefresher twitchRefresher)
     {
         _client = client;
         _modules = modules;
@@ -60,6 +63,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _reactionRoleDomain = reactionRoleDomain;
         _reactionRoleRefresher = reactionRoleRefresher;
         _youtubeRefresher = youtubeRefresher;
+        _twitchRefresher = twitchRefresher;
     }
 
     public void Run(Func<YoutubeNotification, Task> callback)
@@ -83,9 +87,18 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/Emoji", ProcessEmoji);
         app.MapPut("/Modules/Refresh/ReactionRole", RefreshReactionRole);
         app.MapPut("/Modules/Refresh/Youtube", RefreshYoutube);
+        app.MapPut("/Modules/Refresh/Twitch", RefreshTwitch);
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task RefreshTwitch(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        await _twitchRefresher.RefreshAsync(guildId);
     }
 
     private async Task RefreshYoutube(HttpContext context)

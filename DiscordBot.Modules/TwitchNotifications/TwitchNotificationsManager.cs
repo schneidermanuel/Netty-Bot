@@ -52,9 +52,11 @@ internal class TwitchNotificationsManager
 
                 await channel.SendMessageAsync(registration.Message, false, embed);
             }
-            catch
+            catch  (Exception e)
             {
-                // Ignored
+                Console.WriteLine("Twitch exception");
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
             }
         }
     }
@@ -83,10 +85,24 @@ internal class TwitchNotificationsManager
         }
     }
 
+    public async Task RefreshGuildAsync(ulong guildId)
+    {
+        var registrations = _registrations.Where(reg => reg.GuildId == guildId).ToArray();
+        foreach (var registration in registrations)
+        {
+            _registrations.Remove(registration);
+        }
+
+        var guildRegistrations = await _domain.RetrieveAllRegistrationsForGuildAsync(guildId);
+        foreach (var guildRegistration in guildRegistrations)
+        {
+            await AddUserAsync(guildRegistration);
+        }
+    }
+
     public async Task AddUserAsync(TwitchNotificationRegistration registration)
     {
         _registrations.Add(registration);
         await _pubsubManager.RegisterStreamerAsync(registration.Streamer);
-        await _pubsubManager.ReconnectAsync();
     }
 }
