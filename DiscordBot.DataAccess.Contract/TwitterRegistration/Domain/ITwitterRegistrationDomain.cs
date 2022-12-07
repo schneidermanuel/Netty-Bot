@@ -9,4 +9,5 @@ public interface ITwitterRegistrationDomain
     Task RegisterTwitterAsync(TwitterRegistrationDto twitterRegistrationDto);
     Task<IReadOnlyCollection<TwitterRegistrationDto>> RetrieveAllRegistartionsAsync();
     Task UnregisterTwitterAsync(ulong guildId, ulong channelId, string username);
+    Task<IReadOnlyCollection<TwitterRegistrationDto>> RetrieveAllRegistartionsForGuildAsync(ulong guildId);
 }

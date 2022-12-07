@@ -74,4 +74,19 @@ internal class TwitterRegistrationRepository : ITwitterRegistrationRepository
             await session.FlushAsync();
         }
     }
+
+    public async Task<IReadOnlyCollection<TwitterRegistrationData>> RetrieveAllRegistartionsForGuildAsync(
+        string guildId)
+    {
+        using (var session = _sessionProvider.OpenSession())
+        {
+            var query = await session.Query<TwitterRegistrationEntity>()
+                .Where(entity => entity.GuildId == guildId)
+                .ToListAsync();
+            return query.Select(reg =>
+                    new TwitterRegistrationData(reg.RegistrationId, reg.GuildId, reg.ChannelId, reg.TwitterUsername,
+                        reg.Message, reg.RuleFilter))
+                .ToArray();
+        }
+    }
 }
