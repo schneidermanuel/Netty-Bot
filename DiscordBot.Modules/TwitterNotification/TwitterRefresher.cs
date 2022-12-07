@@ -14,6 +14,6 @@ internal class TwitterRefresher : ITwitterRefresher
 
     public async Task RefreshTwitterAsync(ulong guildId)
     {
-        
+        await _twitterStreamManager.RefreshAsync(guildId);
     }
 }
