@@ -123,9 +123,13 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
     private async Task ProcessTwitch(HttpContext context)
     {
-        var messageId = context.Request.Headers["Twitch-Eventsub-Message-Id"];
-        var timestamp = context.Request.Headers["Twitch-Eventsub-Message-Timestamp"];
-        var signature = context.Request.Headers["Twitch-Eventsub-Message-Signature"];
+        var messageId = context.Request.Headers["Twitch-Eventsub-Message-Id"].ToString();
+        var timestamp = context.Request.Headers["Twitch-Eventsub-Message-Timestamp"].ToString();
+        var signature = context.Request.Headers["Twitch-Eventsub-Message-Signature"].ToString();
+
+        Console.WriteLine("Message id: " + messageId);
+        Console.WriteLine("timestamp: " + timestamp);
+        Console.WriteLine("sig: " + signature);
 
         var stream = context.Request.Body;
         string body;
