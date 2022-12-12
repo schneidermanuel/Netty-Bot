@@ -3,7 +3,7 @@ using System.Text;
 
 namespace DiscordBot.PubSub.Backend;
 
-public class YoutubePubSubSecret
+public class PubSubSecret
 {
     private static string _secret;
 
@@ -29,4 +29,14 @@ public class YoutubePubSubSecret
             return signature.Equals(hash);
         }
     }
+    public static bool Check256(string body, string signature)
+    {
+        using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(Secret)))
+        {
+            var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(body));
+            var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            return signature.Equals(hash);
+        }
+    }
+
 }

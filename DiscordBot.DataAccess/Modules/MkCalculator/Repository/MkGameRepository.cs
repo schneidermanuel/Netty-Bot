@@ -115,13 +115,20 @@ internal class MkGameRepository : IMkGameRepository
                 .Where(entity => entity.IsCompleted == false);
             foreach (var gameEntity in entities)
             {
-                var lastItemCreated = await session.Query<MarioKartHistoryItemEntity>()
-                    .Where(historyEntity => historyEntity.MarioKartGameId == gameEntity.GameId)
-                    .Select(historyEntity => historyEntity.CreatedAt)
-                    .MaxAsync();
-                if (lastItemCreated > dueDate)
+                try
                 {
-                    gameEntity.IsCompleted = true;
+                    var lastItemCreated = await session.Query<MarioKartHistoryItemEntity>()
+                        .Where(historyEntity => historyEntity.MarioKartGameId == gameEntity.GameId)
+                        .Select(historyEntity => historyEntity.CreatedAt)
+                        .MaxAsync();
+                    if (lastItemCreated > dueDate)
+                    {
+                        gameEntity.IsCompleted = true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                 }
             }
 

@@ -21,6 +21,7 @@ using DiscordBot.PubSub.Backend.Data.Guild.AutoModRule;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ReactionRole = DiscordBot.PubSub.Backend.Data.Guild.ReactionRole.ReactionRole;
 
 namespace DiscordBot.PubSub.Backend;
@@ -37,7 +38,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IReactionRoleDomain _reactionRoleDomain;
     private readonly IReactionRoleRefresher _reactionRoleRefresher;
     private readonly IYoutubeRefresher _youtubeRefresher;
-    private Func<YoutubeNotification, Task> _callback;
+    private Func<YoutubeNotification, Task> _youtubeCallback;
+    private Func<string, Task> _twitchCallback;
 
     public DiscordBotPubSubBackendManager(DiscordSocketClient client,
         IEnumerable<ICommandModule> modules,
@@ -62,9 +64,10 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _youtubeRefresher = youtubeRefresher;
     }
 
-    public void Run(Func<YoutubeNotification, Task> callback)
+    public void Run(Func<YoutubeNotification, Task> youtubeCallback, Func<string, Task> callback)
     {
-        _callback = callback;
+        _youtubeCallback = youtubeCallback;
+        _twitchCallback = callback;
         var builder = WebApplication.CreateBuilder();
         builder.Services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
         var app = builder.Build();
@@ -72,6 +75,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
         app.MapGet("/", ProcessGet);
         app.MapPost("/", ProcessPost);
+        app.MapPost("/Twitch", ProcessTwitch);
         app.MapGet("/GuildStatus", ProcessGuilds);
         app.MapGet("/Guild/", ProcessGuild);
         app.MapGet("/Modules/AutoModConfig/listConfigs", AutoModListConfigs);
@@ -86,6 +90,29 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task ProcessTwitch(HttpContext context)
+    {
+        var messageId = context.Request.Headers["Twitch-Eventsub-Message-Id"];
+        var timestamp = context.Request.Headers["Twitch-Eventsub-Message-Timestamp"];
+        var signature = context.Request.Headers["Twitch-Eventsub-Message-Signature"];
+
+        var stream = context.Request.Body;
+        string body;
+        using (var reader = new StreamReader(stream))
+        {
+            body = await reader.ReadToEndAsync();
+        }
+
+        var veryfyString = messageId + timestamp + body;
+        if (PubSubSecret.Check256(veryfyString, signature))
+        {
+            var userLogin = JObject.Parse(body)["event"]?["broadcaster_user_login"]?.ToString();
+            _ = _twitchCallback(userLogin);
+        }
+
+        await context.Response.CompleteAsync();
     }
 
     private async Task RefreshYoutube(HttpContext context)
@@ -391,7 +418,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
                 body = await reader.ReadToEndAsync();
             }
 
-            var isValid = YoutubePubSubSecret.Check(body, signature);
+            var isValid = PubSubSecret.Check(body, signature);
 
             if (!isValid)
             {
@@ -406,7 +433,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
                 {
                     if (data.IsNewVideo)
                     {
-                        await _callback.Invoke(data);
+                        _ = _youtubeCallback.Invoke(data);
                     }
 
                     context.Response.StatusCode = 200;

@@ -18,9 +18,9 @@ internal class TwitchNotificationsBootStep : IBootStep
 
     public async Task BootAsync()
     {
-        _pubsub.Initialize(_manager.StreamUp);
+        await _pubsub.Initialize();
         await _manager.Initialize();
     }
 
-    public BootOrder StepPosition => BootOrder.Async;
+    public BootOrder StepPosition => BootOrder.End;
 }

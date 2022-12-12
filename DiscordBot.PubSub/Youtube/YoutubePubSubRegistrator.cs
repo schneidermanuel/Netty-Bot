@@ -21,7 +21,7 @@ internal class YoutubePubSubRegistrator : IYoutubePubSubRegistrator
                 new("hub.topic", topic),
                 new("hub.verify", "async"),
                 new("hub.verify_token", Guid.NewGuid().ToString()),
-                new("hub.secret", YoutubePubSubSecret.Secret)
+                new("hub.secret", PubSubSecret.Secret)
             }));
 
 

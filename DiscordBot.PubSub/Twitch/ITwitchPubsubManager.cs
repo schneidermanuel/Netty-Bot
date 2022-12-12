@@ -2,7 +2,6 @@
 
 public interface ITwitchPubsubManager
 {
-    void Initialize(Func<StreamerInformation, Task> callback);
+    Task Initialize();
     Task RegisterStreamerAsync(string channelName);
-    Task ReconnectAsync();
 }

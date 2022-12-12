@@ -13,7 +13,6 @@ internal class TwitchNotificationsModule : Module
 
         builder.RegisterType<TwitchNotificationsBootStep>().As<IBootStep>();
         builder.RegisterType<TwitchNotificationCommands>().As<ICommandModule>();
-        builder.RegisterType<TwitchNotificationReconnectStep>().As<ITimedAction>();
         builder.RegisterType<TwitchNotificationsManager>().AsSelf().SingleInstance();
     }
 }
