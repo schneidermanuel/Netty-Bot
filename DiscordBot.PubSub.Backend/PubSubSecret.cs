@@ -35,8 +35,7 @@ public class PubSubSecret
         {
             var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(body));
             var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-            Console.WriteLine("hash: " + hash);
-            return signature.Equals(hash);
+            return signature.Remove(0, 7).Equals(hash);
         }
     }
 

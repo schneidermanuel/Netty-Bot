@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.TwitchNotifications;
 using DiscordBot.Framework.Contract;
 using DiscordBot.PubSub.Twitch;
+using Google.Protobuf.WellKnownTypes;
 using TwitchLib.Api;
 using TwitchLib.Api.Helix.Models.Streams.GetStreams;
 using TwitchLib.Api.Helix.Models.Users.GetUsers;
@@ -85,7 +86,7 @@ internal class TwitchNotificationsManager
         embedBuilder.WithDescription(streamInformation.GameName);
         embedBuilder.WithUrl($"https://twitch.tv/{streamInformation.UserName}");
         embedBuilder.WithThumbnailUrl(user.ProfileImageUrl);
-        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl);
+        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl.Replace("{width}", "320").Replace("{height}", "180") + "?=" + DateTime.Now.ToTimestamp());
         var embed = embedBuilder.Build();
         return embed;
     }

@@ -127,20 +127,12 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         var timestamp = context.Request.Headers["Twitch-Eventsub-Message-Timestamp"].ToString();
         var signature = context.Request.Headers["Twitch-Eventsub-Message-Signature"].ToString();
 
-        Console.WriteLine("Message id: " + messageId);
-        Console.WriteLine("timestamp: " + timestamp);
-        Console.WriteLine("sig: " + signature);
-        Console.WriteLine("key: " + PubSubSecret.Secret);
-
         var stream = context.Request.Body;
         string body;
         using (var reader = new StreamReader(stream))
         {
             body = await reader.ReadToEndAsync();
         }
-
-        Console.WriteLine(body);
-
         var veryfyString = messageId + timestamp + body;
         if (PubSubSecret.Check256(veryfyString, signature))
         {
