@@ -130,6 +130,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         Console.WriteLine("Message id: " + messageId);
         Console.WriteLine("timestamp: " + timestamp);
         Console.WriteLine("sig: " + signature);
+        Console.WriteLine("key: " + PubSubSecret.Secret);
 
         var stream = context.Request.Body;
         string body;
@@ -137,6 +138,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         {
             body = await reader.ReadToEndAsync();
         }
+
+        Console.WriteLine(body);
 
         var veryfyString = messageId + timestamp + body;
         if (PubSubSecret.Check256(veryfyString, signature))
