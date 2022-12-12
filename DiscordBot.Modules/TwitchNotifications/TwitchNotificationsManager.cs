@@ -86,7 +86,7 @@ internal class TwitchNotificationsManager
         embedBuilder.WithDescription(streamInformation.GameName);
         embedBuilder.WithUrl($"https://twitch.tv/{streamInformation.UserName}");
         embedBuilder.WithThumbnailUrl(user.ProfileImageUrl);
-        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl.Replace("{width}", "320").Replace("{height}", "180") + "?=" + DateTime.Now.ToTimestamp());
+        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl.Replace("{width}", "320").Replace("{height}", "180") + "?=" + DateTime.Now.Millisecond);
         var embed = embedBuilder.Build();
         return embed;
     }
