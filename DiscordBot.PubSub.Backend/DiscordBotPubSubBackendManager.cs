@@ -138,6 +138,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             body = await reader.ReadToEndAsync();
         }
 
+        Console.WriteLine(body);
+
         var veryfyString = messageId + timestamp + body;
         if (PubSubSecret.Check256(veryfyString, signature))
         {
