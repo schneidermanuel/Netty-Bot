@@ -97,6 +97,25 @@ internal class TwitterStreamManager
             }
         }
     }
+
+    public async Task RefreshAsync(ulong guildId)
+    {
+        var guildRegistrations = _registrations.Where(reg => reg.GuildId == guildId).ToArray();
+
+        var persistantRegistrationsTask = _domain.RetrieveAllRegistartionsForGuildAsync(guildId);
+        
+        foreach (var registration in guildRegistrations)
+        {
+            _registrations.Remove(registration);
+        }
+
+        var persistantRegistrations = await persistantRegistrationsTask;
+        foreach (var registration in persistantRegistrations)
+        {
+            await RegisterTwitterUserAsync(registration);
+        }
+
+    }
     
     public async Task RegisterTwitterUserAsync(TwitterRegistrationDto registrationDto)
     {

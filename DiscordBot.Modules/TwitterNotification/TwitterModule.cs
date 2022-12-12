@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modules.Twitter;
 using DiscordBot.Framework.Contract.TimedAction;
 using TwitterSharp.Client;
 
@@ -16,5 +17,6 @@ internal class TwitterModule : Module
         builder.RegisterType<TwitterRegistrationCommands>().As<ICommandModule>();
         builder.RegisterType<TwitterApiInitializer>().As<ITimedAction>();
         builder.RegisterType<TwitterRuleValidator>().AsSelf();
+        builder.RegisterType<TwitterRefresher>().As<ITwitterRefresher>();
     }
 }

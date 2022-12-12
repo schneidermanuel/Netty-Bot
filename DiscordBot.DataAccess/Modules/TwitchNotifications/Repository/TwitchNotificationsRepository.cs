@@ -72,6 +72,18 @@ internal class TwitchNotificationsRepository : ITwitchNotificationsRepository
         }
     }
 
+    public async Task<IEnumerable<TwitchNotificationData>> RetrieveAllRegistrationsForGuildAsync(string guildId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var query = session.Query<TwitchNotificationRegistrationEntity>()
+                .Where(entity => 
+                    entity.GuildId == guildId);
+            var entites = await query.ToListAsync();
+            return entites.Select(MapToData);
+        }
+    }
+
     private TwitchNotificationData MapToData(TwitchNotificationRegistrationEntity entity)
     {
         return new TwitchNotificationData(entity.Id, entity.GuildId, entity.ChannelId, entity.Message, entity.Streamer);
