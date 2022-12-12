@@ -6,7 +6,6 @@ using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
-using DiscordBot.DataAccess.Contract.ZenQuote;
 using DiscordBot.DataAccess.Modules.WebAccess.Domain;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
@@ -14,6 +13,8 @@ using DiscordBot.Framework.Contract.Modules.AutoMod;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.Framework.Contract.Modules.AutoRole;
 using DiscordBot.Framework.Contract.Modules.ReactionRoles;
+using DiscordBot.Framework.Contract.Modules.TwitchRegistrations;
+using DiscordBot.Framework.Contract.Modules.Twitter;
 using DiscordBot.Framework.Contract.Modules.YoutubeRegistrations;
 using DiscordBot.PubSub.Backend.Data;
 using DiscordBot.PubSub.Backend.Data.Guild;
@@ -38,6 +39,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IReactionRoleDomain _reactionRoleDomain;
     private readonly IReactionRoleRefresher _reactionRoleRefresher;
     private readonly IYoutubeRefresher _youtubeRefresher;
+    private readonly ITwitchRefresher _twitchRefresher;
+    private readonly ITwitterRefresher _twitterRefresher;
     private Func<YoutubeNotification, Task> _youtubeCallback;
     private Func<string, Task> _twitchCallback;
 
@@ -50,7 +53,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IAutoRoleRefresher autoRoleRefresher,
         IReactionRoleDomain reactionRoleDomain,
         IReactionRoleRefresher reactionRoleRefresher,
-        IYoutubeRefresher youtubeRefresher)
+        IYoutubeRefresher youtubeRefresher,
+        ITwitchRefresher twitchRefresher,
+        ITwitterRefresher twitterRefresher)
     {
         _client = client;
         _modules = modules;
@@ -62,6 +67,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _reactionRoleDomain = reactionRoleDomain;
         _reactionRoleRefresher = reactionRoleRefresher;
         _youtubeRefresher = youtubeRefresher;
+        _twitchRefresher = twitchRefresher;
+        _twitterRefresher = twitterRefresher;
     }
 
     public void Run(Func<YoutubeNotification, Task> youtubeCallback, Func<string, Task> callback)
@@ -87,9 +94,31 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapGet("/Guild/Emoji", ProcessEmoji);
         app.MapPut("/Modules/Refresh/ReactionRole", RefreshReactionRole);
         app.MapPut("/Modules/Refresh/Youtube", RefreshYoutube);
+        app.MapPut("/Modules/Refresh/Twitch", RefreshTwitch);
+        app.MapPut("/Modules/Refresh/Twitter", RefreshTwitter);
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task RefreshTwitter(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync(); 
+        _ = _twitterRefresher.RefreshTwitterAsync(guildId);
+    }
+
+    private async Task RefreshTwitch(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+
+        var guildId = ulong.Parse(context.Request.Query["guildId"]);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync(); 
+        _ = _twitchRefresher.RefreshAsync(guildId);
     }
 
     private async Task ProcessTwitch(HttpContext context)
@@ -120,7 +149,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         await RequireAuthenticationAsync(context);
 
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        await _youtubeRefresher.RefreshGuildAsync(guildId);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync();
+        _ = _youtubeRefresher.RefreshGuildAsync(guildId);
     }
 
     private async Task RefreshReactionRole(HttpContext context)
@@ -128,7 +159,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         await RequireAuthenticationAsync(context);
 
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        await _reactionRoleRefresher.RefreshAsync(guildId);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync();
+        _ = _reactionRoleRefresher.RefreshAsync(guildId);
     }
 
     private async Task ProcessEmoji(HttpContext context)
@@ -145,6 +178,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             Url = emote.Url
         });
         await Responsd(context, JsonConvert.SerializeObject(emoji));
+        await context.Response.CompleteAsync();
     }
 
     private async Task ProcessChannels(HttpContext context)
@@ -160,6 +194,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             ChannelName = channel.Name
         });
         await Responsd(context, JsonConvert.SerializeObject(textChannel));
+        await context.Response.CompleteAsync();
     }
 
     private async Task ProcessReactionRoles(HttpContext context)
@@ -183,6 +218,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         }
 
         await Responsd(context, JsonConvert.SerializeObject(list));
+        await context.Response.CompleteAsync();
     }
 
     private static async Task MapReactionRolesAsync(SocketGuild guild,
@@ -225,13 +261,17 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             };
             list.Add(role);
         }
+
     }
 
     private async Task RefreshAutoRole(HttpContext context)
     {
         await RequireAuthenticationAsync(context);
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        await _autoRoleRefresher.RefreshAsync(guildId);
+        context.Response.StatusCode = 202;
+        await context.Response.CompleteAsync();
+
+        _ = _autoRoleRefresher.RefreshAsync(guildId);
     }
 
     private async Task ProcessGuildRoles(HttpContext context)
@@ -258,9 +298,10 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         await RequireAuthenticationAsync(context);
         var guildIdString = context.Request.Query["guildId"];
         var guildId = ulong.Parse(guildIdString);
+        context.Response.StatusCode = 202;
         await context.Response.CompleteAsync();
 
-        await _autoModRefresher.RefreshGuildAsync(guildId);
+        _ = _autoModRefresher.RefreshGuildAsync(guildId);
     }
 
     private async Task RequireAuthenticationAsync(HttpContext context)

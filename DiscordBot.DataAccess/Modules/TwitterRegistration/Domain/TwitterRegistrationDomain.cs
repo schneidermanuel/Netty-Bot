@@ -42,6 +42,12 @@ internal class TwitterRegistrationDomain : ITwitterRegistrationDomain
         await _repository.UnregisterTwitterAsync(guildId.ToString(), channelId.ToString(), username);
     }
 
+    public async Task<IReadOnlyCollection<TwitterRegistrationDto>> RetrieveAllRegistartionsForGuildAsync(ulong guildId)
+    {
+        var datas = await _repository.RetrieveAllRegistartionsForGuildAsync(guildId.ToString());
+        return datas.Select(MapDataToDto).ToArray();
+    }
+
     private TwitterRegistrationDto MapDataToDto(TwitterRegistrationData data)
     {
         return new TwitterRegistrationDto

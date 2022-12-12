@@ -24,10 +24,15 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
 
     private async Task Cleanup()
     {
-        var currentRegistrations = await _api.Helix.EventSub.GetEventSubSubscriptionsAsync();
+        var currentRegistrations = await _api.Helix.EventSub.GetEventSubSubscriptionsAsync(clientId: BotClientConstants.TwitchClientId, accessToken:_api.Settings.AccessToken);
         foreach (var registration in currentRegistrations.Subscriptions)
         {
-            await _api.Helix.EventSub.DeleteEventSubSubscriptionAsync(registration.Id);
+            using (var http = new HttpClient())
+            {
+                http.DefaultRequestHeaders.Add("Authorization", $"Bearer {_api.Settings.AccessToken}");
+                http.DefaultRequestHeaders.Add("Client-Id", BotClientConstants.TwitchClientId);
+                await http.DeleteAsync("https://api.twitch.tv/helix/eventsub/subscriptions?id=" + registration.Id);
+            }
         }
     }
 

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -25,7 +27,7 @@ internal class ReactionRoleDomain : IReactionRoleDomain
             GuildId = ulong.Parse(x.GuildId),
             MessageId = ulong.Parse(x.MessageId),
             RoleId = ulong.Parse(x.RoleId),
-            Emote = x.IsEmoji ? new Emoji(x.EmojiId) : Emote.Parse(x.EmojiId)
+            Emote = GetEmote(x)
         });
     }
 
@@ -56,8 +58,23 @@ internal class ReactionRoleDomain : IReactionRoleDomain
             GuildId = ulong.Parse(x.GuildId),
             MessageId = ulong.Parse(x.MessageId),
             RoleId = ulong.Parse(x.RoleId),
-            Emote = x.IsEmoji ? new Emoji(x.EmojiId) : Emote.Parse(x.EmojiId)
+            Emote = GetEmote(x)
         });
 
+    }
+
+    private static IEmote GetEmote(ReactionRoleData data)
+    {
+        if (!data.IsEmoji)
+        {
+            return Emote.Parse(data.EmojiId);
+        }
+
+        if (data.EmojiId.StartsWith("U+"))
+        {
+            return Emoji.Parse(char.ConvertFromUtf32(int.Parse(data.EmojiId[2..], NumberStyles.HexNumber)));
+        }
+
+        return Emoji.Parse(data.EmojiId);
     }
 }

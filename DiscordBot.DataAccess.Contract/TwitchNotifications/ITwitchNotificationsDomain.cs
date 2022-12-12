@@ -9,4 +9,5 @@ public interface ITwitchNotificationsDomain
     Task SaveRegistrationAsync(TwitchNotificationRegistration registration);
     Task DeleteRegistrationAsync(string username, ulong guildId);
     Task<IEnumerable<TwitchNotificationRegistration>> RetrieveAllRegistrationsAsync();
+    Task<IEnumerable<TwitchNotificationRegistration>> RetrieveAllRegistrationsForGuildAsync(ulong guildId);
 }

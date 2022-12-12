@@ -25,7 +25,7 @@ internal class AutoRoleManager
     {
         var newSetupsTask = _domain.RetrieveAllSetupsForGuildAsync(guildId);
 
-        var setupsForGuild = _setups.Where(setup => setup.GuildId == guildId);
+        var setupsForGuild = _setups.Where(setup => setup.GuildId == guildId).ToArray();
         foreach (var autoRoleSetup in setupsForGuild)
         {
             _setups.Remove(autoRoleSetup);

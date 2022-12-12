@@ -37,6 +37,12 @@ internal class TwitchNotificationsDomain : ITwitchNotificationsDomain
         return datas.Select(MapToDto);
     }
 
+    public async Task<IEnumerable<TwitchNotificationRegistration>> RetrieveAllRegistrationsForGuildAsync(ulong guildId)
+    {
+        var datas = await _repository.RetrieveAllRegistrationsForGuildAsync(guildId.ToString());
+        return datas.Select(MapToDto);
+    }
+
     private TwitchNotificationRegistration MapToDto(TwitchNotificationData data)
     {
         return new TwitchNotificationRegistration

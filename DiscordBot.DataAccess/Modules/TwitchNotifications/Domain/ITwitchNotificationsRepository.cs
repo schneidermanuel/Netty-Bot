@@ -9,4 +9,5 @@ internal interface ITwitchNotificationsRepository
     Task<long> SaveRegistrationAsync(TwitchNotificationData data);
     Task DeleteRegistrationAsync(string username, ulong guildId);
     Task<IEnumerable<TwitchNotificationData>> RetrieveAllRegistrationsAsync();
+    Task<IEnumerable<TwitchNotificationData>> RetrieveAllRegistrationsForGuildAsync(string guildId);
 }
