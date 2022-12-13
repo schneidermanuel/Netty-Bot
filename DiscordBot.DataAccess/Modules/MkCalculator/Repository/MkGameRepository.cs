@@ -32,6 +32,8 @@ internal class MkGameRepository : IMkGameRepository
                 entity.IsCompleted = true;
             }
 
+            await session.SaveOrUpdateAsync(entity);
+
             await session.FlushAsync();
         }
     }
@@ -41,7 +43,7 @@ internal class MkGameRepository : IMkGameRepository
         using (var session = _provider.OpenSession())
         {
             var query = session.Query<MarioKartRunnningGameEntity>()
-                .Where(entity => entity.ChannelId == data.ChannelId);
+                .Where(entity => entity.ChannelId == data.ChannelId && !entity.IsCompleted);
             var entity = await query.FirstOrDefaultAsync() ?? await CreateNewGame(data);
             entity.EnemyPoints = data.EnemyPoints;
             entity.TeamPoints = data.TeamPoints;
