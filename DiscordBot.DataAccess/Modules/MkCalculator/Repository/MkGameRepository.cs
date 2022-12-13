@@ -32,6 +32,8 @@ internal class MkGameRepository : IMkGameRepository
                 entity.IsCompleted = true;
             }
 
+            await session.SaveOrUpdateAsync(entity);
+
             await session.FlushAsync();
         }
     }
