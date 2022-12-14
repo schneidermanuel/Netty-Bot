@@ -3,7 +3,7 @@
 
 ## Donation
 
-This Bot is completly free available for everyone to use. A fully public hosted Bot, including a web-based configuration frontend will be available once the bot is out of beta state. 
+This Bot is completly free available for everyone to use. A fully public hosted Bot, including a web-based configuration frontend is available at [netty-bot.com](https://netty-bot.com)
 Any donation is highly appreciated and helps keeping this project alive.
 You may donate [here](https://tipeeestream.com/brainyxs/donation)
 
