@@ -12,5 +12,5 @@ internal interface IMkGameRepository
     Task<bool> CanRevertAsync(long gameId);
     Task<HistoryItemData> RevertGameAsync(long gameId);
     Task<IEnumerable<HistoryItemData>> RetrieveHistoryAsync(long gameId);
-    Task AutoCompleteOldGames(DateTime dueDate);
+    Task<IReadOnlyCollection<ulong>> RetriveChannelsToStopAsync(DateTime dueDate);
 }

@@ -8,12 +8,13 @@ namespace DiscordBot.Modules.MarioKart;
 
 internal class MarioKartGameCloser : ITimedAction
 {
-    private readonly IMkGameDomain _domain;
+    private readonly MkGameManager _manager;
 
-    public MarioKartGameCloser(IMkGameDomain domain)
+    public MarioKartGameCloser(MkGameManager manager)
     {
-        _domain = domain;
+        _manager = manager;
     }
+
     public ExecutionTime GetExecutionTime()
     {
         return ExecutionTime.Hourly;
@@ -22,6 +23,6 @@ internal class MarioKartGameCloser : ITimedAction
     public async Task ExecuteAsync(DiscordSocketClient client)
     {
         var dueDate = DateTime.Now.AddHours(-3);
-        await _domain.AutoCompleteOldGames(dueDate);
+        await _manager.AutoCompleteGamesAsync(dueDate);
     }
 }

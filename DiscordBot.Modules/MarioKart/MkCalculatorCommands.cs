@@ -16,15 +16,15 @@ namespace DiscordBot.Modules.MarioKart;
 internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 {
     private readonly IMkCalculator _calculator;
-    private readonly MkManager _manager;
+    private readonly MkGameManager _gameManager;
     private readonly IMkWorldRecordLoader _worldRecordLoader;
 
-    public MkCalculatorCommands(IModuleDataAccess dataAccess, IMkCalculator calculator, MkManager manager,
+    public MkCalculatorCommands(IModuleDataAccess dataAccess, IMkCalculator calculator, MkGameManager gameManager,
         IMkWorldRecordLoader worldRecordLoader) :
         base(dataAccess)
     {
         _calculator = calculator;
-        _manager = manager;
+        _gameManager = gameManager;
         _worldRecordLoader = worldRecordLoader;
     }
 
@@ -51,8 +51,8 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         }
 
         var result = _calculator.Calculate(places);
-        await _manager.RegisterResultAsync(result, context.Channel.Id, guild.Id, comment);
-        var sumResult = _manager.GetFinalResult(context.Channel.Id);
+        await _gameManager.RegisterResultAsync(result, context.Channel.Id, guild.Id, comment);
+        var sumResult = _gameManager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
         ExecuteShellCommand(
             $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
@@ -92,15 +92,15 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     [Description("Reverts the last Mario Kart Race")]
     public async Task RevertGameAsync(SocketSlashCommand context)
     {
-        if (!await _manager.CanRevertAsync(context.Channel.Id))
+        if (!await _gameManager.CanRevertAsync(context.Channel.Id))
         {
             await context.RespondAsync(Localize(nameof(MarioKartRessources.Error_NotRevertable)));
             return;
         }
 
-        await _manager.RevertGameAsync(context.Channel.Id);
+        await _gameManager.RevertGameAsync(context.Channel.Id);
 
-        var result = _manager.GetFinalResult(context.Channel.Id);
+        var result = _gameManager.GetFinalResult(context.Channel.Id);
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();
@@ -128,9 +128,9 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     public async Task FinishAsync(SocketSlashCommand context)
     {
         var guild = await RequireGuild(context);
-        var result = _manager.GetFinalResult(context.Channel.Id);
-        var games = (await _manager.RetriveHistoryAsync(result.GameId)).ToArray();
-        await _manager.EndGameAsync(context.Channel.Id);
+        var result = _gameManager.GetFinalResult(context.Channel.Id);
+        var games = (await _gameManager.RetriveHistoryAsync(result.GameId)).ToArray();
+        await _gameManager.EndGameAsync(context.Channel.Id);
         var url = BuildChartUrl(games);
         await context.DeferAsync();
         ExecuteShellCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");

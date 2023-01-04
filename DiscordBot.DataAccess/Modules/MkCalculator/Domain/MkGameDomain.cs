@@ -60,10 +60,10 @@ internal class MkGameDomain : IMkGameDomain
             TeamPoints = data.Points
         });
     }
-
-    public async Task AutoCompleteOldGames(DateTime dueDate)
+    
+    public async Task<IReadOnlyCollection<ulong>> RetriveChannelsToStopAsync(DateTime dueDate)
     {
-        await _repository.AutoCompleteOldGames(dueDate);
+        return await _repository.RetriveChannelsToStopAsync(dueDate);
     }
 
     private HistoryItemData MapToHistoryData(MkHistoryItem history)

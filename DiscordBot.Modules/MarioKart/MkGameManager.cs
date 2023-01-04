@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
 
 namespace DiscordBot.Modules.MarioKart;
 
-internal class MkManager
+internal class MkGameManager
 {
     private readonly IMkGameDomain _domain;
     private readonly Dictionary<ulong, MkResult> _runningGames = new();
 
-    public MkManager(IMkGameDomain domain)
+    public MkGameManager(IMkGameDomain domain)
     {
         _domain = domain;
     }
@@ -81,5 +83,12 @@ internal class MkManager
             _runningGames.Remove(channelId);
             await _domain.ClearAsync(channelId);
         }
+    }
+
+    public async Task AutoCompleteGamesAsync(DateTime dueDate)
+    {
+        var gamesToStop = await _domain.RetriveChannelsToStopAsync(dueDate);
+        var stopGameTasks = gamesToStop.Select(EndGameAsync);
+        await Task.WhenAll(stopGameTasks);
     }
 }

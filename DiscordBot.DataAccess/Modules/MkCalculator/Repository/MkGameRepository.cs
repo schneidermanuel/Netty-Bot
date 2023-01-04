@@ -109,8 +109,10 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    public async Task AutoCompleteOldGames(DateTime dueDate)
+
+    public async Task<IReadOnlyCollection<ulong>> RetriveChannelsToStopAsync(DateTime dueDate)
     {
+        var channelIds = new List<ulong>();
         using (var session = _provider.OpenSession())
         {
             var entities = session.Query<MarioKartRunnningGameEntity>()
@@ -123,9 +125,9 @@ internal class MkGameRepository : IMkGameRepository
                         .Where(historyEntity => historyEntity.MarioKartGameId == gameEntity.GameId)
                         .Select(historyEntity => historyEntity.CreatedAt)
                         .MaxAsync();
-                    if (lastItemCreated > dueDate)
+                    if (lastItemCreated < dueDate)
                     {
-                        gameEntity.IsCompleted = true;
+                        channelIds.Add(ulong.Parse(gameEntity.ChannelId));
                     }
                 }
                 catch (Exception e)
@@ -134,7 +136,7 @@ internal class MkGameRepository : IMkGameRepository
                 }
             }
 
-            await session.FlushAsync();
+            return channelIds;
         }
     }
 
