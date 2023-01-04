@@ -3,7 +3,7 @@
 
 ## Donation
 
-This Bot is completly free available for everyone to use. A fully public hosted Bot, including a web-based configuration frontend will be available once the bot is out of beta state. 
+This Bot is completly free available for everyone to use. A fully public hosted Bot, including a web-based configuration frontend is available at [netty-bot.com](https://netty-bot.com)
 Any donation is highly appreciated and helps keeping this project alive.
 You may donate [here](https://tipeeestream.com/brainyxs/donation)
 
@@ -31,6 +31,7 @@ This requires:
 - Hostname & Port for the server the bot is running on. This will host a REST API for Youtube to send data to, once a video is uploaded by a followed channel.
 - Lavalink Host & Port & Password & SSL Mode: You can either self-host your lavalink server or choose one of the many publicly available servers
 - Youtube API Key with Youtube Data V3 enabled
+- Spotify API Key
 
 Last, rename the hibernate_example.cfg.xml to hibernate.cfg.xml and pase in your sql connection string. 
 
@@ -47,89 +48,19 @@ This is recommended when testing the bot multiple times a day to not trigger tho
 
 You may create pull requests.
 
-## Current Modules
+## Commands
 
-### AutoRole
+We use SlashCommands for every action. 
 
-> Automatically assigns a role to every user joining the server. 
+### Current Modules
 
-#### Commands: 
-- autoRoleConfig list 
-> Prints out all the roles on the server that will be automatically assigned to new users. 
-- autoRoleConfig add <RoleID>
-> Sets a role up, that will be automatically distributed to new users. 
-- autoRoleConfig delete <RoleId>
-> Stops distributing a role
-  
-### BirthdayList
-
-> Creates a List of all the members on the server with their birthdays. Optionally notifies the server on a birthday and assigns a role to everyone at their birthday. 
-> ATTENTION: This will stop working on BIIIG server, because of the message character limit. Will fix later. 
-  
-#### Commands
-- registerBirthday <dd.MM>
-> Adds your birthday to the database
-- registerBirthdayChannel
-> Prints and automatically updates the birthdays in this channel
-- subBirthdays
-> At a birthday of a user, there will be a notification in this channel.
-- unsubBirthdays
-> What do you think this does?
-- setBirthdayRole <RoleID>
-> Automatically distributes a role at a birhday
-  
-  
-### MusicPlayer
- 
-> Plays music in a voice chat with the ability to create and use playlists.
-  
-#### Commands
-- play <NAME>
-- pause
-- resume
-- queue
-- createPlaylist <NAME>
-- deletePlaylist <ID>
-- playlists
-- playlist <ID>
-- stop
-  
-### ReactionRoles
-
-> Assignes a role to everyone reacing to a message
-  
-#### Commands
-
-- registerReactionRole <Emote> <RoleID> <Message>
-> Sends <Message> in the channel, reactes with <Emote> and distributes the <Role> to anyone reacting.
-  
-### ZenQuote
-  
-> Sends a quote in a channel once a day. 
-  
-#### Commands
-  
-- registerQuote
-- 
-
-### TwitchNotifications
-
-> Sends a notification in a channel when a twitch user starts a live stream
-
-#### Commands
-
-- registerTwitch <twitchUsername> <message>
-> Registers the current channel for notifications for the <twitchUsername>. The <message> paramter is optional.
-- unregisterTwitch <twitchUsername>
-> Removes a registration.
-
-### YoutubeNotifications
-
-> Sends a notification in a channel when a Youtube channel uploads a video
-
-#### Commands
-
-- registerYoutube <channelId> <message>
-> Registers the current channel for notifications for the <channelId>. The <message> paramter is optional.
-- unregisterYoutube <channelId>
-> Removes a registration.
+- Music
+- AutoMod
+- MarioKart
+- ReactionRole
+- AutoRole
+- Birthdays
+- Quotes
+- Youtube Notifications
+- Twitch Notifications
+- Twitter Notifications
