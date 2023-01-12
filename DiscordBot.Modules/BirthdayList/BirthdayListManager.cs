@@ -69,6 +69,7 @@ public class BirthdayListManager
         {
             Console.WriteLine(
                 $"Geburtstagsaktualisierung für server {channelSetup.GuildId} nicht möglich, lösche aus DB");
+            await _domain.DeleteBirthdayChannelAsync(channelSetup.Id);
         }
     }
 
