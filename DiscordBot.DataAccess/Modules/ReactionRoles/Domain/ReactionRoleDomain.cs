@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
+using Org.BouncyCastle.Crypto.Tls;
 
 namespace DiscordBot.DataAccess.Modules.ReactionRoles.Domain;
 
@@ -60,7 +61,6 @@ internal class ReactionRoleDomain : IReactionRoleDomain
             RoleId = ulong.Parse(x.RoleId),
             Emote = GetEmote(x)
         });
-
     }
 
     private static IEmote GetEmote(ReactionRoleData data)
@@ -72,7 +72,10 @@ internal class ReactionRoleDomain : IReactionRoleDomain
 
         if (data.EmojiId.StartsWith("U+"))
         {
-            return Emoji.Parse(char.ConvertFromUtf32(int.Parse(data.EmojiId[2..], NumberStyles.HexNumber)));
+            var charEmoji = char.ConvertFromUtf32(int.Parse(data.EmojiId[2..], NumberStyles.HexNumber));
+            Console.WriteLine(data.EmojiId);
+            Console.WriteLine(charEmoji);
+            return Emoji.Parse(charEmoji);
         }
 
         return Emoji.Parse(data.EmojiId);
