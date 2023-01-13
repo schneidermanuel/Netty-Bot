@@ -75,7 +75,14 @@ internal class ReactionRoleDomain : IReactionRoleDomain
             var charEmoji = char.ConvertFromUtf32(int.Parse(data.EmojiId[2..], NumberStyles.HexNumber));
             Console.WriteLine(data.EmojiId);
             Console.WriteLine(charEmoji);
-            return Emoji.Parse(charEmoji);
+            try
+            {
+                return Emoji.Parse(charEmoji);
+            }
+            catch (Exception e)
+            {
+                return Emoji.Parse("⚠");
+            }
         }
 
         return Emoji.Parse(data.EmojiId);
