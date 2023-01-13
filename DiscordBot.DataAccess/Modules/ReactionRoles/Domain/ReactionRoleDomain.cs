@@ -81,7 +81,7 @@ internal class ReactionRoleDomain : IReactionRoleDomain
             }
             catch (Exception e)
             {
-                return Emoji.Parse("⚠");
+                return Emoji.Parse("⚠️");
             }
         }
 
