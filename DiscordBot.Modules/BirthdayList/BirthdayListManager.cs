@@ -83,25 +83,17 @@ public class BirthdayListManager
                 current + $"{birthday.Key}: {birthday.Value.Day:00}.{birthday.Value.Month:00}.\n");
     }
 
-     private async Task<Dictionary<string, DateTime>> GetBirthdaysFromServer(SocketGuild guild)
+    private async Task<Dictionary<string, DateTime>> GetBirthdaysFromServer(SocketGuild guild)
     {
         var output = new Dictionary<string, DateTime>();
-        if (_birthdays == null)
-        {
-            _birthdays = await _domain.GetAllGeburtstageAsync();
-
-        }
+        _birthdays ??= await _domain.GetAllGeburtstageAsync();
+        var usersInGuild = (await guild.GetUsersAsync().ToArrayAsync()).SelectMany(x => x.ToArray()).ToArray();
         foreach (var birthday in _birthdays.OrderBy(x => x.Geburtsdatum))
         {
-            try
+            if (usersInGuild.Any(user => user.Id == birthday.UserId))
             {
-                var user = guild.GetUser(birthday.UserId);
-                var mention = user.Mention;
+                var mention = usersInGuild.Single(user => user.Id == birthday.UserId).Mention;
                 output.Add(mention, birthday.Geburtsdatum);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
             }
         }
 
