@@ -148,4 +148,8 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Event" />
+    </ItemGroup>
+
 </Project>

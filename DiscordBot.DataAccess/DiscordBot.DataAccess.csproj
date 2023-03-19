@@ -35,6 +35,9 @@
       <EmbeddedResource Include="Entities\BirthdayRoleSetupEntity.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Include="Entities\EventEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
       <EmbeddedResource Include="Entities\GuildConfigEntity.hbm.xml" />
       <EmbeddedResource Include="Entities\MarioKartHistoryItemEntity.hbm.xml" />
       <EmbeddedResource Include="Entities\MarioKartRunningGame.hbm.xml">
@@ -86,6 +89,10 @@
 
     <ItemGroup>
       <Compile Remove="Modules\ReactionRoles\Repository\IReactionRolesRepository.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Modules\Event\Repository" />
     </ItemGroup>
     
 </Project>
