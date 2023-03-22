@@ -2,6 +2,7 @@ using Autofac;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Modules.AutoMod;
 using DiscordBot.DataAccess.Modules.AutoRole;
+using DiscordBot.DataAccess.Modules.Event;
 using DiscordBot.DataAccess.Modules.GeburtstagList;
 using DiscordBot.DataAccess.Modules.GuildConfig;
 using DiscordBot.DataAccess.Modules.MkCalculator;
@@ -32,6 +33,7 @@ public class DataAccessModule : Module
         builder.RegisterModule<YoutubeNotificationModule>();
         builder.RegisterModule<AutoModModule>();
         builder.RegisterModule<MkCalculatorModule>();
+        builder.RegisterModule<EventModule>();
         builder.RegisterModule<UserConfigurationModule>();
         builder.RegisterModule<GuildConfigModule>();
         builder.RegisterModule<TwitterRegistrationModule>();

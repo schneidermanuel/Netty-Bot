@@ -7,7 +7,7 @@
         </id>
         <property name="GuildId" type="String" column="guildId"/>
         <property name="ChannelId" type="String" column="channelId"/>
-        <property name="Message" type="String" column="messageId"/>
+        <property name="MessageId" type="String" column="messageId"/>
         <property name="AutodeleteDate" type="DateTime" column="autodeleteDate"/>
         <property name="RoleId" type="String" column="roleId"/>
     </class>

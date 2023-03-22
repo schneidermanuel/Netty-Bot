@@ -10,5 +10,5 @@ public class EventEntity
     public virtual string MessageId { get; set; }
     public virtual DateTime AutodeleteDate { get; set; }
     public virtual string RoleId { get; set; }
-    public virtual int MaxUsers { get; set; }
+    public virtual int? MaxUsers { get; set; }
 }

@@ -49,7 +49,7 @@ public class DiscordBotSystem
         builder.RegisterModule<MusicPlayerModule>();
         builder.RegisterModule<VictoriaModule>();
         builder.RegisterModule<PubSubModule>();
-        builder.RegisterModule<DiscordBotPubSubBackendModule>();
+        //builder.RegisterModule<DiscordBotPubSubBackendModule>();
         builder.RegisterModule<FrameworkModule>();
         builder.RegisterInstance(BotManager.Client);
         _container = builder.Build();

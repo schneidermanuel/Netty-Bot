@@ -90,9 +90,5 @@
     <ItemGroup>
       <Compile Remove="Modules\ReactionRoles\Repository\IReactionRolesRepository.cs" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Modules\Event\Repository" />
-    </ItemGroup>
     
 </Project>

@@ -87,6 +87,10 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>ModerationResources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="Event\EventResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>EventResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -155,10 +159,21 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ModerationResources.resx</DependentUpon>
       </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
       <Folder Include="Event" />
+      <Compile Update="Event\EventResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>EventResources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Moderation\ModerationResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ModerationResources.resx</DependentUpon>
+      <Compile Update="Event\EventResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>EventResources.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

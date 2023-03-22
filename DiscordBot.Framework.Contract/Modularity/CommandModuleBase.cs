@@ -129,11 +129,41 @@ public abstract class CommandModuleBase : ICommandModule
         return int.TryParse(arg, out var result) ? result : defaultValue;
     }
 
+    protected int? GetOptionalIntParameter(SocketSlashCommand context, string parametername)
+    {
+        var value = context.Data.Options.SingleOrDefault(option => option.Name == parametername)?.Value?.ToString();
+        if (string.IsNullOrEmpty(value))
+        {
+            return null;
+        }
+
+        return int.Parse(value);
+    }
+
+    protected string GetOptionalStringParameter(SocketSlashCommand context, string parametername)
+    {
+        var value = context.Data.Options.SingleOrDefault(option => option.Name == parametername)?.Value?.ToString();
+        return string.IsNullOrEmpty(value) ? null : value;
+    }
+
+    protected IRole GetOptionalRoleParameter(SocketSlashCommand context, string parametername)
+    {
+        var value = context.Data.Options.SingleOrDefault(option => option.Name == parametername)?.Value;
+        if (value is IRole role)
+        {
+            return role;
+        }
+
+        return null;
+    }
+
+
     protected async Task<string> RequireString(SocketSlashCommand context, int position = 1)
     {
         await RequireArg(context, position);
         return context.Data.Options.Skip(position - 1).First().Value.ToString();
     }
+
     protected string RequireStringOrEmpty(SocketSlashCommand context, int position = 1)
     {
         var arg = context.Data.Options.Skip(position - 1).FirstOrDefault()?.Value ?? string.Empty;
