@@ -55,6 +55,27 @@ internal class EventCommands : CommandModuleBase
         await CreateEventAsync(name, eventTime.Value, maxUsers, role, guild, context);
     }
 
+    [Command("war")]
+    [Parameter(ParameterType = ApplicationCommandOptionType.String, IsOptional = false, Name = "time",
+        Description = "when the event takes place")]
+    [Parameter(ParameterType = ApplicationCommandOptionType.Role, IsOptional = true, Name = "role",
+        Description = "Assign a Role to all participants")]
+    public async Task WarCommand(SocketSlashCommand context)
+    {
+        var timeString = await RequireString(context);
+        var eventTime = _timeInterpretor.Interpret(timeString);
+        if (eventTime == null)
+        {
+            await context.RespondAsync(Localize(nameof(EventResources.Error_TimeNotResolved)));
+            return;
+        }
+
+        var role = GetOptionalRoleParameter(context, "role");
+        var guild = await RequireGuild(context);
+
+        await CreateEventAsync("War " + timeString, eventTime.Value, 6, role, guild, context);
+    }
+
     private async Task CreateEventAsync(string name, DateTime time, int? maxUsers, IRole role, IGuild guild,
         SocketSlashCommand context)
     {

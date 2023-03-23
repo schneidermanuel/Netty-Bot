@@ -195,6 +195,7 @@ internal class EventLifesycleManager : IButtonListener
         }
 
         var builder = new EmbedBuilder()
+            .WithTitle(originalEmbed.Title)
             .WithAuthor(originalEmbed.Author.Value.Name)
             .WithColor(Color.Blue)
             .WithTimestamp(originalEmbed.Timestamp.Value)
