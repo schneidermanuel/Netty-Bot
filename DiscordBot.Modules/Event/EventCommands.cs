@@ -58,29 +58,39 @@ internal class EventCommands : CommandModuleBase
     private async Task CreateEventAsync(string name, DateTime time, int? maxUsers, IRole role, IGuild guild,
         SocketSlashCommand context)
     {
+        var description = time.ToString("dd.MM HH:mm");
+        if (maxUsers.HasValue)
+        {
+            description += $" (+{maxUsers})";
+        }
+
         var embed = new EmbedBuilder()
             .WithAuthor(context.User.Username)
             .WithColor(Color.Blue)
             .WithCurrentTimestamp()
             .WithTitle(name)
-            .WithDescription(time.ToString("dd.MM hh:mm"))
+            .WithDescription(description)
             .AddField(string.Format(Localize(nameof(EventResources.Field_Can)), 0.ToString()), "-")
             .AddField(string.Format(Localize(nameof(EventResources.Field_Cant)), 0.ToString()), "-")
             .AddField(string.Format(Localize(nameof(EventResources.Field_Unsure)), 0.ToString()), "-")
             .Build();
 
-
-        await context.RespondAsync("🤝");
-        var message = await context.Channel.SendMessageAsync(string.Empty, false, embed);
         var e = new DataAccess.Contract.Event.Event
         {
             RoleId = role?.Id,
-            ChannelId = message.Channel.Id,
-            MessageId = message.Id,
             AutoDeleteDate = time,
             GuildId = guild.Id,
-            MaxUsers = maxUsers
+            MaxUsers = maxUsers,
+            OwnerUserId = context.User.Id
         };
-        await _eventDomain.SaveAsync(e);
+
+        var eventId = await _eventDomain.SaveAsync(e);
+
+        var components = new ComponentBuilder()
+            .WithButton("Can", $"event_{eventId}_can", ButtonStyle.Success)
+            .WithButton("Can't", $"event_{eventId}_cant", ButtonStyle.Danger)
+            .WithButton("Unsure", $"event_{eventId}_unsure", ButtonStyle.Secondary)
+            .Build();
+        await context.RespondAsync(string.Empty, null, false, false, null, components, embed);
     }
 }

@@ -6,9 +6,9 @@
             <generator class="increment"/>
         </id>
         <property name="GuildId" type="String" column="guildId"/>
-        <property name="ChannelId" type="String" column="channelId"/>
-        <property name="MessageId" type="String" column="messageId"/>
+        <property name="OwnerUserId" type="String" column="ownerUserId"/>
         <property name="AutodeleteDate" type="DateTime" column="autodeleteDate"/>
         <property name="RoleId" type="String" column="roleId"/>
+        <property name="MaxUsers" type="Int32" column="maxusers"/>
     </class>
 </hibernate-mapping>

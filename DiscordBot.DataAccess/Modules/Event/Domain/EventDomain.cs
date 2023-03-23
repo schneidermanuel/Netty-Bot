@@ -13,13 +13,18 @@ internal class EventDomain : IEventDomain
         _repository = repository;
     }
     
-    public async Task SaveAsync(Contract.Event.Event eventDto)
+    public async Task<long> SaveAsync(Contract.Event.Event eventDto)
     {
-        await _repository.SaveAsync(eventDto);
+        return await _repository.SaveAsync(eventDto);
     }
 
     public async Task<IReadOnlyCollection<Contract.Event.Event>> GetAllCurrentEventsAsync()
     {
         return await _repository.GetAllCurrentEventsAsync();
+    }
+
+    public async Task<Contract.Event.Event> GetEventByIdAsync(long eventId)
+    {
+        return await _repository.GetEventByIdAsync(eventId);
     }
 }

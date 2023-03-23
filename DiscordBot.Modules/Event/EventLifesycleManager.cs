@@ -1,65 +1,257 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Rest;
 using Discord.WebSocket;
+using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.Event;
+using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.Event;
 
-internal class EventLifesycleManager
+internal class EventLifesycleManager : IButtonListener
 {
     private readonly IEventDomain _domain;
     private readonly DiscordSocketClient _client;
+    private readonly IModuleDataAccess _dataAccess;
 
-    private IList<DataAccess.Contract.Event.Event> _currentEvents;
-
-    public EventLifesycleManager(IEventDomain domain, DiscordSocketClient client)
+    public EventLifesycleManager(IEventDomain domain, DiscordSocketClient client, IModuleDataAccess dataAccess)
     {
         _domain = domain;
         _client = client;
-        _currentEvents = new List<DataAccess.Contract.Event.Event>();
+        _dataAccess = dataAccess;
     }
 
 
-    public void StartListenForChanges()
+    private async Task UserUnsureAsync(ulong userId, DataAccess.Contract.Event.Event relevantEvent, ulong messageId,
+        ulong channelId)
     {
-        _client.ReactionAdded += ProcessReaction;
-    }
+        var guild = _client.GetGuild(relevantEvent.GuildId);
+        var user = guild.GetUser(userId);
+        var message = (RestUserMessage)await guild
+            .GetTextChannel(channelId)
+            .GetMessageAsync(messageId);
+        var embed = message.Embeds.Single();
 
-    private async Task ProcessReaction(Cacheable<IUserMessage, ulong> message,
-        Cacheable<IMessageChannel, ulong> channel, SocketReaction reaction)
-    {
-        if (_currentEvents.Any(e => e.MessageId == message.Id))
+        var canField = embed.Fields.Single(f => f.Name.Contains('✅'));
+        var unsureField = embed.Fields.Single(f => f.Name.Contains('❓'));
+        var cantField = embed.Fields.Single(f => f.Name.Contains('❌'));
+        var subField = embed.Fields.SingleOrDefault(f => f.Name.Contains("🔼"));
+        if (unsureField.Value.Contains(user.Mention))
         {
-            switch (reaction.Emote.ToString())
+            return;
+        }
+
+        var unsureTags = unsureField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention).ToList();
+        var cantTags = cantField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToArray();
+        var canTags = canField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
+        var subTags = subField.Value != null
+            ? subField.Value.Split("\n")
+                .Where(tag => tag.Trim().StartsWith("<"))
+                .Where(tag => tag != user.Mention)
+                .ToList()
+            : Array.Empty<string>().ToList();
+        if (relevantEvent.MaxUsers.HasValue)
+        {
+            while (canTags.Count < relevantEvent.MaxUsers.Value && subTags.Any())
             {
-                case "✅":
-
-                    break;
-                case "❌":
-                    break;
-
-                case "❓":
-
-                    break;
-                case "🗑":
-                    
-                    break;
-                default:
-                    return;
+                var tag = subTags.First();
+                subTags.Remove(tag);
+                canTags.Add(tag);
             }
+        }
+
+        unsureTags.Add(user.Mention);
+
+        var newEmbed = await RebuildEmbedAsync(canTags, unsureTags, cantTags, subTags, embed, relevantEvent);
+        await message.ModifyAsync(msg => msg.Embed = newEmbed);
+    }
+
+    private async Task RemoveUserFromEventAsync(ulong userId, DataAccess.Contract.Event.Event relevantEvent,
+        ulong messageId, ulong channelId)
+    {
+        var guild = _client.GetGuild(relevantEvent.GuildId);
+        var user = guild.GetUser(userId);
+        var message = (RestUserMessage)await guild
+            .GetTextChannel(channelId)
+            .GetMessageAsync(messageId);
+        var embed = message.Embeds.Single();
+
+        var canField = embed.Fields.Single(f => f.Name.Contains('✅'));
+        var unsureField = embed.Fields.Single(f => f.Name.Contains('❓'));
+        var cantField = embed.Fields.Single(f => f.Name.Contains('❌'));
+        var subField = embed.Fields.SingleOrDefault(f => f.Name.Contains("🔼"));
+        if (cantField.Value.Contains(user.Mention))
+        {
+            return;
+        }
+
+        var unsureTags = unsureField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention).ToList();
+        var cantTags = cantField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
+        var canTags = canField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
+        var subTags = subField.Value != null
+            ? subField.Value.Split("\n")
+                .Where(tag => tag.Trim().StartsWith("<"))
+                .Where(tag => tag != user.Mention)
+                .ToList()
+            : Array.Empty<string>().ToList();
+
+        if (relevantEvent.MaxUsers.HasValue)
+        {
+            while (canTags.Count < relevantEvent.MaxUsers.Value && subTags.Any())
+            {
+                var tag = subTags.First();
+                subTags.Remove(tag);
+                canTags.Add(tag);
+            }
+        }
+
+        cantTags.Add(user.Mention);
+
+        var newEmbed = await RebuildEmbedAsync(canTags, unsureTags, cantTags, subTags, embed, relevantEvent);
+        await message.ModifyAsync(msg => msg.Embed = newEmbed);
+    }
+
+    private async Task AddUserToEventAsync(ulong userId, DataAccess.Contract.Event.Event relevantEvent, ulong messageId,
+        ulong channelId)
+    {
+        var guild = _client.GetGuild(relevantEvent.GuildId);
+        var user = guild.GetUser(userId);
+        var message = (RestUserMessage)await guild
+            .GetTextChannel(channelId)
+            .GetMessageAsync(messageId);
+        var embed = message.Embeds.Single();
+
+        var canField = embed.Fields.Single(f => f.Name.Contains('✅'));
+        var unsureField = embed.Fields.Single(f => f.Name.Contains('❓'));
+        var cantField = embed.Fields.Single(f => f.Name.Contains('❌'));
+        var subField = embed.Fields.SingleOrDefault(f => f.Name.Contains("🔼"));
+        if (canField.Value.Contains(user.Mention))
+        {
+            return;
+        }
+
+        var unsureTags = unsureField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention).ToArray();
+        var cantTags = cantField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToArray();
+        var canTags = canField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
+        var subTags = subField.Value != null
+            ? subField.Value.Split("\n")
+                .Where(tag => tag.Trim().StartsWith("<"))
+                .Where(tag => tag != user.Mention)
+                .ToList()
+            : Array.Empty<string>().ToList();
+        if (relevantEvent.MaxUsers.HasValue && canTags.Count < relevantEvent.MaxUsers.Value)
+        {
+            canTags.Add(user.Mention);
+        }
+        else
+        {
+            subTags.Add(user.Mention);
+        }
+
+        var newEmbed = await RebuildEmbedAsync(canTags, unsureTags, cantTags, subTags, embed, relevantEvent);
+        await message.ModifyAsync(msg => msg.Embed = newEmbed);
+    }
+
+    private async Task<Embed> RebuildEmbedAsync(IReadOnlyCollection<string> acceptedTages,
+        IReadOnlyCollection<string> unsureTags,
+        IReadOnlyCollection<string> cantTags,
+        IReadOnlyCollection<string> subTags,
+        IEmbed originalEmbed, DataAccess.Contract.Event.Event reactedEvent)
+    {
+        var language = await _dataAccess.GetUserLanguageAsync(reactedEvent.OwnerUserId);
+        var description = reactedEvent.AutoDeleteDate.ToString("dd.MM HH:mm");
+        if (reactedEvent.MaxUsers.HasValue)
+        {
+            description += $" (+{reactedEvent.MaxUsers.Value - acceptedTages.Count})";
+        }
+
+        var builder = new EmbedBuilder()
+            .WithAuthor(originalEmbed.Author.Value.Name)
+            .WithColor(Color.Blue)
+            .WithTimestamp(originalEmbed.Timestamp.Value)
+            .WithDescription(description)
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Can), language), acceptedTages.Count),
+                !acceptedTages.Any() ? "-" : string.Join("\n", acceptedTages))
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Cant), language), cantTags.Count),
+                !cantTags.Any() ? "-" : string.Join("\n", cantTags))
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Unsure), language), unsureTags.Count),
+                !unsureTags.Any() ? "-" : string.Join("\n", unsureTags));
+
+        if (subTags.Any())
+        {
+            builder.AddField(string.Format(Localize(nameof(EventResources.Field_Sub), language), subTags.Count),
+                string.Join("\n", subTags));
+        }
+
+        return builder.Build();
+    }
+
+    private string Localize(string ressource, string language)
+    {
+        var ressourceType = typeof(EventResources);
+        language = language == "ch" ? "de-ch" : language;
+        lock (ressourceType)
+        {
+            var cultureProperty = ressourceType.GetProperty("Culture", BindingFlags.NonPublic | BindingFlags.Static);
+            cultureProperty?.SetValue(null, new CultureInfo(language));
+            return ressourceType.GetProperty(ressource, BindingFlags.NonPublic | BindingFlags.Static)?.GetValue(null)
+                ?.ToString();
         }
     }
 
 
-    public async Task Refresh()
+    public string ButtonEventPrefix => "event";
+
+    public async Task ButtonPressedAsync(ulong userId, ulong messageId, ulong channelId, string customRewardId)
     {
-        var currentEvents = await _domain.GetAllCurrentEventsAsync();
-        _currentEvents.Clear();
-        foreach (var currentEvent in currentEvents)
+        var parts = customRewardId.Split('_');
+        var eventId = long.Parse(parts[1]);
+        var action = parts[2];
+
+        var relevantEvent = await _domain.GetEventByIdAsync(eventId);
+
+        switch (action)
         {
-            _currentEvents.Add(currentEvent);
+            case "can":
+                await AddUserToEventAsync(userId, relevantEvent, messageId, channelId);
+                break;
+            case "cant":
+                await RemoveUserFromEventAsync(userId, relevantEvent, messageId, channelId);
+                break;
+            case "unsure":
+                await UserUnsureAsync(userId, relevantEvent, messageId, channelId);
+                break;
+            default:
+                return;
         }
     }
 }

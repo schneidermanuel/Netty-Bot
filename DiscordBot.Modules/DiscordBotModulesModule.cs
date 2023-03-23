@@ -25,7 +25,7 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<ZenQuoteModule>();
         builder.RegisterModule<BirthdayListModule>();
         builder.RegisterModule<MusicPlayerModule>();
-        //builder.RegisterModule<TwitchNotificationsModule>();
+        builder.RegisterModule<TwitchNotificationsModule>();
         builder.RegisterModule<YoutubeNotificationsModule>();
         builder.RegisterModule<AutoRoleModule>();
         builder.RegisterModule<ModerationModule>();
@@ -34,7 +34,7 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<ServerCoutnerModule>();
         builder.RegisterModule<ConfigurationModule>();
         builder.RegisterModule<EventModule>();
-        //builder.RegisterModule<TwitterModule>();
-        //builder.RegisterModule<WebBackendModule>();
+        builder.RegisterModule<TwitterModule>();
+        builder.RegisterModule<WebBackendModule>();
     }
 }

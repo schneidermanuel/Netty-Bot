@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.TimedAction;
 
 namespace DiscordBot.Modules.Event;
 
@@ -11,7 +12,6 @@ internal class EventModule : Module
         base.Load(builder);
 
         builder.RegisterType<EventCommands>().As<ICommandModule>();
-        builder.RegisterType<EventLifesycleManager>().SingleInstance();
-        builder.RegisterType<EventBootstep>().As<IBootStep>();
+        builder.RegisterType<EventLifesycleManager>().SingleInstance().AsSelf().As<IButtonListener>();
     }
 }

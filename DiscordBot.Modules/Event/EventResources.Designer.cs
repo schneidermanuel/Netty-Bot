@@ -96,6 +96,15 @@ namespace DiscordBot.Modules.Event {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 🔼 Einspringer ({0}).
+        /// </summary>
+        internal static string Field_Sub {
+            get {
+                return ResourceManager.GetString("Field_Sub", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ❓ Unsicher ({0}).
         /// </summary>
         internal static string Field_Unsure {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
@@ -18,7 +19,7 @@ internal class EventRepository : IEventRepository
         _sessionProvider = sessionProvider;
     }
 
-    public async Task SaveAsync(Contract.Event.Event eventDto)
+    public async Task<long> SaveAsync(Contract.Event.Event eventDto)
     {
         using (var session = _sessionProvider.OpenSession())
         {
@@ -26,13 +27,13 @@ internal class EventRepository : IEventRepository
             {
                 AutodeleteDate = eventDto.AutoDeleteDate,
                 GuildId = eventDto.GuildId.ToString(),
-                ChannelId = eventDto.ChannelId.ToString(),
-                MessageId = eventDto.MessageId.ToString(),
                 MaxUsers = eventDto.MaxUsers,
-                RoleId = eventDto.RoleId?.ToString()
+                RoleId = eventDto.RoleId?.ToString(),
+                OwnerUserId = eventDto.OwnerUserId.ToString()
             };
             await session.SaveAsync(entity);
             await session.FlushAsync();
+            return entity.Id;
         }
     }
 
@@ -43,15 +44,31 @@ internal class EventRepository : IEventRepository
             var entities = await session.Query<EventEntity>().ToListAsync();
             var dtos = entities.Select(entity => new Contract.Event.Event
             {
-                ChannelId = ulong.Parse(entity.ChannelId),
                 MaxUsers = entity.MaxUsers,
                 RoleId = entity.RoleId != null ? ulong.Parse(entity.RoleId) : null,
                 GuildId = ulong.Parse(entity.GuildId),
-                MessageId = ulong.Parse(entity.MessageId),
                 AutoDeleteDate = entity.AutodeleteDate,
-                EventId = entity.Id
+                EventId = entity.Id,
+                OwnerUserId = ulong.Parse(entity.OwnerUserId)
             });
             return dtos.ToArray();
+        }
+    }
+
+    public async Task<Contract.Event.Event> GetEventByIdAsync(long eventId)
+    {
+        using (var session = _sessionProvider.OpenSession())
+        {
+            var entity = await session.LoadAsync<EventEntity>(eventId);
+            return new Contract.Event.Event
+            {
+                MaxUsers = entity.MaxUsers,
+                RoleId = entity.RoleId != null ? ulong.Parse(entity.RoleId) : null,
+                GuildId = ulong.Parse(entity.GuildId),
+                AutoDeleteDate = entity.AutodeleteDate,
+                EventId = entity.Id,
+                OwnerUserId = ulong.Parse(entity.OwnerUserId)
+            };
         }
     }
 }

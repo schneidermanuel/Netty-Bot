@@ -33,4 +33,7 @@
     <data name="Field_Unsure" xml:space="preserve">
         <value>❓ Unsicher ({0})</value>
     </data>
+    <data name="Field_Sub" xml:space="preserve">
+        <value>🔼 Einspringer ({0})</value>
+    </data>
 </root>
