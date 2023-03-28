@@ -83,6 +83,10 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>TwitterNotificationRessources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="Moderation\ModerationResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>ModerationResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -145,6 +149,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>TwitterNotificationRessources.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Moderation\ModerationResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ModerationResources.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

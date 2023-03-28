@@ -4,6 +4,7 @@ using DiscordBot.Modules.AutoRole;
 using DiscordBot.Modules.BirthdayList;
 using DiscordBot.Modules.Configuration;
 using DiscordBot.Modules.MarioKart;
+using DiscordBot.Modules.Moderation;
 using DiscordBot.Modules.MusicPlayer;
 using DiscordBot.Modules.ReactionRoles;
 using DiscordBot.Modules.ServerCounter;
@@ -26,6 +27,7 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<TwitchNotificationsModule>();
         builder.RegisterModule<YoutubeNotificationsModule>();
         builder.RegisterModule<AutoRoleModule>();
+        builder.RegisterModule<ModerationModule>();
         builder.RegisterModule<AutoModModule>();
         builder.RegisterModule<MkCalculatorModule>();
         builder.RegisterModule<ServerCoutnerModule>();
