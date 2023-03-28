@@ -12,6 +12,6 @@ internal class EventModule : Module
         base.Load(builder);
 
         builder.RegisterType<EventCommands>().As<ICommandModule>();
-        builder.RegisterType<EventLifesycleManager>().SingleInstance().AsSelf().As<IButtonListener>();
+        builder.RegisterType<EventLifesycleButtonListener>().SingleInstance().AsSelf().As<IButtonListener>();
     }
 }

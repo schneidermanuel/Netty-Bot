@@ -13,13 +13,13 @@ using DiscordBot.Framework.Contract.Modularity;
 
 namespace DiscordBot.Modules.Event;
 
-internal class EventLifesycleManager : IButtonListener
+internal class EventLifesycleButtonListener : IButtonListener
 {
     private readonly IEventDomain _domain;
     private readonly DiscordSocketClient _client;
     private readonly IModuleDataAccess _dataAccess;
 
-    public EventLifesycleManager(IEventDomain domain, DiscordSocketClient client, IModuleDataAccess dataAccess)
+    public EventLifesycleButtonListener(IEventDomain domain, DiscordSocketClient client, IModuleDataAccess dataAccess)
     {
         _domain = domain;
         _client = client;
@@ -74,6 +74,18 @@ internal class EventLifesycleManager : IButtonListener
         }
 
         unsureTags.Add(user.Mention);
+        if (relevantEvent.RoleId.HasValue)
+        {
+            try
+            {
+                var role = guild.GetRole(relevantEvent.RoleId.Value);
+                await user.RemoveRoleAsync(role);
+            }
+            catch (Exception e)
+            {
+                // ROLE NOT FOUND
+            }
+        }
 
         var newEmbed = await RebuildEmbedAsync(canTags, unsureTags, cantTags, subTags, embed, relevantEvent);
         await message.ModifyAsync(msg => msg.Embed = newEmbed);
@@ -127,6 +139,18 @@ internal class EventLifesycleManager : IButtonListener
         }
 
         cantTags.Add(user.Mention);
+        if (relevantEvent.RoleId.HasValue)
+        {
+            try
+            {
+                var role = guild.GetRole(relevantEvent.RoleId.Value);
+                await user.RemoveRoleAsync(role);
+            }
+            catch (Exception e)
+            {
+                // ROLE NOT FOUND
+            }
+        }
 
         var newEmbed = await RebuildEmbedAsync(canTags, unsureTags, cantTags, subTags, embed, relevantEvent);
         await message.ModifyAsync(msg => msg.Embed = newEmbed);
@@ -171,6 +195,18 @@ internal class EventLifesycleManager : IButtonListener
         if (relevantEvent.MaxUsers.HasValue && canTags.Count < relevantEvent.MaxUsers.Value)
         {
             canTags.Add(user.Mention);
+            if (relevantEvent.RoleId.HasValue)
+            {
+                try
+                {
+                    var role = guild.GetRole(relevantEvent.RoleId.Value);
+                    await user.AddRoleAsync(role);
+                }
+                catch (Exception e)
+                {
+                    // ROLE NOT FOUND
+                }
+            }
         }
         else
         {
