@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -17,17 +18,22 @@ internal class ModerationCommands : CommandModuleBase, ICommandModule
 
 
     [Command("clean")]
-    [Parameter(Name = "count", Description = "The count of messages to delete. default is 100",
+    [Description("cleans n messages from the channel")]
+    [Parameter(Name = "count", Description = "The amount of messages to delete",
         ParameterType = ApplicationCommandOptionType.Integer, IsOptional = true)]
     public async Task CleanAsync(SocketSlashCommand context)
     {
-        var count = RequireIntArgOrDefault(context, 100);
+        var count = RequireIntArgOrDefault(context, 1, 100);
         var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
+        await context.RespondAsync("cleaning...");
         var channel = (ITextChannel)context.Channel;
-        var messages = (await channel.GetMessagesAsync(count).ToListAsync()).SelectMany(x => x);
+        var messages =
+            (await channel.GetMessagesAsync(count).FlattenAsync()).Where(message =>
+                message.Timestamp.DateTime.AddDays(14) > DateTime.Now);
         await channel.DeleteMessagesAsync(messages);
+        await context.DeleteOriginalResponseAsync();
     }
 
     protected override Type RessourceType => typeof(ModerationResources);
