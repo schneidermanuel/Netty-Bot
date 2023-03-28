@@ -36,25 +36,7 @@ internal class EventRepository : IEventRepository
             return entity.Id;
         }
     }
-
-    public async Task<IReadOnlyCollection<Contract.Event.Event>> GetAllCurrentEventsAsync()
-    {
-        using (var session = _sessionProvider.OpenSession())
-        {
-            var entities = await session.Query<EventEntity>().ToListAsync();
-            var dtos = entities.Select(entity => new Contract.Event.Event
-            {
-                MaxUsers = entity.MaxUsers,
-                RoleId = entity.RoleId != null ? ulong.Parse(entity.RoleId) : null,
-                GuildId = ulong.Parse(entity.GuildId),
-                AutoDeleteDate = entity.AutodeleteDate,
-                EventId = entity.Id,
-                OwnerUserId = ulong.Parse(entity.OwnerUserId)
-            });
-            return dtos.ToArray();
-        }
-    }
-
+    
     public async Task<Contract.Event.Event> GetEventByIdAsync(long eventId)
     {
         using (var session = _sessionProvider.OpenSession())
