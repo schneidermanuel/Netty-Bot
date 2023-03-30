@@ -24,7 +24,7 @@
         <value>❌ Can't ({0})</value>
     </data>
     <data name="Field_Unsure" xml:space="preserve">
-        <value>❓Not sure {0} ({0})</value>
+        <value>❓Not sure ({0})</value>
     </data>
     <data name="Field_Sub" xml:space="preserve">
         <value>🔼 Sub ({0})</value>

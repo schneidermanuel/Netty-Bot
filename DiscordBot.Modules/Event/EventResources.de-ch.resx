@@ -24,7 +24,7 @@
         <value>❌ Cha nöd ({0})</value>
     </data>
     <data name="Field_Unsure" xml:space="preserve">
-        <value>❓ Mol luegä {0} ({0})</value>
+        <value>❓ Mol luegä ({0})</value>
     </data>
     <data name="Field_Sub" xml:space="preserve">
         <value>🔼 Iihüpfär ({0})</value>

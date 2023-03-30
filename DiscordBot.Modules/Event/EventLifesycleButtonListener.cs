@@ -192,7 +192,7 @@ internal class EventLifesycleButtonListener : IButtonListener
                 .Where(tag => tag != user.Mention)
                 .ToList()
             : Array.Empty<string>().ToList();
-        if (relevantEvent.MaxUsers.HasValue && canTags.Count < relevantEvent.MaxUsers.Value)
+        if (!relevantEvent.MaxUsers.HasValue || canTags.Count < relevantEvent.MaxUsers.Value)
         {
             canTags.Add(user.Mention);
             if (relevantEvent.RoleId.HasValue)
