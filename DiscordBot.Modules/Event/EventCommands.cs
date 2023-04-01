@@ -57,6 +57,7 @@ internal class EventCommands : CommandModuleBase
     }
 
     [Command("war")]
+    [Description("Creates a war in the channel")]
     [Parameter(ParameterType = ApplicationCommandOptionType.String, IsOptional = false, Name = "time",
         Description = "when the event takes place")]
     [Parameter(ParameterType = ApplicationCommandOptionType.Role, IsOptional = true, Name = "role",
@@ -80,6 +81,7 @@ internal class EventCommands : CommandModuleBase
     }
 
     [Command("wars")]
+    [Description("Creates wars at every space-determined time in the channel")]
     [Parameter(ParameterType = ApplicationCommandOptionType.String, IsOptional = false, Name = "time",
         Description = "when the event takes place")]
     public async Task WarsCommand(SocketSlashCommand context)

@@ -218,7 +218,7 @@ internal class EventLifesycleButtonListener : IButtonListener
             .AddField(string.Format(Localize(nameof(EventResources.Field_Unsure), language), unsureTags.Count),
                 !unsureTags.Any() ? "-" : string.Join("\n", unsureTags))
             .AddField(string.Format(Localize(nameof(EventResources.Field_Sub), language), subTags.Count),
-                string.Join("\n", subTags));
+                !subTags.Any() ? "-" : string.Join("\n", subTags));
 
         return builder.Build();
     }
