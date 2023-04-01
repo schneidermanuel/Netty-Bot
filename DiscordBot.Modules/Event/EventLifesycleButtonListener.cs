@@ -57,21 +57,10 @@ internal class EventLifesycleButtonListener : IButtonListener
             .Where(tag => tag.Trim().StartsWith("<"))
             .Where(tag => tag != user.Mention)
             .ToList();
-        var subTags = subField.Value != null
-            ? subField.Value.Split("\n")
-                .Where(tag => tag.Trim().StartsWith("<"))
-                .Where(tag => tag != user.Mention)
-                .ToList()
-            : Array.Empty<string>().ToList();
-        if (relevantEvent.MaxUsers.HasValue)
-        {
-            while (canTags.Count < relevantEvent.MaxUsers.Value && subTags.Any())
-            {
-                var tag = subTags.First();
-                subTags.Remove(tag);
-                canTags.Add(tag);
-            }
-        }
+        var subTags = subField.Value.Split("\n")
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
 
         unsureTags.Add(user.Mention);
         if (relevantEvent.RoleId.HasValue)
@@ -121,22 +110,10 @@ internal class EventLifesycleButtonListener : IButtonListener
             .Where(tag => tag.Trim().StartsWith("<"))
             .Where(tag => tag != user.Mention)
             .ToList();
-        var subTags = subField.Value != null
-            ? subField.Value.Split("\n")
-                .Where(tag => tag.Trim().StartsWith("<"))
-                .Where(tag => tag != user.Mention)
-                .ToList()
-            : Array.Empty<string>().ToList();
-
-        if (relevantEvent.MaxUsers.HasValue)
-        {
-            while (canTags.Count < relevantEvent.MaxUsers.Value && subTags.Any())
-            {
-                var tag = subTags.First();
-                subTags.Remove(tag);
-                canTags.Add(tag);
-            }
-        }
+        var subTags = subField.Value.Split("\n")
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
 
         cantTags.Add(user.Mention);
         if (relevantEvent.RoleId.HasValue)
@@ -186,12 +163,10 @@ internal class EventLifesycleButtonListener : IButtonListener
             .Where(tag => tag.Trim().StartsWith("<"))
             .Where(tag => tag != user.Mention)
             .ToList();
-        var subTags = subField.Value != null
-            ? subField.Value.Split("\n")
-                .Where(tag => tag.Trim().StartsWith("<"))
-                .Where(tag => tag != user.Mention)
-                .ToList()
-            : Array.Empty<string>().ToList();
+        var subTags = subField.Value.Split("\n")
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
         if (!relevantEvent.MaxUsers.HasValue || canTags.Count < relevantEvent.MaxUsers.Value)
         {
             canTags.Add(user.Mention);
@@ -241,13 +216,9 @@ internal class EventLifesycleButtonListener : IButtonListener
             .AddField(string.Format(Localize(nameof(EventResources.Field_Cant), language), cantTags.Count),
                 !cantTags.Any() ? "-" : string.Join("\n", cantTags))
             .AddField(string.Format(Localize(nameof(EventResources.Field_Unsure), language), unsureTags.Count),
-                !unsureTags.Any() ? "-" : string.Join("\n", unsureTags));
-
-        if (subTags.Any())
-        {
-            builder.AddField(string.Format(Localize(nameof(EventResources.Field_Sub), language), subTags.Count),
+                !unsureTags.Any() ? "-" : string.Join("\n", unsureTags))
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Sub), language), subTags.Count),
                 string.Join("\n", subTags));
-        }
 
         return builder.Build();
     }
@@ -287,8 +258,51 @@ internal class EventLifesycleButtonListener : IButtonListener
             case "unsure":
                 await UserUnsureAsync(userId, relevantEvent, messageId, channelId);
                 break;
+            case "sub":
+                await UserSubAsync(userId, relevantEvent, messageId, channelId);
+                break;
             default:
                 return;
         }
+    }
+
+    private async Task UserSubAsync(ulong userId, DataAccess.Contract.Event.Event relevantEvent, ulong messageId,
+        ulong channelId)
+    {
+        var guild = _client.GetGuild(relevantEvent.GuildId);
+        var user = guild.GetUser(userId);
+        var message = (RestUserMessage)await guild
+            .GetTextChannel(channelId)
+            .GetMessageAsync(messageId);
+        var embed = message.Embeds.Single();
+
+        var canField = embed.Fields.Single(f => f.Name.Contains('✅'));
+        var unsureField = embed.Fields.Single(f => f.Name.Contains('❓'));
+        var cantField = embed.Fields.Single(f => f.Name.Contains('❌'));
+        var subField = embed.Fields.SingleOrDefault(f => f.Name.Contains("🔼"));
+        if (subField.Value.Contains(user.Mention))
+        {
+            return;
+        }
+
+        var unsureTags = unsureField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention).ToArray();
+        var cantTags = cantField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToArray();
+        var canTags = canField.Value.Split('\n')
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
+        var subTags = subField.Value.Split("\n")
+            .Where(tag => tag.Trim().StartsWith("<"))
+            .Where(tag => tag != user.Mention)
+            .ToList();
+        subTags.Add(user.Mention);
+
+        var newEmbed = await RebuildEmbedAsync(canTags, unsureTags, cantTags, subTags, embed, relevantEvent);
+        await message.ModifyAsync(msg => msg.Embed = newEmbed);
     }
 }

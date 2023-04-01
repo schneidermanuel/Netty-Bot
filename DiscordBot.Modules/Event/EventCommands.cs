@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -123,8 +122,9 @@ internal class EventCommands : CommandModuleBase
             .WithTitle(name)
             .WithDescription(description)
             .AddField(string.Format(Localize(nameof(EventResources.Field_Can)), 0.ToString()), "-")
-            .AddField(string.Format(Localize(nameof(EventResources.Field_Cant)), 0.ToString()), "-")
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Sub)), 0.ToString()), "-")
             .AddField(string.Format(Localize(nameof(EventResources.Field_Unsure)), 0.ToString()), "-")
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Cant)), 0.ToString()), "-")
             .Build();
 
         var e = new DataAccess.Contract.Event.Event
@@ -142,6 +142,7 @@ internal class EventCommands : CommandModuleBase
             .WithButton("Can", $"event_{eventId}_can", ButtonStyle.Success)
             .WithButton("Can't", $"event_{eventId}_cant", ButtonStyle.Danger)
             .WithButton("Unsure", $"event_{eventId}_unsure", ButtonStyle.Secondary)
+            .WithButton("Sub", $"event_{eventId}_sub", ButtonStyle.Secondary)
             .Build();
         return (components, embed);
     }
