@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -52,7 +53,8 @@ internal class EventCommands : CommandModuleBase
         var role = GetOptionalRoleParameter(context, "role");
         var guild = await RequireGuild(context);
 
-        await CreateEventAsync(name, eventTime.Value, maxUsers, role, guild, context);
+        var (component, embed) = await CreateEventAsync(name, eventTime.Value, maxUsers, role, guild, context.User);
+        await context.RespondAsync(string.Empty, embed: embed, components: component);
     }
 
     [Command("war")]
@@ -73,11 +75,40 @@ internal class EventCommands : CommandModuleBase
         var role = GetOptionalRoleParameter(context, "role");
         var guild = await RequireGuild(context);
 
-        await CreateEventAsync("War " + timeString, eventTime.Value, 6, role, guild, context);
+        var (component, embed) =
+            await CreateEventAsync("War " + timeString, eventTime.Value, 6, role, guild, context.User);
+        await context.RespondAsync(string.Empty, embed: embed, components: component);
     }
 
-    private async Task CreateEventAsync(string name, DateTime time, int? maxUsers, IRole role, IGuild guild,
-        SocketSlashCommand context)
+    [Command("wars")]
+    [Parameter(ParameterType = ApplicationCommandOptionType.String, IsOptional = false, Name = "time",
+        Description = "when the event takes place")]
+    public async Task WarsCommand(SocketSlashCommand context)
+    {
+        var guild = await RequireGuild(context);
+        var timeString = await RequireString(context);
+        var times = timeString.Split(' ');
+
+        await context.RespondAsync("🤝");
+        foreach (var time in times)
+        {
+            var interpreted = _timeInterpretor.Interpret(time);
+            if (!interpreted.HasValue)
+            {
+                await context.Channel.SendMessageAsync(time + ": " +
+                                                       Localize(nameof(EventResources.Error_TimeNotResolved)));
+                continue;
+            }
+
+            var (component, embed) =
+                await CreateEventAsync("Was " + time, interpreted.Value, 6, null, guild, context.User);
+            await context.Channel.SendMessageAsync(string.Empty, embed: embed, components: component);
+        }
+    }
+
+    private async Task<(MessageComponent, Embed)> CreateEventAsync(string name, DateTime time, int? maxUsers,
+        IRole role, IGuild guild,
+        IUser user)
     {
         var description = time.ToString("dd.MM HH:mm");
         if (maxUsers.HasValue)
@@ -86,7 +117,7 @@ internal class EventCommands : CommandModuleBase
         }
 
         var embed = new EmbedBuilder()
-            .WithAuthor(context.User.Username)
+            .WithAuthor(user.Username)
             .WithColor(Color.Blue)
             .WithCurrentTimestamp()
             .WithTitle(name)
@@ -102,7 +133,7 @@ internal class EventCommands : CommandModuleBase
             AutoDeleteDate = time,
             GuildId = guild.Id,
             MaxUsers = maxUsers,
-            OwnerUserId = context.User.Id
+            OwnerUserId = user.Id
         };
 
         var eventId = await _eventDomain.SaveAsync(e);
@@ -112,6 +143,6 @@ internal class EventCommands : CommandModuleBase
             .WithButton("Can't", $"event_{eventId}_cant", ButtonStyle.Danger)
             .WithButton("Unsure", $"event_{eventId}_unsure", ButtonStyle.Secondary)
             .Build();
-        await context.RespondAsync(string.Empty, null, false, false, null, components, embed);
+        return (components, embed);
     }
 }
