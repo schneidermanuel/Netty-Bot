@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using DiscordBot.DataAccess.Contract;
 using DiscordBot.Framework;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.TimedAction;
+using CommandInfo = DiscordBot.Framework.Contract.Modularity.CommandInfo;
 
 // ReSharper disable LocalizableElement
 
@@ -23,7 +23,6 @@ public class BotManager
 {
     private readonly IEnumerable<IGuildModule> _modules;
     private readonly IEnumerable<ITimedAction> _timedActions;
-    private readonly IModuleDataAccess _dataAccess;
     private readonly IEnumerable<ICommandModule> _commandModules;
     private bool _isReady;
 
@@ -32,30 +31,39 @@ public class BotManager
         GatewayIntents = GatewayIntents.All
     });
 
-    private Dictionary<string, CommandInfos> _slashCommands;
+    private Dictionary<string, CommandInfo> _slashCommands;
+    private IList<string> _messageCommands;
 
     public BotManager(IEnumerable<IGuildModule> modules,
         IEnumerable<ITimedAction> timedActions,
-        IModuleDataAccess dataAccess,
         IEnumerable<ICommandModule> commandModules)
     {
         _modules = modules;
         _timedActions = timedActions;
-        _dataAccess = dataAccess;
         _commandModules = commandModules;
     }
 
     public async Task StartSystemAsync()
     {
         _isReady = false;
-        _slashCommands = new Dictionary<string, CommandInfos>();
+        _slashCommands = new Dictionary<string, CommandInfo>();
+        _messageCommands = new List<string>();
         foreach (var commandModule in _commandModules)
         {
             var commands = commandModule.BuildCommandInfos();
             foreach (var command in commands)
             {
                 _slashCommands.Add(command.Key,
-                    new CommandInfos { CommandModule = commandModule, MethodInfo = command.Value });
+                    new CommandInfo { CommandModule = commandModule, MethodInfo = command.Value });
+            }
+        }
+
+        foreach (var commandModule in _commandModules)
+        {
+            var commands = commandModule.BuildMessageCommandInfos();
+            foreach (var command in commands)
+            {
+                _messageCommands.Add(command.Key);
             }
         }
 
@@ -141,6 +149,7 @@ public class BotManager
         await Client.SetActivityAsync(new Game("Booting..."));
 
         await RegisterSlashCommandsAsync();
+        await RegisterMessageCommandsAsync();
         var builder = new SlashCommandBuilder();
         builder.WithName("help");
         builder.WithDescription("Sends some help");
@@ -154,6 +163,30 @@ public class BotManager
         var hourlyStuffThread = new Thread(HourlyStuff);
         dailyStuffThread.Start();
         hourlyStuffThread.Start();
+    }
+
+    private async Task RegisterMessageCommandsAsync()
+    {
+        try
+        {
+            foreach (var command in _messageCommands)
+            {
+                Console.WriteLine("registering " + command);
+                try
+                {
+                    await Client.CreateGlobalApplicationCommandAsync(
+                        new MessageCommandProperties { Name = command });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private async void HourlyStuff()

@@ -60,6 +60,15 @@ namespace DiscordBot.Modules.Event {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Diese Aktion muss auf einem Event ausgeführt werden.
+        /// </summary>
+        internal static string Error_NotAnEvent {
+            get {
+                return ResourceManager.GetString("Error_NotAnEvent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Die eingegebene Zeit konnte nicht interpretiert werden. Versuche es mit &apos;20:00&apos;, &apos;20&apos; oder &apos;1.1.2025 16:00&apos;.
         /// </summary>
         internal static string Error_TimeNotResolved {

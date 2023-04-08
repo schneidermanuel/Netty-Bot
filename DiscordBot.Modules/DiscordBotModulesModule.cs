@@ -34,7 +34,7 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<ServerCoutnerModule>();
         builder.RegisterModule<ConfigurationModule>();
         builder.RegisterModule<EventModule>();
-        builder.RegisterModule<TwitterModule>();
-        builder.RegisterModule<WebBackendModule>();
+        // builder.RegisterModule<TwitterModule>();
+        // builder.RegisterModule<WebBackendModule>();
     }
 }

@@ -29,4 +29,7 @@
     <data name="Field_Sub" xml:space="preserve">
         <value>🔼 Iihüpfär ({0})</value>
     </data>
+    <data name="Error_NotAnEvent" xml:space="preserve">
+        <value>Da mues uf eme Event gmacht werdä</value>
+    </data>
 </root>

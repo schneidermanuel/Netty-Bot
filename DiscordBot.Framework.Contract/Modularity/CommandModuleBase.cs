@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 
@@ -60,6 +61,23 @@ public abstract class CommandModuleBase : ICommandModule
         }
 
         return moduleMethods;
+    }
+
+    public IDictionary<string, MethodInfo> BuildMessageCommandInfos()
+    {
+        var methodInfos = GetType()
+            .GetMethods()
+            .Where(m => m.GetCustomAttributes(typeof(MessageCommandAttribute), false).Length > 0)
+            .ToArray();
+        var methods = new Dictionary<string, MethodInfo>();
+        foreach (var method in methodInfos)
+        {
+            var attribute = (MessageCommandAttribute)method.GetCustomAttribute(typeof(MessageCommandAttribute), false);
+            Debug.Assert(attribute != null, nameof(attribute) + " != null");
+            methods.Add(attribute.Name, method);
+        }
+
+        return methods;
     }
 
     public virtual async Task ExecuteAsync(ICommandContext context)

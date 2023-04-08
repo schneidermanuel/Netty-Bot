@@ -36,4 +36,7 @@
     <data name="Field_Sub" xml:space="preserve">
         <value>🔼 Einspringer ({0})</value>
     </data>
+    <data name="Error_NotAnEvent" xml:space="preserve">
+        <value>Diese Aktion muss auf einem Event ausgeführt werden</value>
+    </data>
 </root>

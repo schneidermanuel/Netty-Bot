@@ -29,4 +29,7 @@
     <data name="Field_Sub" xml:space="preserve">
         <value>🔼 Sub ({0})</value>
     </data>
+    <data name="Error_NotAnEvent" xml:space="preserve">
+        <value>This action must be invoked on an event</value>
+    </data>
 </root>

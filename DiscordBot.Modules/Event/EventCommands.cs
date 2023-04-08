@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.Event;
@@ -147,5 +149,32 @@ internal class EventCommands : CommandModuleBase
             .WithButton("Sub", $"event_{eventId}_sub", ButtonStyle.Secondary)
             .Build();
         return (components, embed);
+    }
+
+    [MessageCommand("build lineup")]
+    public async Task BuildLineupCommandAsync(SocketMessageCommand context)
+    {
+        var message = context.Data.Message;
+        if (message.Embeds.Count != 1)
+        {
+            await context.RespondAsync(Localize(nameof(EventResources.Error_NotAnEvent)), ephemeral: true);
+            return;
+        }
+
+        var embed = message.Embeds.Single();
+
+        if (embed.Fields.Count(field => field.Name.Contains('✅')) != 1 ||
+            embed.Fields.Count(field => field.Name.Contains("🔼")) != 1)
+        {
+            await context.RespondAsync(Localize(nameof(EventResources.Error_NotAnEvent)), ephemeral: true);
+            return;
+        }
+
+        var accepted = embed.Fields.Single(field => field.Name.Contains('✅'));
+        var subs = embed.Fields.Single(field => field.Name.Contains("🔼"));
+
+        var output =
+            $"{embed.Title}\n{embed.Description}\n\nVS:\n\n{accepted.Name}\n{accepted.Value}\n\n{subs.Name}\n{subs.Value}\n\nHost:";
+        await context.RespondAsync(output, ephemeral: true);
     }
 }

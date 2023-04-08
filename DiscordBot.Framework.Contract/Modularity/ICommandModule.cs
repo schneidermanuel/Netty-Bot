@@ -7,6 +7,7 @@ namespace DiscordBot.Framework.Contract.Modularity;
 
 public interface ICommandModule
 {
+    public IDictionary<string, MethodInfo> BuildMessageCommandInfos();
     Dictionary<string, MethodInfo> BuildCommandInfos();
     string ModuleUniqueIdentifier { get; }
     Task InitializeAsync(SocketSlashCommand context);
