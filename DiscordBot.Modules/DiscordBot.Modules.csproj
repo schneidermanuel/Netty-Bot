@@ -5,27 +5,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspose.HTML" Version="22.6.0"/>
-        <PackageReference Include="Autofac" Version="6.3.0"/>
-        <PackageReference Include="Discord.Net" Version="3.5.0"/>
-        <PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2658"/>
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.42"/>
-        <PackageReference Include="ImageCharts" Version="6.0.190"/>
-        <PackageReference Include="MySql.Data" Version="8.0.28"/>
-        <PackageReference Include="Opus" Version="1.0.0"/>
-        <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3"/>
-        <PackageReference Include="SpotifyAPI.Web" Version="6.2.2"/>
-        <PackageReference Include="System.Drawing.Common" Version="6.0.0"/>
-        <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0"/>
-        <PackageReference Include="TwitterSharp" Version="2.2.0"/>
+        <PackageReference Include="Aspose.HTML" Version="22.6.0" />
+        <PackageReference Include="Autofac" Version="6.3.0" />
+        <PackageReference Include="Discord.Net" Version="3.5.0" />
+        <PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2658" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
+        <PackageReference Include="ImageCharts" Version="6.0.190" />
+        <PackageReference Include="MySql.Data" Version="8.0.28" />
+        <PackageReference Include="Opus" Version="1.0.0" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
+        <PackageReference Include="SpotifyAPI.Web" Version="6.2.2" />
+        <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+        <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
+        <PackageReference Include="TwitterSharp" Version="2.2.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DiscordBot.DataAccess.Contract\DiscordBot.DataAccess.Contract.csproj"/>
-        <ProjectReference Include="..\DiscordBot.Framework.Contract\DiscordBot.Framework.Contract.csproj"/>
-        <ProjectReference Include="..\DiscordBot.MusicPlayer\DiscordBot.MusicPlayer.csproj"/>
-        <ProjectReference Include="..\DiscordBot.PubSub\DiscordBot.PubSub.csproj"/>
-        <ProjectReference Include="..\Victoria\Victoria.csproj"/>
+        <ProjectReference Include="..\DiscordBot.DataAccess.Contract\DiscordBot.DataAccess.Contract.csproj" />
+        <ProjectReference Include="..\DiscordBot.Framework.Contract\DiscordBot.Framework.Contract.csproj" />
+        <ProjectReference Include="..\DiscordBot.MusicPlayer\DiscordBot.MusicPlayer.csproj" />
+        <ProjectReference Include="..\DiscordBot.PubSub\DiscordBot.PubSub.csproj" />
+        <ProjectReference Include="..\Victoria\Victoria.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -159,7 +159,6 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>ModerationResources.resx</DependentUpon>
         </Compile>
-        <Folder Include="Event"/>
         <Compile Update="Event\EventResources.Designer.cs">
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>

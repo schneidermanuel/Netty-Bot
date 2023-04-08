@@ -10,6 +10,7 @@ using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.Event;
 using DiscordBot.Framework.Contract.Interpretors.DateTime;
 using DiscordBot.Framework.Contract.Modularity;
+using ModalBuilder = Discord.ModalBuilder;
 
 namespace DiscordBot.Modules.Event;
 
@@ -169,12 +170,27 @@ internal class EventCommands : CommandModuleBase
             await context.RespondAsync(Localize(nameof(EventResources.Error_NotAnEvent)), ephemeral: true);
             return;
         }
+        
+        var enemyInput = new TextInputBuilder()
+            .WithCustomId("event_enemy")
+            .WithLabel("Enemy")
+            .WithPlaceholder("enemy team name")
+            .WithRequired(false)
+            .WithStyle(TextInputStyle.Short);
+        var fcInput = new TextInputBuilder()
+            .WithCustomId("event_fc")
+            .WithLabel("Host")
+            .WithPlaceholder("SW-xxxx-xxxx-xxxx")
+            .WithRequired(false)
+            .WithStyle(TextInputStyle.Short);
 
-        var accepted = embed.Fields.Single(field => field.Name.Contains('✅'));
-        var subs = embed.Fields.Single(field => field.Name.Contains("🔼"));
+        var modal = new ModalBuilder()
+            .WithTitle("Configure Lineup")
+            .WithCustomId($"eventLineup_{((IGuildChannel)message.Channel).GuildId}_{message.Channel.Id}_{message.Id}")
+            .AddTextInput(enemyInput)
+            .AddTextInput(fcInput)
+            .Build();
 
-        var output =
-            $"{embed.Title}\n{embed.Description}\n\nVS:\n\n{accepted.Name}\n{accepted.Value}\n\n{subs.Name}\n{subs.Value}\n\nHost:";
-        await context.RespondAsync(output, ephemeral: true);
+        await context.RespondWithModalAsync(modal);
     }
 }
