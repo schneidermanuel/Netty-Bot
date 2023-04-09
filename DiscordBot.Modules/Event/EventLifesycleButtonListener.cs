@@ -213,12 +213,12 @@ internal class EventLifesycleButtonListener : IButtonListener
             .WithDescription(description)
             .AddField(string.Format(Localize(nameof(EventResources.Field_Can), language), acceptedTages.Count),
                 !acceptedTages.Any() ? "-" : string.Join("\n", acceptedTages))
-            .AddField(string.Format(Localize(nameof(EventResources.Field_Cant), language), cantTags.Count),
-                !cantTags.Any() ? "-" : string.Join("\n", cantTags))
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Sub), language), subTags.Count),
+                !subTags.Any() ? "-" : string.Join("\n", subTags))
             .AddField(string.Format(Localize(nameof(EventResources.Field_Unsure), language), unsureTags.Count),
                 !unsureTags.Any() ? "-" : string.Join("\n", unsureTags))
-            .AddField(string.Format(Localize(nameof(EventResources.Field_Sub), language), subTags.Count),
-                !subTags.Any() ? "-" : string.Join("\n", subTags));
+            .AddField(string.Format(Localize(nameof(EventResources.Field_Cant), language), cantTags.Count),
+                !cantTags.Any() ? "-" : string.Join("\n", cantTags));
 
         return builder.Build();
     }
