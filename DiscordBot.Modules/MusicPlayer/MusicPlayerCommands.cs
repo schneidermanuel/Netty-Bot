@@ -9,6 +9,7 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MusicPlayer;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 using Victoria;
 
 namespace DiscordBot.Modules.MusicPlayer;

@@ -9,6 +9,7 @@ using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.GuildConfiguration;
 using DiscordBot.DataAccess.Contract.UserConfiguration;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 
 namespace DiscordBot.Modules.Configuration;
 

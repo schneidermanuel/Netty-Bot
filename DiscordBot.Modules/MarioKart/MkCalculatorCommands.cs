@@ -10,6 +10,7 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MkCalculator;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 
 namespace DiscordBot.Modules.MarioKart;
 
@@ -32,7 +33,10 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     [Description("Registers a race to the current Mario Kart War session")]
     [Parameter(Name = "Places", Description = "The space sepperated list of places", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    [Parameter(Name = "Comment", Description = "A comment", IsOptional = true, ParameterType = ApplicationCommandOptionType.String)]
+    [Parameter(Name = "map", Description = "The map plaied", IsOptional = true,
+        ParameterType = ApplicationCommandOptionType.String, RestrictionType = ParameterRestrictionType.MarioKartMap)]
+    [Parameter(Name = "Comment", Description = "A comment", IsOptional = true,
+        ParameterType = ApplicationCommandOptionType.String)]
     public async Task CalculateAsync(SocketSlashCommand context)
     {
         var guild = await RequireGuild(context);
@@ -112,7 +116,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
         await context.RespondAsync("", new[] { embedBuilder.Build() });
     }
-    
+
 
     [Command("mkdisplay")]
     [Description(

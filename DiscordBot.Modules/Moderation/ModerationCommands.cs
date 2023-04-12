@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 
 namespace DiscordBot.Modules.Moderation;
 

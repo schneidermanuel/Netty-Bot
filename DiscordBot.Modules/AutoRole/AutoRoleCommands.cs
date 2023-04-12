@@ -8,6 +8,7 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.AutoRole;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 
 namespace DiscordBot.Modules.AutoRole;
 

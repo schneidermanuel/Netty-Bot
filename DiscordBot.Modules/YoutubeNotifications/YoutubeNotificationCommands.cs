@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.YoutubeNotification;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 
 namespace DiscordBot.Modules.YoutubeNotifications;
 

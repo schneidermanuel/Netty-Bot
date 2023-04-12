@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 using DiscordBot.Framework.Extentions;
 
 namespace DiscordBot.Framework.MessageCommands;

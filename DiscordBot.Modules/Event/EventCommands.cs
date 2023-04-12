@@ -10,6 +10,7 @@ using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.Event;
 using DiscordBot.Framework.Contract.Interpretors.DateTime;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 using ModalBuilder = Discord.ModalBuilder;
 
 namespace DiscordBot.Modules.Event;

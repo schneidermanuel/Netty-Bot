@@ -8,6 +8,7 @@ using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.TwitterRegistration;
 using DiscordBot.DataAccess.Contract.TwitterRegistration.Domain;
 using DiscordBot.Framework.Contract.Modularity;
+using DiscordBot.Framework.Contract.Modularity.Commands;
 
 namespace DiscordBot.Modules.TwitterNotification;
 

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace DiscordBot.Framework.Contract.Modularity;
+namespace DiscordBot.Framework.Contract.Modularity.Commands;
 
 public class CommandInfo
 {
