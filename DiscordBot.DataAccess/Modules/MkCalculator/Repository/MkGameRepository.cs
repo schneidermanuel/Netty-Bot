@@ -64,7 +64,8 @@ internal class MkGameRepository : IMkGameRepository
                 CreatedAt = DateTime.Now,
                 EnemyPoints = historyData.EnemyPoints,
                 TeamPoints = historyData.Points,
-                MarioKartGameId = historyData.GameId
+                MarioKartGameId = historyData.GameId,
+                Map = historyData.Map
             };
             await session.SaveOrUpdateAsync(entity);
             await session.FlushAsync();
@@ -89,7 +90,8 @@ internal class MkGameRepository : IMkGameRepository
                 .Where(entity => entity.MarioKartGameId == gameId)
                 .OrderByDescending(entity => entity.CreatedAt);
             var entity = await query.FirstAsync();
-            var data = new HistoryItemData(0, gameId, entity.TeamPoints, entity.EnemyPoints, entity.Comment);
+            var data = new HistoryItemData(0, gameId, entity.TeamPoints, entity.EnemyPoints, entity.Comment,
+                entity.Map);
             await session.DeleteAsync(entity);
             await session.FlushAsync();
             return data;
@@ -105,7 +107,7 @@ internal class MkGameRepository : IMkGameRepository
                 .OrderBy(entity => entity.CreatedAt);
             var entities = await query.ToListAsync();
             return entities.Select(entity => new HistoryItemData(entity.Id, entity.MarioKartGameId, entity.TeamPoints,
-                entity.EnemyPoints, entity.Comment));
+                entity.EnemyPoints, entity.Comment, entity.Map));
         }
     }
 

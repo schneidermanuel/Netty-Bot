@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace DiscordBot.Framework.Contract.Modularity.Commands.RestrictionResolver;
+namespace DiscordBot.Framework.RestrictionResolver;
 
 internal class MarioKartRestrictionResolver : IRestrictionResolver
 {
-    public bool IsResponsible(ParameterRestrictionType type)
+    public bool IsResponsible(string commandName, string parameterName)
     {
-        return type == ParameterRestrictionType.MarioKartMap;
+        return commandName == "race" && parameterName == "map";
     }
 
     public Dictionary<string, string> PermittedValues => new()
@@ -80,17 +80,17 @@ internal class MarioKartRestrictionResolver : IRestrictionResolver
         { "bBL", "GBA Boo Lake" },
         { "bRRM", "3DS Rock Rock Mountain" },
         { "bMT", "Wii Maple Treeway" },
-        {"bBB", "Tour Berlin Byways"},
-        {"bPG", "DS Peach Gardens"},
-        {"bMM", "Merry Mountain"},
-        {"bRR7", "3DS Rainbow Road"},
-        {"bAD", "Tour Amsterdam Drift"},
-        {"bRP", "GBA Riverside Park"},
-        {"bDS", "Wii DK Summit"},
-        {"bYI", "Wii Yoshi's Island"},
-        {"bBR", "Tour Bangkok Rush"},
-        {"bMS", "Tour Mario Circuit"},
-        {"bWS", "GNC Waluigi Stadium"},
-        {"bSS", "Tour Singapore Speedway"}
+        { "bBB", "Tour Berlin Byways" },
+        { "bPG", "DS Peach Gardens" },
+        { "bMM", "Merry Mountain" },
+        { "bRR7", "3DS Rainbow Road" },
+        { "bAD", "Tour Amsterdam Drift" },
+        { "bRP", "GBA Riverside Park" },
+        { "bDKS", "Wii DK Summit" },
+        { "bYI", "Wii Yoshi's Island" },
+        { "bBR", "Tour Bangkok Rush" },
+        { "bMS", "Tour Mario Circuit" },
+        { "bWS", "GNC Waluigi Stadium" },
+        { "bSSy", "Tour Singapore Speedway" }
     };
 }

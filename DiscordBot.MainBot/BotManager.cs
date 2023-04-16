@@ -13,8 +13,8 @@ using DiscordBot.Framework;
 using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modularity.Commands;
-using DiscordBot.Framework.Contract.Modularity.Commands.RestrictionResolver;
 using DiscordBot.Framework.Contract.TimedAction;
+using DiscordBot.Framework.RestrictionResolver;
 using CommandInfo = DiscordBot.Framework.Contract.Modularity.Commands.CommandInfo;
 
 // ReSharper disable LocalizableElement
@@ -26,7 +26,6 @@ public class BotManager
     private readonly IEnumerable<IGuildModule> _modules;
     private readonly IEnumerable<ITimedAction> _timedActions;
     private readonly IEnumerable<ICommandModule> _commandModules;
-    private readonly IEnumerable<IRestrictionResolver> _restrictionResolvers;
     private bool _isReady;
 
     public static readonly DiscordSocketClient Client = new(new DiscordSocketConfig
@@ -39,13 +38,11 @@ public class BotManager
 
     public BotManager(IEnumerable<IGuildModule> modules,
         IEnumerable<ITimedAction> timedActions,
-        IEnumerable<ICommandModule> commandModules,
-        IEnumerable<IRestrictionResolver> restrictionResolvers)
+        IEnumerable<ICommandModule> commandModules)
     {
         _modules = modules;
         _timedActions = timedActions;
         _commandModules = commandModules;
-        _restrictionResolvers = restrictionResolvers;
     }
 
     public async Task StartSystemAsync()
@@ -251,15 +248,11 @@ public class BotManager
                     optionBuilder.WithType(parameterAttribute.ParameterType);
                     optionBuilder.WithDescription(parameterAttribute.Description);
                     optionBuilder.WithRequired(!parameterAttribute.IsOptional);
-                    var resolver =
-                        _restrictionResolvers.SingleOrDefault(r => r.IsResponsible(parameterAttribute.RestrictionType));
-                    if (resolver != null)
+                    if (parameterAttribute.IsAutocomplete)
                     {
-                        foreach (var value in resolver.PermittedValues)
-                        {
-                            optionBuilder.AddChoice(value.Key, value.Value);
-                        }
+                        optionBuilder.WithAutocomplete(true);
                     }
+
 
                     builder.AddOption(optionBuilder);
                 }

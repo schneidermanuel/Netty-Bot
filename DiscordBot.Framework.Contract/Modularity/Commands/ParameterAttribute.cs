@@ -10,6 +10,5 @@ public class ParameterAttribute : Attribute
     public string Description { get; set; }
     public bool IsOptional { get; set; }
     public ApplicationCommandOptionType ParameterType { get; set; }
-    public ParameterRestrictionType RestrictionType { get; set; }
-    
+    public bool IsAutocomplete { get; set; }
 }

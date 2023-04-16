@@ -5,6 +5,7 @@ using DiscordBot.Framework.Contract.Boot;
 using DiscordBot.Framework.Interpretors.DateTime;
 using DiscordBot.Framework.MessageCommands;
 using DiscordBot.Framework.Modals;
+using DiscordBot.Framework.RestrictionResolver;
 
 namespace DiscordBot.Framework;
 
@@ -17,5 +18,7 @@ public class FrameworkModule : Module
         builder.RegisterType<ButtonManager>().As<IBootStep>();
         builder.RegisterType<MessageCommandManager>().As<IBootStep>();
         builder.RegisterType<ModalManager>().As<IBootStep>();
+        builder.RegisterType<MarioKartRestrictionResolver>().As<IRestrictionResolver>();
+        builder.RegisterType<AutocompletionResolver>().As<IBootStep>();
     }
 }

@@ -10,4 +10,5 @@ public class MarioKartHistoryItemEntity
     public virtual int EnemyPoints { get; set; }
     public virtual DateTime CreatedAt { get; set; }
     public virtual string Comment { get; set; }
+    public virtual string Map { get; set; }
 }

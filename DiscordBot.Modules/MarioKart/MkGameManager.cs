@@ -16,7 +16,7 @@ internal class MkGameManager
         _domain = domain;
     }
 
-    public async Task RegisterResultAsync(MkResult result, ulong channel, ulong guild, string comment)
+    public async Task RegisterResultAsync(MkResult result, ulong channel, ulong guild, string comment, string map)
     {
         if (!_runningGames.ContainsKey(channel))
         {
@@ -34,7 +34,8 @@ internal class MkGameManager
             Id = 0,
             EnemyPoints = result.EnemyPoints,
             TeamPoints = result.Points,
-            GameId = gameId
+            GameId = gameId,
+            Map = map
         };
         await _domain.SaveHistoryItemAsync(history);
     }

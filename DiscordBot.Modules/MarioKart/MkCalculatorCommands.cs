@@ -33,15 +33,16 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     [Description("Registers a race to the current Mario Kart War session")]
     [Parameter(Name = "Places", Description = "The space sepperated list of places", IsOptional = false,
         ParameterType = ApplicationCommandOptionType.String)]
-    [Parameter(Name = "map", Description = "The map plaied", IsOptional = true,
-        ParameterType = ApplicationCommandOptionType.String, RestrictionType = ParameterRestrictionType.MarioKartMap)]
+    [Parameter(Name = "map", Description = "The map plaied", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String, IsAutocomplete = true)]
     [Parameter(Name = "Comment", Description = "A comment", IsOptional = true,
         ParameterType = ApplicationCommandOptionType.String)]
     public async Task CalculateAsync(SocketSlashCommand context)
     {
         var guild = await RequireGuild(context);
         var placesString = await RequireString(context);
-        var comment = RequireStringOrEmpty(context, 2);
+        var comment = RequireStringOrEmpty(context, 3);
+        var map = await RequireString(context, 2);
 
         List<int> places;
         try
@@ -55,7 +56,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         }
 
         var result = _calculator.Calculate(places);
-        await _gameManager.RegisterResultAsync(result, context.Channel.Id, guild.Id, comment);
+        await _gameManager.RegisterResultAsync(result, context.Channel.Id, guild.Id, comment, map);
         var sumResult = _gameManager.GetFinalResult(context.Channel.Id);
         await context.DeferAsync();
         ExecuteShellCommand(

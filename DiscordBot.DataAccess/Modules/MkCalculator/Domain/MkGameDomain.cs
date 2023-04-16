@@ -57,7 +57,8 @@ internal class MkGameDomain : IMkGameDomain
             Id = data.Id,
             EnemyPoints = data.EnemyPoints,
             GameId = data.GameId,
-            TeamPoints = data.Points
+            TeamPoints = data.Points,
+            Map = data.Map
         });
     }
     
@@ -69,7 +70,7 @@ internal class MkGameDomain : IMkGameDomain
     private HistoryItemData MapToHistoryData(MkHistoryItem history)
     {
         return new HistoryItemData(history.Id, history.GameId, history.TeamPoints, history.EnemyPoints,
-            history.Comment);
+            history.Comment, history.Map);
     }
 
     private MarioKartRunningGameData MapToData(ulong channelId, ulong guildId, MkResult gameToSave)

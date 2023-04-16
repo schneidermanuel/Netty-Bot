@@ -7,4 +7,5 @@ public class MkHistoryItem
     public int TeamPoints { get; set; }
     public int EnemyPoints { get; set; }
     public string Comment { get; set; }
+    public string Map { get; set; }
 }
