@@ -37,7 +37,9 @@
       <EmbeddedResource Include="Entities\EventEntity.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
-      <EmbeddedResource Include="Entities\GuildConfigEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\MarioKartGuildCacheEntity.hbm.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
       <EmbeddedResource Include="Entities\MarioKartHistoryItemEntity.hbm.xml" />
       <EmbeddedResource Include="Entities\MarioKartRunningGame.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

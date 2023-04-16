@@ -11,5 +11,7 @@ internal class MkCalculatorModule : Module
     {
         builder.RegisterType<MkGameDomain>().As<IMkGameDomain>();
         builder.RegisterType<MkGameRepository>().As<IMkGameRepository>();
+        builder.RegisterType<MarioKartWarCacheRepository>().As<IMarioKartWarCacheRepository>();
+        builder.RegisterType<MarioKartWarCacheDomain>().As<IMarioKartWarCacheDomain>();
     }
 }
