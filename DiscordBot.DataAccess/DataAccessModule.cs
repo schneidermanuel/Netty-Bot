@@ -4,7 +4,6 @@ using DiscordBot.DataAccess.Modules.AutoMod;
 using DiscordBot.DataAccess.Modules.AutoRole;
 using DiscordBot.DataAccess.Modules.Event;
 using DiscordBot.DataAccess.Modules.GeburtstagList;
-using DiscordBot.DataAccess.Modules.GuildConfig;
 using DiscordBot.DataAccess.Modules.MkCalculator;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
 using DiscordBot.DataAccess.Modules.ReactionRoles;
@@ -35,7 +34,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<MkCalculatorModule>();
         builder.RegisterModule<EventModule>();
         builder.RegisterModule<UserConfigurationModule>();
-        builder.RegisterModule<GuildConfigModule>();
         builder.RegisterModule<TwitterRegistrationModule>();
         builder.RegisterModule<WebAccessModule>();
     }

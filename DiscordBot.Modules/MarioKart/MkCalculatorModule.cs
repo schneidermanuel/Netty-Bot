@@ -16,5 +16,6 @@ internal class MkCalculatorModule : Module
         builder.RegisterType<MkWorldRecordMapper>().As<IMkWorldRecordMapper>();
         builder.RegisterType<MkWorldRecordLoader>().As<IMkWorldRecordLoader>();
         builder.RegisterType<MarioKartGameCloser>().As<ITimedAction>();
+        builder.RegisterType<MarioKartModalListener>().As<IModalListener>();
     }
 }

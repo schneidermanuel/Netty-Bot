@@ -9,6 +9,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MkCalculator;
+using DiscordBot.DataAccess.Modules.MkCalculator.Domain;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modularity.Commands;
 
@@ -19,14 +20,16 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     private readonly IMkCalculator _calculator;
     private readonly MkGameManager _gameManager;
     private readonly IMkWorldRecordLoader _worldRecordLoader;
+    private readonly IMarioKartWarCacheDomain _warCacheDomain;
 
     public MkCalculatorCommands(IModuleDataAccess dataAccess, IMkCalculator calculator, MkGameManager gameManager,
-        IMkWorldRecordLoader worldRecordLoader) :
+        IMkWorldRecordLoader worldRecordLoader, IMarioKartWarCacheDomain warCacheDomain) :
         base(dataAccess)
     {
         _calculator = calculator;
         _gameManager = gameManager;
         _worldRecordLoader = worldRecordLoader;
+        _warCacheDomain = warCacheDomain;
     }
 
     [Command("race")]
@@ -58,6 +61,14 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var result = _calculator.Calculate(places);
         await _gameManager.RegisterResultAsync(result, context.Channel.Id, guild.Id, comment, map);
         var sumResult = _gameManager.GetFinalResult(context.Channel.Id);
+        if (result.Points == sumResult.Points)
+        {
+            var modal = await BuildTeamSetupModalAsync(guild.Id);
+            modal.WithCustomId($"mkWarTeam_Active_{context.Channel.Id}");
+            await context.RespondWithModalAsync(modal.Build());
+            return;
+        }
+
         await context.DeferAsync();
         ExecuteShellCommand(
             $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
@@ -67,6 +78,18 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
             option.Attachments =
                 new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
         });
+    }
+
+    private async Task<ModalBuilder> BuildTeamSetupModalAsync(ulong guildId)
+    {
+        var data = await _warCacheDomain.RetrieveCachedRegistryAsync(guildId);
+        var builder = new ModalBuilder();
+        builder.WithTitle("War setup");
+        builder.AddTextInput("Team Name", "teamName", value: data.TeamName);
+        builder.AddTextInput("Team Image", "teamImage", value: data.TeamImage);
+        builder.AddTextInput("Enemy Name", "enemyName", value: data.EnemyName);
+        builder.AddTextInput("Enemy Image", "enemyImage", value: data.EnemyImage);
+        return builder;
     }
 
     private static void ExecuteShellCommand(string arguments)
