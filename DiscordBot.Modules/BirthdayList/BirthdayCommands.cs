@@ -42,9 +42,7 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
             await context.RespondAsync(Localize(nameof(BirthdayListRessources.Error_BirthdayAlreadySaved)));
             return;
         }
-        var guild = await RequireGuild(context);
 
-        var prefix = await _dataAccess.GetServerPrefixAsync(guild.Id);
         try
         {
             var date = await RequireString(context);
@@ -62,8 +60,7 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
         }
         catch (Exception)
         {
-            await context.RespondAsync(string.Format(Localize(nameof(BirthdayListRessources.Error_InvalidFormat)),
-                prefix));
+            await context.RespondAsync(Localize(nameof(BirthdayListRessources.Error_InvalidFormat)));
         }
     }
 
@@ -171,7 +168,8 @@ public class BirthdayCommands : CommandModuleBase, ICommandModule
 
     [Command("setBirthdayRole")]
     [Description("Sets the role that will be given to the user at their birthday")]
-    [Parameter(Name = "role", Description = "The role that will be given to the user at their birthday", IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
+    [Parameter(Name = "role", Description = "The role that will be given to the user at their birthday",
+        IsOptional = false, ParameterType = ApplicationCommandOptionType.Role)]
     public async Task SetupBirthdayRoleCommandAsync(SocketSlashCommand context)
     {
         var guild = await RequireGuild(context);

@@ -21,6 +21,6 @@
         <value>Nochricht nöd gfunde. Bitte korrekti ID verwende</value>
     </data>
     <data name="Error_SyntaxError" xml:space="preserve">
-        <value>Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht]</value>
+        <value>Syntaxfehler: /registerReactionRole [Emote] [Rollen-Id] [Nachricht]</value>
     </data>
 </root>

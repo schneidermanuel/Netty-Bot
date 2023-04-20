@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
                    namespace="DiscordBot.DataAccess.Entities">
-    <class name="EventEntity" table="event">
+    <class name="MarioKartGuildCacheEntity" table="marioKartGuildCache">
         <id name="Id" column="cacheId" type="Int64">
             <generator class="increment"/>
         </id>

@@ -25,7 +25,7 @@
         <value>Dein Geburtstag wurde gespeichert</value>
     </data>
     <data name="Error_InvalidFormat" xml:space="preserve">
-        <value>Bitte den Geburtstag im Format {0}registerBirthday dd.MM</value>
+        <value>Bitte den Geburtstag im Format /registerBirthday dd.MM</value>
     </data>
     <data name="Error_BirthdaylistAlreadyPresent" xml:space="preserve">
         <value>Auf diesem Server ist bereits eine Geburtstagsliste vorhanden. </value>

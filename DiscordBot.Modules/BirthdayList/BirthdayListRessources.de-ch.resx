@@ -18,7 +18,7 @@
         <value>Uf dem Server gits scho e Geburtstagslischtä</value>
     </data>
     <data name="Error_InvalidFormat" xml:space="preserve">
-        <value>Bitte dä Geburtstag im Format {0}registerBirthday dd.MM ageh.</value>
+        <value>Bitte dä Geburtstag im Format /registerBirthday dd.MM ageh.</value>
     </data>
     <data name="Error_NoBirthdayChannel" xml:space="preserve">
         <value>Uf dem Server gits kei Geburtstagslistä</value>

@@ -18,7 +18,7 @@
         <value>Ya existe una lista de cumpleaños en este servidor</value>
     </data>
     <data name="Error_InvalidFormat" xml:space="preserve">
-        <value>Por favor, introduzca la fecha de nacimiento en el formato {0}registerBirthday dd.MM</value>
+        <value>Por favor, introduzca la fecha de nacimiento en el formato /registerBirthday dd.MM</value>
     </data>
     <data name="Error_NoBirthdayChannel" xml:space="preserve">
         <value>No se ha establecido ningún canal con una lista de cumplea�os</value>
