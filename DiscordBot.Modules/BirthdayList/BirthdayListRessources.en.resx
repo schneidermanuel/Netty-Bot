@@ -18,7 +18,7 @@
         <value>You birthday was saved</value>
     </data>
     <data name="Error_InvalidFormat" xml:space="preserve">
-        <value>Please use the format {0}registerBirthday dd.MM</value>
+        <value>Please use the format registerBirthday dd.MM</value>
     </data>
     <data name="Error_BirthdaylistAlreadyPresent" xml:space="preserve">
         <value>There is already an acrive birthday list on this server.</value>

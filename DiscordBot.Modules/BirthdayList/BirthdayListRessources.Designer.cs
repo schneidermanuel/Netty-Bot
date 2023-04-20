@@ -78,7 +78,7 @@ namespace DiscordBot.Modules.BirthdayList {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bitte den Geburtstag im Format {0}registerBirthday dd.MM.
+        ///   Looks up a localized string similar to Bitte den Geburtstag im Format /registerBirthday dd.MM.
         /// </summary>
         internal static string Error_InvalidFormat {
             get {

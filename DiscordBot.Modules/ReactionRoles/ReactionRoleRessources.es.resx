@@ -15,7 +15,7 @@
         <value>No se ha encontrado ningún rol'</value>
     </data>
     <data name="Error_SyntaxError" xml:space="preserve">
-        <value>Error de sintaxis: {0}registerReactionRole [Emote] [ID del rol] [mensaje]</value>
+        <value>Error de sintaxis: /registerReactionRole [Emote] [ID del rol] [mensaje]</value>
     </data>
     <data name="Error_EmoteAlreadyAdded" xml:space="preserve">
         <value>Esta reacción ya se utiliza en el mensaje</value>

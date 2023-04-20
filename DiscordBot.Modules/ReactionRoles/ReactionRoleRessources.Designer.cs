@@ -87,7 +87,7 @@ namespace DiscordBot.Modules.ReactionRoles {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Syntaxfehler: {0}registerReactionRole [Emote] [Rollen-Id] [Nachricht].
+        ///   Looks up a localized string similar to Syntaxfehler: /registerReactionRole [Emote] [Rollen-Id] [Nachricht].
         /// </summary>
         internal static string Error_SyntaxError {
             get {

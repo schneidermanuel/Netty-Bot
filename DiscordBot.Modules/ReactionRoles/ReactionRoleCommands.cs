@@ -13,14 +13,12 @@ namespace DiscordBot.Modules.ReactionRoles;
 
 public class ReactionRoleCommands : CommandModuleBase, ICommandModule
 {
-    private readonly IModuleDataAccess _dataAccess;
     private readonly ReactionRoleManager _manager;
     private readonly IReactionRoleDomain _domain;
 
     public ReactionRoleCommands(IModuleDataAccess dataAccess, ReactionRoleManager manager,
         IReactionRoleDomain domain) : base(dataAccess)
     {
-        _dataAccess = dataAccess;
         _manager = manager;
         _domain = domain;
     }
@@ -102,8 +100,7 @@ public class ReactionRoleCommands : CommandModuleBase, ICommandModule
         var guild = await RequireGuild(context);
 
         await RequirePermissionAsync(context, guild, GuildPermission.ManageRoles);
-        var prefix = await _dataAccess.GetServerPrefixAsync(guild.Id);
-        await RequireArg(context, 3, string.Format(Localize(nameof(ReactionRoleRessources.Error_SyntaxError)), prefix));
+        await RequireArg(context, 3, Localize(nameof(ReactionRoleRessources.Error_SyntaxError)));
         var emote = GetEmote(await RequireString(context));
         var role = await RequireRoleAsync(context, 2);
 
