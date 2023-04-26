@@ -9,7 +9,7 @@ You may donate [here](https://tipeeestream.com/brainyxs/donation)
 
 ## Add the Bot
 
-A fully hosted bot is available [here](https://invite.netty-bot.com). A Web configuration UI is planed.
+A fully hosted bot is available [here](https://invite.netty-bot.com). A Web configuration UI is available at [https://netty-bot.com](https://netty-bot.com) This will be published as open source in the future. 
 
 ### Self-Host this Bot
 
