@@ -20,14 +20,17 @@ internal class MkGameDomain : IMkGameDomain
         await _repository.ClearAsync(channelId.ToString());
     }
 
-    public async Task<long> SaveOrUpdateAsync(ulong channelId, ulong guildId, MkResult gameToSave)
+    public async Task<long> SaveOrUpdateGameAsync(ulong channelId, MkResult gameToSave)
     {
-        return await _repository.SaveOrUpdateAsync(MapToData(channelId, guildId, gameToSave));
+        return await _repository.SaveOrUpdateGameAsync(MapToData(channelId, gameToSave));
     }
 
-    public async Task SaveHistoryItemAsync(MkHistoryItem history)
+    public async Task SaveHistoryItemAsync(MkHistoryItem historyItem)
     {
-        await _repository.SaveHistoryItemAsync(MapToHistoryData(history));
+        await _repository.SaveHistoryItemAsync(MapToHistoryData(historyItem));
+        var races = (await _repository.RetrieveHistoryAsync(historyItem.GameId)).ToArray();
+        var totalScoreTeam = races.Sum(r => r.Points);
+        var totalScoreEnemy = races.Sum(r => r.EnemyPoints);
     }
 
     public async Task<bool> CanRevertAsync(long gameId)
@@ -61,7 +64,7 @@ internal class MkGameDomain : IMkGameDomain
             Map = data.Map
         });
     }
-    
+
     public async Task<IReadOnlyCollection<ulong>> RetriveChannelsToStopAsync(DateTime dueDate)
     {
         return await _repository.RetriveChannelsToStopAsync(dueDate);
@@ -73,9 +76,9 @@ internal class MkGameDomain : IMkGameDomain
             history.Comment, history.Map);
     }
 
-    private MarioKartRunningGameData MapToData(ulong channelId, ulong guildId, MkResult gameToSave)
+    private MarioKartRunningGameData MapToData(ulong channelId, MkResult gameToSave)
     {
-        return new MarioKartRunningGameData(0, channelId.ToString(), guildId.ToString(), gameToSave.Points,
+        return new MarioKartRunningGameData(0, channelId.ToString(), gameToSave.Points,
             gameToSave.EnemyPoints,
             $"Mario Kart match {DateTime.Now:dd.MM.yyyy hh:mm}", false);
     }
