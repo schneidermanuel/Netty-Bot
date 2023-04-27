@@ -12,6 +12,7 @@ using DiscordBot.DataAccess.Contract.MkCalculator;
 using DiscordBot.DataAccess.Modules.MkCalculator.Domain;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modularity.Commands;
+using NHibernate.Engine.Query;
 
 namespace DiscordBot.Modules.MarioKart;
 
@@ -58,20 +59,23 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
             return;
         }
 
-        var result = _calculator.Calculate(places);
-        await _gameManager.RegisterResultAsync(result, context.Channel.Id, guild.Id, comment, map);
-        var sumResult = _gameManager.GetFinalResult(context.Channel.Id);
-        if (result.Points == sumResult.Points)
+        if (!_gameManager.HasChannelRunningGame(context.Channel.Id))
         {
             var modal = await BuildTeamSetupModalAsync(guild.Id);
             modal.WithCustomId($"mkWarTeam_Active_{context.Channel.Id}");
             await context.RespondWithModalAsync(modal.Build());
+            var tempResult = _calculator.Calculate(places);
+            await _gameManager.RegisterResultAsync(tempResult, context.Channel.Id, comment, map);
             return;
         }
 
         await context.DeferAsync();
+        var result = _calculator.Calculate(places);
+        await _gameManager.RegisterResultAsync(result, context.Channel.Id, comment, map);
+        var game = _gameManager.RetrieveGame(context.Channel.Id).Totals;
+
         ExecuteShellCommand(
-            $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={sumResult.Points}&enemyTotal={sumResult.EnemyPoints}\"");
+            $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={game.Points}&enemyTotal={game.EnemyPoints}\"");
         await context.ModifyOriginalResponseAsync(option =>
         {
             option.Content = "🤝";
@@ -85,10 +89,10 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var data = await _warCacheDomain.RetrieveCachedRegistryAsync(guildId);
         var builder = new ModalBuilder();
         builder.WithTitle("War setup");
-        builder.AddTextInput("Team Name", "teamName", value: data.TeamName);
-        builder.AddTextInput("Team Image", "teamImage", value: data.TeamImage);
-        builder.AddTextInput("Enemy Name", "enemyName", value: data.EnemyName);
-        builder.AddTextInput("Enemy Image", "enemyImage", value: data.EnemyImage);
+        builder.AddTextInput("Team Name", "teamName", value: data.TeamName, required: false);
+        builder.AddTextInput("Team Image", "teamImage", value: data.TeamImage, required: false);
+        builder.AddTextInput("Enemy Name", "enemyName", value: data.EnemyName, required: false);
+        builder.AddTextInput("Enemy Image", "enemyImage", value: data.EnemyImage, required: false);
         return builder;
     }
 
@@ -128,7 +132,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
         await _gameManager.RevertGameAsync(context.Channel.Id);
 
-        var result = _gameManager.GetFinalResult(context.Channel.Id);
+        var result = _gameManager.RetrieveGame(context.Channel.Id).Totals;
         var embedBuilder = new EmbedBuilder();
         embedBuilder.WithColor(Color.Gold);
         embedBuilder.WithCurrentTimestamp();
@@ -156,10 +160,9 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     public async Task FinishAsync(SocketSlashCommand context)
     {
         var guild = await RequireGuild(context);
-        var result = _gameManager.GetFinalResult(context.Channel.Id);
-        var games = (await _gameManager.RetriveHistoryAsync(result.GameId)).ToArray();
+        var result = _gameManager.RetrieveGame(context.Channel.Id);
         await _gameManager.EndGameAsync(context.Channel.Id);
-        var url = BuildChartUrl(games);
+        var url = BuildChartUrl(result);
         await context.DeferAsync();
         ExecuteShellCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
         await context.ModifyOriginalResponseAsync(option =>
@@ -170,14 +173,15 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         });
     }
 
-    private string BuildChartUrl(IReadOnlyCollection<MkHistoryItem> games)
+    private string BuildChartUrl(MkGame game)
     {
         var url = "https://analytics.netty-bot.com/MarioKart/result.php?";
         var chartValue = 0;
-        foreach (var game in games)
+        foreach (var race in game.Races)
         {
-            chartValue += game.TeamPoints - game.EnemyPoints;
-            url += $"scoreHistory[]={chartValue}&comments[]={game.Comment.Replace(" ", "%20")}&";
+            chartValue += race.Points - race.EnemyPoints;
+            url +=
+                $"scoreHistory[]={chartValue}&comments[]={(race.Track + " " + race.Comment).Trim().Replace(" ", "%20")}&";
         }
 
         return url;

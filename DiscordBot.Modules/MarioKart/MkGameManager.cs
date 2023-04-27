@@ -3,44 +3,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
+using Microsoft.VisualBasic;
 
 namespace DiscordBot.Modules.MarioKart;
 
 internal class MkGameManager
 {
     private readonly IMkGameDomain _domain;
-    private readonly Dictionary<ulong, MkResult> _runningGames = new();
+    private readonly Dictionary<ulong, MkGame> _runningGames = new();
+    private readonly Dictionary<ulong, MkResult> _resultsInProcess = new();
 
     public MkGameManager(IMkGameDomain domain)
     {
         _domain = domain;
     }
 
-    public async Task RegisterResultAsync(MkResult result, ulong channel, ulong guild, string comment, string map)
+    public bool HasChannelRunningGame(ulong channelId)
     {
-        if (!_runningGames.ContainsKey(channel))
+        return _runningGames.ContainsKey(channelId);
+    }
+
+    public async Task StartGameAsync(ulong channelId, MkGame game)
+    {
+        var preparedRace = _resultsInProcess[channelId];
+        var gameId = await _domain.SaveOrUpdateGameAsync(channelId, preparedRace);
+        _runningGames.Add(channelId, game);
+        game.GameId = gameId;
+        await RegisterResultAsync(preparedRace, channelId);
+    }
+
+    public async Task RegisterResultAsync(MkResult result, ulong channelId)
+    {
+        if (!_runningGames.ContainsKey(channelId))
         {
-            _runningGames.Add(channel, new MkResult());
+            _resultsInProcess.Add(channelId, result);
+            return;
         }
 
-        var game = _runningGames[channel];
-        game.Points += result.Points;
-        game.EnemyPoints += result.EnemyPoints;
-        var gameId = await _domain.SaveOrUpdateAsync(channel, guild, game);
-        _runningGames[channel].GameId = gameId;
+        var game = _runningGames[channelId];
+        result.Track = game.Races.Count + 1;
+
         var history = new MkHistoryItem
         {
-            Comment = comment,
+            Comment = result.Comment,
             Id = 0,
             EnemyPoints = result.EnemyPoints,
             TeamPoints = result.Points,
-            GameId = gameId,
-            Map = map
+            GameId = game.GameId,
+            Map = result.Map
         };
         await _domain.SaveHistoryItemAsync(history);
     }
 
-    public MkResult GetFinalResult(ulong channelId)
+    public MkGame RetrieveGame(ulong channelId)
     {
         if (!_runningGames.ContainsKey(channelId))
         {
@@ -64,12 +79,9 @@ internal class MkGameManager
 
     public async Task RevertGameAsync(ulong channelId)
     {
-        var gameId = _runningGames[channelId].GameId;
-        var historyItem = await _domain.RevertGameAsync(gameId);
-
-        var result = _runningGames[channelId];
-        result.Points -= historyItem.TeamPoints;
-        result.EnemyPoints -= historyItem.EnemyPoints;
+        var game = _runningGames[channelId];
+        game.Races.Remove(game.Races.OrderBy(r => r.Track).Last());
+        await _domain.RevertGameAsync(game.GameId);
     }
 
     public async Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId)

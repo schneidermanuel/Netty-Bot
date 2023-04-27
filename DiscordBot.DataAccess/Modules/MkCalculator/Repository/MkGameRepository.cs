@@ -38,7 +38,7 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    public async Task<long> SaveOrUpdateAsync(MarioKartRunningGameData data)
+    public async Task<long> SaveOrUpdateGameAsync(MarioKartRunningGameData data)
     {
         using (var session = _provider.OpenSession())
         {
@@ -148,7 +148,6 @@ internal class MkGameRepository : IMkGameRepository
         {
             ChannelId = data.ChannelId,
             GameName = data.GameName,
-            GuildId = data.GuildId,
             IsCompleted = false
         });
     }

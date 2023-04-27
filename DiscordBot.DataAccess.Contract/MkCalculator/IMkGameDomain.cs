@@ -7,8 +7,8 @@ namespace DiscordBot.DataAccess.Contract.MkCalculator;
 public interface IMkGameDomain
 {
     Task ClearAsync(ulong channelId);
-    Task<long> SaveOrUpdateAsync(ulong channelId, ulong guildId, MkResult gameToSave);
-    Task SaveHistoryItemAsync(MkHistoryItem history);
+    Task<long> SaveOrUpdateGameAsync(ulong channelId, MkResult gameToSave);
+    Task SaveHistoryItemAsync(MkHistoryItem historyItem);
     Task<bool> CanRevertAsync(long gameId);
     Task<MkHistoryItem> RevertGameAsync(long gameId);
     Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId);
