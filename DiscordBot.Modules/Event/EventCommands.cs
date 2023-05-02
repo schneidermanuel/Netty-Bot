@@ -106,7 +106,7 @@ internal class EventCommands : CommandModuleBase
             }
 
             var (component, embed) =
-                await CreateEventAsync("Was " + time, interpreted.Value, 6, null, guild, context.User);
+                await CreateEventAsync("War " + time, interpreted.Value, 6, null, guild, context.User);
             await context.Channel.SendMessageAsync(string.Empty, embed: embed, components: component);
         }
     }
