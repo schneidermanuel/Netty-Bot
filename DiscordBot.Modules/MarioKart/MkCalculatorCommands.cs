@@ -65,13 +65,17 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
             modal.WithCustomId($"mkWarTeam_Active_{context.Channel.Id}");
             await context.RespondWithModalAsync(modal.Build());
             var tempResult = _calculator.Calculate(places);
-            await _gameManager.RegisterResultAsync(tempResult, context.Channel.Id, comment, map);
+            tempResult.Map = map;
+            tempResult.Comment = comment;
+            await _gameManager.RegisterResultAsync(tempResult, context.Channel.Id);
             return;
         }
 
         await context.DeferAsync();
         var result = _calculator.Calculate(places);
-        await _gameManager.RegisterResultAsync(result, context.Channel.Id, comment, map);
+        result.Map = map;
+        result.Comment = comment;
+        await _gameManager.RegisterResultAsync(result, context.Channel.Id);
         var game = _gameManager.RetrieveGame(context.Channel.Id).Totals;
 
         ExecuteShellCommand(
