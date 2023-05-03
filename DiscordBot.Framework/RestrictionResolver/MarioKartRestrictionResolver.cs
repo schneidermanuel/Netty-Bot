@@ -91,6 +91,7 @@ internal class MarioKartRestrictionResolver : IRestrictionResolver
         { "bBR", "Tour Bangkok Rush" },
         { "bMS", "Tour Mario Circuit" },
         { "bWS", "GNC Waluigi Stadium" },
-        { "bSSy", "Tour Singapore Speedway" }
+        { "bSSy", "Tour Singapore Speedway" },
+        { "unset", "unset" }
     };
 }
