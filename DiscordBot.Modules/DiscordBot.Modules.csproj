@@ -19,6 +19,7 @@
         <ProjectReference Include="..\DiscordBot.Framework.Contract\DiscordBot.Framework.Contract.csproj" />
         <ProjectReference Include="..\DiscordBot.MusicPlayer\DiscordBot.MusicPlayer.csproj" />
         <ProjectReference Include="..\DiscordBot.PubSub\DiscordBot.PubSub.csproj" />
+        <ProjectReference Include="..\DiscordBot.Shared\DiscordBot.Shared.csproj" />
         <ProjectReference Include="..\Victoria\Victoria.csproj" />
     </ItemGroup>
 
