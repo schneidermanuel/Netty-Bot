@@ -6,6 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.TwitchNotifications;
 using DiscordBot.Framework.Contract;
+using DiscordBot.Framework.Contract.TimedAction;
 using DiscordBot.PubSub.Twitch;
 using TwitchLib.Api;
 using TwitchLib.Api.Helix.Models.Streams.GetStreams;
@@ -13,7 +14,7 @@ using TwitchLib.Api.Helix.Models.Users.GetUsers;
 
 namespace DiscordBot.Modules.TwitchNotifications;
 
-internal class TwitchNotificationsManager
+internal class TwitchNotificationsManager : ITimedAction
 {
     private readonly ITwitchNotificationsDomain _domain;
     private readonly ITwitchPubsubManager _pubsubManager;
@@ -78,6 +79,24 @@ internal class TwitchNotificationsManager
         }
     }
 
+    private async Task RefreshAsync()
+    {
+        var registrationsResponse =
+            await _api.Helix.EventSub.GetEventSubSubscriptionsAsync("notification_failures_exceeded ");
+        foreach (var sub in registrationsResponse.Subscriptions)
+        {
+            var userId = sub.Condition["broadcaster_user_id"];
+            var channelInfo = await _api.Helix.Users.GetUsersAsync(new List<string> { userId });
+            if (!channelInfo.Users.Any())
+            {
+                return;
+            }
+
+            var login = channelInfo.Users.First().Login;
+            await _pubsubManager.RegisterStreamerAsync(login);
+        }
+    }
+
     private static Embed BuildEmbed(Stream streamInformation, User user)
     {
         var embedBuilder = new EmbedBuilder();
@@ -122,5 +141,15 @@ internal class TwitchNotificationsManager
     {
         _registrations.Add(registration);
         await _pubsubManager.RegisterStreamerAsync(registration.Streamer);
+    }
+
+    public ExecutionTime GetExecutionTime()
+    {
+        return ExecutionTime.Hourly;
+    }
+
+    public async Task ExecuteAsync(DiscordSocketClient client)
+    {
+        await RefreshAsync();
     }
 }
