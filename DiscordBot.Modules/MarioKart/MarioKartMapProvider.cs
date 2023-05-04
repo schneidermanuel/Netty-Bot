@@ -6,6 +6,7 @@ public static class MarioKartMapProvider
 {
     public static Dictionary<string, string> Maps = new()
     {
+        { "unset", "unset" },
         { "MKS", "Mario+Kart+Stadium" },
         { "WP", "Water+Park" },
         { "SSC", "Sweet+Sweet+Canyon" },
