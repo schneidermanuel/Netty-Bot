@@ -7,7 +7,6 @@ using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract.TwitchNotifications;
 using DiscordBot.Framework.Contract;
 using DiscordBot.PubSub.Twitch;
-using Google.Protobuf.WellKnownTypes;
 using TwitchLib.Api;
 using TwitchLib.Api.Helix.Models.Streams.GetStreams;
 using TwitchLib.Api.Helix.Models.Users.GetUsers;
@@ -32,8 +31,6 @@ internal class TwitchNotificationsManager
         _api = new TwitchAPI();
         _api.Settings.ClientId = BotClientConstants.TwitchClientId;
         _api.Settings.Secret = BotClientConstants.TwitchClientSecret;
-        var token = _api.Auth.GetAccessToken();
-        _api.Settings.AccessToken = token;
     }
 
     public Func<string, Task> Callback => CallbackTwitch;
@@ -59,7 +56,7 @@ internal class TwitchNotificationsManager
 
                 await channel.SendMessageAsync(registration.Message, false, embed);
             }
-            catch  (Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Twitch exception");
                 Console.WriteLine(e);
@@ -70,6 +67,8 @@ internal class TwitchNotificationsManager
 
     public async Task Initialize()
     {
+        var token = await _api.Auth.GetAccessTokenAsync();
+        _api.Settings.AccessToken = token;
         var registrations = await _domain.RetrieveAllRegistrationsAsync();
         _registrations.Clear();
         _registrations.AddRange(registrations);
@@ -87,7 +86,8 @@ internal class TwitchNotificationsManager
         embedBuilder.WithDescription(streamInformation.GameName);
         embedBuilder.WithUrl($"https://twitch.tv/{streamInformation.UserName}");
         embedBuilder.WithThumbnailUrl(user.ProfileImageUrl);
-        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl.Replace("{width}", "320").Replace("{height}", "180") + "?=" + DateTime.Now.Millisecond);
+        embedBuilder.WithImageUrl(streamInformation.ThumbnailUrl.Replace("{width}", "320").Replace("{height}", "180") +
+                                  "?=" + DateTime.Now.Millisecond);
         var embed = embedBuilder.Build();
         return embed;
     }

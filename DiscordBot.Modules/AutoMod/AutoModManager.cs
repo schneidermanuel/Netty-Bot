@@ -33,7 +33,7 @@ internal class AutoModManager
         var violation = rulesToTest
             .Select(rule => rule.ExecuteRule(context))
             .MaxBy(rule => rule.Priority);
-        return violation;
+        return await Task.FromResult(violation);
     }
 
     public bool ExistsRule(string module)

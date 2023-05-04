@@ -24,7 +24,6 @@ internal class TwitterStreamManager
     private IList<TwitterRegistrationDto> _registrations;
     private readonly ITwitterRegistrationDomain _domain;
     private readonly TwitterRuleValidator _ruleValidator;
-    private Task _task;
 
     public TwitterStreamManager(DiscordSocketClient discordSocketClient, TwitterClient client,
         IList<TwitterRegistrationDto> registrations,

@@ -210,7 +210,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             {
                 await MapReactionRolesAsync(guild, reactionRole, list);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Ignored for now
             }
@@ -390,7 +390,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             var json = JsonConvert.SerializeObject(responseGuild);
             await Responsd(context, json);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             context.Response.StatusCode = 500;
         }

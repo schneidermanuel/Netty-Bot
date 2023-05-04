@@ -75,7 +75,5 @@ internal class MkWorldRecordLoader : IMkWorldRecordLoader
         {
             return null;
         }
-
-        return null;
     }
 }

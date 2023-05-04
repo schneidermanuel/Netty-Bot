@@ -34,6 +34,7 @@ internal class MessageCommandManager : IBootStep
 
         var command = _messageCommands[name];
         command.MethodInfo.Invoke(command.CommandModule, new object[] { arg });
+        await Task.CompletedTask;
     }
 
     public async Task BootAsync()

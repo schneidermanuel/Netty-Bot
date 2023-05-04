@@ -70,7 +70,7 @@ internal class EventLifesycleButtonListener : IButtonListener
                 var role = guild.GetRole(relevantEvent.RoleId.Value);
                 await user.RemoveRoleAsync(role);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ROLE NOT FOUND
             }
@@ -123,7 +123,7 @@ internal class EventLifesycleButtonListener : IButtonListener
                 var role = guild.GetRole(relevantEvent.RoleId.Value);
                 await user.RemoveRoleAsync(role);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // ROLE NOT FOUND
             }
@@ -177,7 +177,7 @@ internal class EventLifesycleButtonListener : IButtonListener
                     var role = guild.GetRole(relevantEvent.RoleId.Value);
                     await user.AddRoleAsync(role);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // ROLE NOT FOUND
                 }

@@ -1,6 +1,7 @@
 ﻿using DiscordBot.Framework.Contract;
 using DiscordBot.PubSub.Backend;
 using TwitchLib.Api;
+using TwitchLib.Api.Core.Enums;
 
 namespace DiscordBot.PubSub.Twitch;
 
@@ -16,7 +17,7 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
         _api = new TwitchAPI();
         _api.Settings.ClientId = BotClientConstants.TwitchClientId;
         _api.Settings.Secret = BotClientConstants.TwitchClientSecret;
-        var token = _api.Auth.GetAccessToken();
+        var token = await _api.Auth.GetAccessTokenAsync();
         _api.Settings.AccessToken = token;
 
         await Cleanup();
@@ -24,7 +25,9 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
 
     private async Task Cleanup()
     {
-        var currentRegistrations = await _api.Helix.EventSub.GetEventSubSubscriptionsAsync(clientId: BotClientConstants.TwitchClientId, accessToken:_api.Settings.AccessToken);
+        var currentRegistrations =
+            await _api.Helix.EventSub.GetEventSubSubscriptionsAsync(clientId: BotClientConstants.TwitchClientId,
+                accessToken: _api.Settings.AccessToken);
         foreach (var registration in currentRegistrations.Subscriptions)
         {
             using (var http = new HttpClient())
@@ -51,7 +54,8 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
             {
                 var conditions = new Dictionary<string, string>();
                 conditions.Add("broadcaster_user_id", id);
-                await _api.Helix.EventSub.CreateEventSubSubscriptionAsync("stream.online", "1", conditions, "webhook",
+                await _api.Helix.EventSub.CreateEventSubSubscriptionAsync("stream.online", "1", conditions,
+                    EventSubTransportMethod.Webhook,
                     "https://callback.netty-bot.com/", PubSubSecret.Secret, BotClientConstants.TwitchClientId);
                 _listening.Add(id);
                 Console.WriteLine("[Twitch] Listening to " + channelName);

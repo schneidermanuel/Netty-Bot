@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using DiscordBot.DataAccess.Contract.ReactionRoles;
-using Org.BouncyCastle.Crypto.Tls;
 
 namespace DiscordBot.DataAccess.Modules.ReactionRoles.Domain;
 
@@ -79,7 +78,7 @@ internal class ReactionRoleDomain : IReactionRoleDomain
             {
                 return Emoji.Parse(charEmoji);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return Emoji.Parse("⚠️");
             }
