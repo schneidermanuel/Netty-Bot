@@ -14,7 +14,7 @@ internal class TwitchNotificationsModule : Module
 
         builder.RegisterType<TwitchNotificationsBootStep>().As<IBootStep>();
         builder.RegisterType<TwitchNotificationCommands>().As<ICommandModule>();
-        builder.RegisterType<TwitchNotificationsManager>().AsSelf().SingleInstance();
+        builder.RegisterType<TwitchNotificationsManager>().AsSelf().As<ITimedAction>().SingleInstance();
         builder.RegisterType<TwitchRefresher>().As<ITwitchRefresher>();
     }
 }
