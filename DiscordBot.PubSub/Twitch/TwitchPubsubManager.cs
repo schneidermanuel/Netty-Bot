@@ -56,7 +56,7 @@ internal class TwitchPubsubManager : ITwitchPubsubManager
                 conditions.Add("broadcaster_user_id", id);
                 await _api.Helix.EventSub.CreateEventSubSubscriptionAsync("stream.online", "1", conditions,
                     EventSubTransportMethod.Webhook,
-                    "https://callback.netty-bot.com/", PubSubSecret.Secret, BotClientConstants.TwitchClientId);
+                    null, "https://callback.netty-bot.com/", PubSubSecret.Secret, BotClientConstants.TwitchClientId);
                 _listening.Add(id);
                 Console.WriteLine("[Twitch] Listening to " + channelName);
             }
