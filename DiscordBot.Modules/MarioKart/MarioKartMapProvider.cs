@@ -40,7 +40,6 @@ public static class MarioKartMapProvider
         { "rGV", "Wii+Grumble+Volcano" },
         { "rRRd", "N64+Rainbow+Road" },
         { "dYC", "GCN+Yoshi+Circuit" },
-        { "dWS", "DS+Wario+Stadium" },
         { "dEA", "Excitebike+Arena" },
         { "dDD", "Dragon+Driftway" },
         { "dMC", "Mute+City" },
