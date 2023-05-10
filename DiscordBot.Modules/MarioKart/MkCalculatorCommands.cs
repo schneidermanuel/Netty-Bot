@@ -89,7 +89,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
 
         _imageHelper.Screenshot(
             $"https://mk-leaderboard.netty-bot.com/v2/table.php?language={GetPreferedLanguage()}&raceId={resultId.Value}\"",
-            ".table");
+            "--window-size=1350,460");
         await context.ModifyOriginalResponseAsync(option =>
         {
             option.Content = "🤝";
@@ -164,7 +164,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         await _gameManager.EndGameAsync(context.Channel.Id);
         var url = BuildChartUrl(result);
         await context.DeferAsync();
-        _imageHelper.Screenshot(url, ".table");
+        _imageHelper.Screenshot(url, "--selector \".table\"");
         await context.ModifyOriginalResponseAsync(option =>
         {
             option.Content = "🤝";
@@ -185,21 +185,6 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         }
 
         return url;
-    }
-
-    private string BuildFinalDescription(MkResult result, IReadOnlyCollection<MkHistoryItem> mkHistoryItems)
-    {
-        var desc = string.Format(Localize(nameof(MarioKartRessources.Message_FinalResult)),
-            result.Points, result.Difference, result.EnemyPoints) + "\n\n";
-        for (var i = 0; i < mkHistoryItems.Count; i++)
-        {
-            var item = mkHistoryItems.ElementAt(i);
-            var comment = string.IsNullOrEmpty(item.Comment) ? string.Empty : $"({item.Comment})";
-            desc +=
-                $"{i + 1}: {item.TeamPoints} - {Math.Abs(item.TeamPoints - item.EnemyPoints)} - {item.EnemyPoints} {comment}\n";
-        }
-
-        return desc;
     }
 
     [Command("mkwr")]

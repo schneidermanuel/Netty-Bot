@@ -2,5 +2,5 @@
 
 public interface IImageHelper
 {
-    void Screenshot(string url, string selector);
+    void Screenshot(string url, string additionalArguments);
 }

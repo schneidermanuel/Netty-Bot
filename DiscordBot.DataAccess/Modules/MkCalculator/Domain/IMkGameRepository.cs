@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DiscordBot.DataAccess.Contract.MkCalculator;
 
 namespace DiscordBot.DataAccess.Modules.MkCalculator.Domain;
 
 internal interface IMkGameRepository
 {
     Task ClearAsync(string channelId);
-    Task<long> SaveOrUpdateGameAsync(MarioKartRunningGameData data);
-    Task<long> SaveHistoryItemAsync(HistoryItemData historyData);
     Task<bool> CanRevertAsync(long gameId);
-    Task<HistoryItemData> RevertGameAsync(long gameId);
-    Task<IEnumerable<HistoryItemData>> RetrieveHistoryAsync(long gameId);
-    Task<IReadOnlyCollection<ulong>> RetriveChannelsToStopAsync(DateTime dueDate);
+    Task RevertGameAsync(long gameId);
+    Task<IReadOnlyCollection<ulong>> RetrieveChannelsToStopAsync(DateTime dueDate);
+    Task<long> SaveGameAsync(MkGame gameToSave, string gameName, string guildId, string channelId);
+    Task<long> SaveRaceAsync(MkResult result, DateTime createdAt, long gameId);
+    Task<MkGame> RetrieveGameAsync(long gameId);
+    Task UpdateTotalsAsync(MkGame game);
 }
