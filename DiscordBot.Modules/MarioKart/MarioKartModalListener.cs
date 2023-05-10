@@ -63,7 +63,7 @@ internal class MarioKartModalListener : IModalListener
                     },
                     GameId = 0
                 };
-                await modal.RespondAsync("loading...");
+                await modal.RespondAsync("Starting new Game!");
                 var raceId = await _manager.StartGameAsync(channelId, channel.GuildId, game);
                 var language = await _dataAccess.GetUserLanguageAsync(modal.User.Id);
                 _imageHelper.Screenshot(
