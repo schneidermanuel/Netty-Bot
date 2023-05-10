@@ -25,12 +25,9 @@ internal class MkGameDomain : IMkGameDomain
         return await _repository.SaveOrUpdateGameAsync(MapToData(channelId, gameToSave));
     }
 
-    public async Task SaveHistoryItemAsync(MkHistoryItem historyItem)
+    public async Task<long> SaveHistoryItemAsync(MkHistoryItem historyItem)
     {
-        await _repository.SaveHistoryItemAsync(MapToHistoryData(historyItem));
-        var races = (await _repository.RetrieveHistoryAsync(historyItem.GameId)).ToArray();
-        var totalScoreTeam = races.Sum(r => r.Points);
-        var totalScoreEnemy = races.Sum(r => r.EnemyPoints);
+        return await _repository.SaveHistoryItemAsync(MapToHistoryData(historyItem));
     }
 
     public async Task<bool> CanRevertAsync(long gameId)

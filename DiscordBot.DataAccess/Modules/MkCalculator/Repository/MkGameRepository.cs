@@ -53,7 +53,7 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    public async Task SaveHistoryItemAsync(HistoryItemData historyData)
+    public async Task<long> SaveHistoryItemAsync(HistoryItemData historyData)
     {
         using (var session = _provider.OpenSession())
         {
@@ -69,6 +69,7 @@ internal class MkGameRepository : IMkGameRepository
             };
             await session.SaveOrUpdateAsync(entity);
             await session.FlushAsync();
+            return entity.Id;
         }
     }
 

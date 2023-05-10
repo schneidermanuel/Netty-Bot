@@ -32,4 +32,23 @@ internal class MarioKartWarCacheRepository : IMarioKartWarCacheRepository
             return new MarioKartWarRegistry(query.TeamName, query.TeamImage, query.EnemyName, query.EnemyImage);
         }
     }
+
+    public async Task SaveTeamsAsync(MarioKartWarRegistry marioKartWarRegistry, string guildId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var query = await session.Query<MarioKartGuildCacheEntity>()
+                .Where(entity => entity.GuildId == guildId)
+                .SingleOrDefaultAsync() ?? new MarioKartGuildCacheEntity
+            {
+                GuildId = guildId
+            };
+            query.TeamName = marioKartWarRegistry.TeamName;
+            query.TeamImage = marioKartWarRegistry.TeamImage;
+            query.EnemyName = marioKartWarRegistry.EnemyName;
+            query.EnemyImage = marioKartWarRegistry.EnemyImage;
+            await session.SaveOrUpdateAsync(query);
+            await session.FlushAsync();
+        }
+    }
 }
