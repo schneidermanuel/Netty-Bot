@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -32,42 +34,51 @@ internal class MarioKartModalListener : IModalListener
 
     public async Task SubmittedAsync(ulong userId, SocketModal modal)
     {
-        var customId = modal.Data.CustomId;
-        var channelId = ulong.Parse(customId.Split('_')[2]);
-        var teamName = modal.Data.Components.Single(c => c.CustomId == "teamName").Value;
-        var teamImage = modal.Data.Components.Single(c => c.CustomId == "teamImage").Value;
-        var enemyName = modal.Data.Components.Single(c => c.CustomId == "enemyName").Value;
-        var enemyImage = modal.Data.Components.Single(c => c.CustomId == "enemyImage").Value;
-
-        var channel = (IGuildChannel)modal.Channel;
-        await _warCacheDomain.SaveTeamsAsync(new MarioKartWarRegistry(teamName, teamImage, enemyName, enemyImage),
-            channel.GuildId);
-
-        if (customId.StartsWith("mkWarTeam_Active"))
+        try
         {
-            var game = new MkGame
+            var customId = modal.Data.CustomId;
+            var channelId = ulong.Parse(customId.Split('_')[2]);
+            var teamName = modal.Data.Components.Single(c => c.CustomId == "teamName").Value;
+            var teamImage = modal.Data.Components.Single(c => c.CustomId == "teamImage").Value;
+            var enemyName = modal.Data.Components.Single(c => c.CustomId == "enemyName").Value;
+            var enemyImage = modal.Data.Components.Single(c => c.CustomId == "enemyImage").Value;
+
+            var channel = (IGuildChannel)modal.Channel;
+            await _warCacheDomain.SaveTeamsAsync(new MarioKartWarRegistry(teamName, teamImage, enemyName, enemyImage),
+                channel.GuildId);
+
+            if (customId.StartsWith("mkWarTeam_Active"))
             {
-                Enemy = new MkTeam
+                var game = new MkGame
                 {
-                    Image = enemyImage,
-                    Name = enemyName
-                },
-                Team = new MkTeam
-                {
-                    Image = teamImage,
-                    Name = teamName
-                },
-                GameId = 0
-            };
-            var raceId = await _manager.StartGameAsync(channelId, game);
-            var language = await _dataAccess.GetUserLanguageAsync(modal.User.Id);
-            _imageHelper.Screenshot(
-                $"https://mk-leaderboard.netty-bot.com/v2/table.php?language={language}&raceId={raceId}\"",
-                ".table");
+                    Enemy = new MkTeam
+                    {
+                        Image = enemyImage,
+                        Name = enemyName
+                    },
+                    Team = new MkTeam
+                    {
+                        Image = teamImage,
+                        Name = teamName
+                    },
+                    GameId = 0
+                };
+                var raceId = await _manager.StartGameAsync(channelId, game);
+                var language = await _dataAccess.GetUserLanguageAsync(modal.User.Id);
+                _imageHelper.Screenshot(
+                    $"https://mk-leaderboard.netty-bot.com/v2/table.php?language={language}&raceId={raceId}\"",
+                    ".table");
+                await modal.RespondWithFileAsync("screenshot.png");
+            }
+            else
+            {
+                await modal.RespondAsync("🤝");
+            }
         }
-        else
+        catch (Exception e)
         {
-            await modal.RespondAsync("🤝");
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

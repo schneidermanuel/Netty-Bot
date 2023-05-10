@@ -21,6 +21,6 @@ public class ModuleDataAccess : IModuleDataAccess
 
     public async Task<string> GetUserLanguageAsync(ulong userId)
     {
-        return await _configurationDomain.GetPreferedLanguageAsync(userId);
+        return (await _configurationDomain.GetPreferedLanguageAsync(userId)) ?? "en";
     }
 }

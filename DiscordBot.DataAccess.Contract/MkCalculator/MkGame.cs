@@ -5,7 +5,7 @@ namespace DiscordBot.DataAccess.Contract.MkCalculator;
 
 public class MkGame
 {
-    public IList<MkResult> Races { get; set; }
+    public IList<MkResult> Races { get; set; } = new List<MkResult>();
 
     public MkResult Totals => new MkResult
     {
