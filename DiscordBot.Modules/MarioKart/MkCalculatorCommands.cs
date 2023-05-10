@@ -88,7 +88,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         }
 
         _imageHelper.Screenshot(
-            $"https://mk-leaderboard.netty-bot.com/v2/table.php?language={GetPreferedLanguage()}&raceId={resultId.Value}\"",
+            $"https://mk-leaderboard.netty-bot.com/v2/table.php?language={GetPreferedLanguage()}&raceId={resultId.Value}",
             "--window-size=1350,460");
         await context.ModifyOriginalResponseAsync(option =>
         {
