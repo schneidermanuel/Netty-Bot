@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -62,12 +63,18 @@ internal class MarioKartModalListener : IModalListener
                     },
                     GameId = 0
                 };
+                await modal.RespondAsync("loading...");
                 var raceId = await _manager.StartGameAsync(channelId, channel.GuildId, game);
                 var language = await _dataAccess.GetUserLanguageAsync(modal.User.Id);
                 _imageHelper.Screenshot(
                     $"https://mk-leaderboard.netty-bot.com/v2/table.php?language={language}&raceId={raceId}",
                     "--window-size=1350,460");
-                await modal.RespondWithFileAsync("screenshot.png");
+                await modal.ModifyOriginalResponseAsync(option =>
+                {
+                    option.Content = "🤝";
+                    option.Attachments =
+                        new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
+                });
             }
             else
             {
