@@ -1,13 +1,17 @@
 <?xml version="1.0"?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
                    namespace="DiscordBot.DataAccess.Entities">
-    <class name="MarioKartRunnningGameEntity" table="marioKartRunningGame">
+    <class name="MarioKartRunningGameEntity" table="marioKartRunningGame">
         <id name="GameId" column="gameId" type="Int64">
             <generator class="increment"/>
         </id>
         <property name="ChannelId" type="String" column="channelId"/>
         <property name="GameName" type="String" column="gameName"/>
         <property name="GuildId" type="String" column="guildId"/>
+        <property name="TeamName" type="String" column="teamName"/>
+        <property name="EnemyName" type="String" column="enemyName"/>
+        <property name="TeamImage" type="String" column="teamImage"/>
+        <property name="EnemyImage" type="String" column="enemyImage"/>
         <property name="IsCompleted" type="bool" column="isCompleted"/>
         <property name="TeamPoints" type="int" column="teamPoints"/>
         <property name="EnemyPoints" type="int" column="enemyPoints"/>

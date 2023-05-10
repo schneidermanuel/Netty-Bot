@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
 
@@ -20,63 +19,39 @@ internal class MkGameDomain : IMkGameDomain
         await _repository.ClearAsync(channelId.ToString());
     }
 
-    public async Task<long> SaveOrUpdateGameAsync(ulong channelId, MkResult gameToSave)
+    public async Task<long> StartGameAsync(ulong channelId, ulong guildId, MkGame gameToSave)
     {
-        return await _repository.SaveOrUpdateGameAsync(MapToData(channelId, gameToSave));
+        var now = DateTime.Now;
+        var gameName = $"{now:dd.MM.yyyy} | {gameToSave.Team.Name} vs {gameToSave.Enemy.Name}";
+        return await _repository.SaveGameAsync(gameToSave, gameName, guildId.ToString(), channelId.ToString());
     }
 
-    public async Task<long> SaveHistoryItemAsync(MkHistoryItem historyItem)
+    public async Task<long> SaveRaceAsync(MkResult result, long gameId)
     {
-        return await _repository.SaveHistoryItemAsync(MapToHistoryData(historyItem));
+        var raceId = await _repository.SaveRaceAsync(result, DateTime.Now, gameId);
+        var game = await _repository.RetrieveGameAsync(gameId);
+        await _repository.UpdateTotalsAsync(game);
+        return raceId;
     }
+
 
     public async Task<bool> CanRevertAsync(long gameId)
     {
         return await _repository.CanRevertAsync(gameId);
     }
 
-    public async Task<MkHistoryItem> RevertGameAsync(long gameId)
+    public async Task<MkGame> RetrieveGameAsync(long gameId)
     {
-        var data = await _repository.RevertGameAsync(gameId);
-        return new MkHistoryItem
-        {
-            Comment = data.Comment,
-            Id = data.Id,
-            EnemyPoints = data.EnemyPoints,
-            GameId = data.GameId,
-            TeamPoints = data.Points
-        };
+        return await _repository.RetrieveGameAsync(gameId);
     }
 
-    public async Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId)
+    public async Task RevertGameAsync(long gameId)
     {
-        var datas = await _repository.RetrieveHistoryAsync(gameId);
-        return datas.Select(data => new MkHistoryItem
-        {
-            Comment = data.Comment,
-            Id = data.Id,
-            EnemyPoints = data.EnemyPoints,
-            GameId = data.GameId,
-            TeamPoints = data.Points,
-            Map = data.Map
-        });
+        await _repository.RevertGameAsync(gameId);
     }
 
     public async Task<IReadOnlyCollection<ulong>> RetriveChannelsToStopAsync(DateTime dueDate)
     {
-        return await _repository.RetriveChannelsToStopAsync(dueDate);
-    }
-
-    private HistoryItemData MapToHistoryData(MkHistoryItem history)
-    {
-        return new HistoryItemData(history.Id, history.GameId, history.TeamPoints, history.EnemyPoints,
-            history.Comment, history.Map);
-    }
-
-    private MarioKartRunningGameData MapToData(ulong channelId, MkResult gameToSave)
-    {
-        return new MarioKartRunningGameData(0, channelId.ToString(), gameToSave.Points,
-            gameToSave.EnemyPoints,
-            $"Mario Kart match {DateTime.Now:dd.MM.yyyy hh:mm}", false);
+        return await _repository.RetrieveChannelsToStopAsync(dueDate);
     }
 }

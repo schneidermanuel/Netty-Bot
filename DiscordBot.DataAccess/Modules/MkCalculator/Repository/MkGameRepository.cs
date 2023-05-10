@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DiscordBot.DataAccess.Contract.MkCalculator;
 using DiscordBot.DataAccess.Entities;
 using DiscordBot.DataAccess.Modules.MkCalculator.Domain;
 using DiscordBot.DataAccess.NHibernate;
@@ -22,7 +23,7 @@ internal class MkGameRepository : IMkGameRepository
     {
         using (var session = _provider.OpenSession())
         {
-            var entity = await session.Query<MarioKartRunnningGameEntity>()
+            var entity = await session.Query<MarioKartRunningGameEntity>()
                 .Where(entity =>
                     entity.ChannelId == channelId
                     && entity.IsCompleted == false)
@@ -38,41 +39,6 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    public async Task<long> SaveOrUpdateGameAsync(MarioKartRunningGameData data)
-    {
-        using (var session = _provider.OpenSession())
-        {
-            var query = session.Query<MarioKartRunnningGameEntity>()
-                .Where(entity => entity.ChannelId == data.ChannelId && !entity.IsCompleted);
-            var entity = await query.FirstOrDefaultAsync() ?? await CreateNewGame(data);
-            entity.EnemyPoints = data.EnemyPoints;
-            entity.TeamPoints = data.TeamPoints;
-            await session.SaveOrUpdateAsync(entity);
-            await session.FlushAsync();
-            return entity.GameId;
-        }
-    }
-
-    public async Task<long> SaveHistoryItemAsync(HistoryItemData historyData)
-    {
-        using (var session = _provider.OpenSession())
-        {
-            var entity = new MarioKartHistoryItemEntity
-            {
-                Comment = historyData.Comment,
-                Id = historyData.Id,
-                CreatedAt = DateTime.Now,
-                EnemyPoints = historyData.EnemyPoints,
-                TeamPoints = historyData.Points,
-                MarioKartGameId = historyData.GameId,
-                Map = historyData.Map
-            };
-            await session.SaveOrUpdateAsync(entity);
-            await session.FlushAsync();
-            return entity.Id;
-        }
-    }
-
     public async Task<bool> CanRevertAsync(long gameId)
     {
         using (var session = _provider.OpenSession())
@@ -83,7 +49,7 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    public async Task<HistoryItemData> RevertGameAsync(long gameId)
+    public async Task RevertGameAsync(long gameId)
     {
         using (var session = _provider.OpenSession())
         {
@@ -91,34 +57,17 @@ internal class MkGameRepository : IMkGameRepository
                 .Where(entity => entity.MarioKartGameId == gameId)
                 .OrderByDescending(entity => entity.CreatedAt);
             var entity = await query.FirstAsync();
-            var data = new HistoryItemData(0, gameId, entity.TeamPoints, entity.EnemyPoints, entity.Comment,
-                entity.Map);
             await session.DeleteAsync(entity);
             await session.FlushAsync();
-            return data;
         }
     }
 
-    public async Task<IEnumerable<HistoryItemData>> RetrieveHistoryAsync(long gameId)
-    {
-        using (var session = _provider.OpenSession())
-        {
-            var query = session.Query<MarioKartHistoryItemEntity>()
-                .Where(entity => entity.MarioKartGameId == gameId)
-                .OrderBy(entity => entity.CreatedAt);
-            var entities = await query.ToListAsync();
-            return entities.Select(entity => new HistoryItemData(entity.Id, entity.MarioKartGameId, entity.TeamPoints,
-                entity.EnemyPoints, entity.Comment, entity.Map));
-        }
-    }
-
-
-    public async Task<IReadOnlyCollection<ulong>> RetriveChannelsToStopAsync(DateTime dueDate)
+    public async Task<IReadOnlyCollection<ulong>> RetrieveChannelsToStopAsync(DateTime dueDate)
     {
         var channelIds = new List<ulong>();
         using (var session = _provider.OpenSession())
         {
-            var entities = session.Query<MarioKartRunnningGameEntity>()
+            var entities = session.Query<MarioKartRunningGameEntity>()
                 .Where(entity => entity.IsCompleted == false);
             foreach (var gameEntity in entities)
             {
@@ -143,13 +92,95 @@ internal class MkGameRepository : IMkGameRepository
         }
     }
 
-    private Task<MarioKartRunnningGameEntity> CreateNewGame(MarioKartRunningGameData data)
+    public async Task<long> SaveGameAsync(MkGame gameToSave, string gameName, string guildId, string channelId)
     {
-        return Task.FromResult(new MarioKartRunnningGameEntity
+        using (var session = _provider.OpenSession())
         {
-            ChannelId = data.ChannelId,
-            GameName = data.GameName,
-            IsCompleted = false
-        });
+            var game = new MarioKartRunningGameEntity
+            {
+                ChannelId = channelId,
+                IsCompleted = false,
+                GameId = 0,
+                GameName = gameName,
+                EnemyImage = gameToSave.Enemy.Image,
+                EnemyName = gameToSave.Enemy.Name,
+                EnemyPoints = 0,
+                GuildId = guildId,
+                TeamImage = gameToSave.Team.Image,
+                TeamName = gameToSave.Team.Name,
+                TeamPoints = 0
+            };
+            await session.SaveOrUpdateAsync(game);
+            await session.FlushAsync();
+            return game.GameId;
+        }
+    }
+
+    public async Task<long> SaveRaceAsync(MkResult result, DateTime createdAt, long gameId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var entity = new MarioKartHistoryItemEntity
+            {
+                CreatedAt = createdAt,
+                EnemyPoints = result.EnemyPoints,
+                TeamPoints = result.Points,
+                MarioKartGameId = gameId,
+                Comment = result.Comment,
+                Map = result.Map
+            };
+            await session.SaveOrUpdateAsync(entity);
+            await session.FlushAsync();
+            return entity.Id;
+        }
+    }
+
+    public async Task<MkGame> RetrieveGameAsync(long gameId)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var gameEntity = await session.LoadAsync<MarioKartRunningGameEntity>(gameId);
+            var raceEntities = (await session.Query<MarioKartHistoryItemEntity>()
+                    .Where(race => race.MarioKartGameId == gameId)
+                    .ToListAsync())
+                .OrderBy(race => race.CreatedAt)
+                .ToArray();
+            var game = new MkGame
+            {
+                Enemy = new MkTeam
+                {
+                    Image = gameEntity.EnemyImage,
+                    Name = gameEntity.EnemyName
+                },
+                GameId = gameEntity.GameId,
+                Team = new MkTeam
+                {
+                    Image = gameEntity.TeamImage,
+                    Name = gameEntity.TeamName
+                },
+                Races = raceEntities.Select(entity => new MkResult
+                    {
+                        Comment = entity.Comment,
+                        Map = entity.Map,
+                        EnemyPoints = entity.EnemyPoints,
+                        Points = entity.TeamPoints,
+                        Track = Array.IndexOf(raceEntities, entity)
+                    })
+                    .ToArray()
+            };
+            return game;
+        }
+    }
+
+    public async Task UpdateTotalsAsync(MkGame game)
+    {
+        using (var session = _provider.OpenSession())
+        {
+            var entity = await session.LoadAsync<MarioKartRunningGameEntity>(game.GameId);
+            entity.TeamPoints = game.Totals.Points;
+            entity.EnemyPoints = game.Totals.EnemyPoints;
+            await session.SaveOrUpdateAsync(entity);
+            await session.FlushAsync();
+        }
     }
 }

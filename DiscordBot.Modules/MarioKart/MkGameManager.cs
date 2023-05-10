@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
-using Microsoft.VisualBasic;
 
 namespace DiscordBot.Modules.MarioKart;
 
@@ -24,10 +23,11 @@ internal class MkGameManager
         return _runningGames.ContainsKey(channelId);
     }
 
-    public async Task<long> StartGameAsync(ulong channelId, MkGame game)
+    public async Task<long> StartGameAsync(ulong channelId, ulong guildId, MkGame game)
     {
         var preparedRace = _resultsInProcess[channelId];
-        var gameId = await _domain.SaveOrUpdateGameAsync(channelId, preparedRace);
+        game.Races.Add(preparedRace);
+        var gameId = await _domain.StartGameAsync(channelId, guildId, game);
         _runningGames.Add(channelId, game);
         game.GameId = gameId;
         var id = await RegisterResultAsync(preparedRace, channelId);
@@ -46,16 +46,7 @@ internal class MkGameManager
         var game = _runningGames[channelId];
         result.Track = game.Races.Count + 1;
 
-        var history = new MkHistoryItem
-        {
-            Comment = result.Comment,
-            Id = 0,
-            EnemyPoints = result.EnemyPoints,
-            TeamPoints = result.Points,
-            GameId = game.GameId,
-            Map = result.Map
-        };
-        return await _domain.SaveHistoryItemAsync(history);
+        return await _domain.SaveRaceAsync(result, game.GameId);
     }
 
     public MkGame RetrieveGame(ulong channelId)
@@ -85,11 +76,6 @@ internal class MkGameManager
         var game = _runningGames[channelId];
         game.Races.Remove(game.Races.OrderBy(r => r.Track).Last());
         await _domain.RevertGameAsync(game.GameId);
-    }
-
-    public async Task<IEnumerable<MkHistoryItem>> RetriveHistoryAsync(long gameId)
-    {
-        return await _domain.RetriveHistoryAsync(gameId);
     }
 
     public async Task EndGameAsync(ulong channelId)

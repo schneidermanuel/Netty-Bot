@@ -7,7 +7,7 @@ public class MkGame
 {
     public IList<MkResult> Races { get; set; } = new List<MkResult>();
 
-    public MkResult Totals => new MkResult
+    public MkResult Totals => new()
     {
         Points = Races.Sum(r => r.Points),
         EnemyPoints = Races.Sum(r => r.EnemyPoints)
