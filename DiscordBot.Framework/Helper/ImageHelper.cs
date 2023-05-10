@@ -8,7 +8,7 @@ internal class ImageHelper : IImageHelper
 {
     public void Screenshot(string url, string selector)
     {
-        ExecuteShellCommand($"firefox -screenshot --selector \"{selector}\" -headless \"{url}\"");
+        // ExecuteShellCommand($"firefox -screenshot --selector \"{selector}\" -headless \"{url}\"");
         Console.WriteLine("Screenshot taken: " + url);
     }
 
