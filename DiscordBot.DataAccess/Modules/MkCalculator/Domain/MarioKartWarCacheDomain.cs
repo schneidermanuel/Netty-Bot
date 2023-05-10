@@ -15,4 +15,9 @@ internal class MarioKartWarCacheDomain : IMarioKartWarCacheDomain
     {
         return await _repository.RetrieveCachedRegistryAsync(guildId.ToString());
     }
+
+    public async Task SaveTeamsAsync(MarioKartWarRegistry marioKartWarRegistry, ulong guildId)
+    {
+        await _repository.SaveTeamsAsync(marioKartWarRegistry, guildId.ToString());
+    }
 }

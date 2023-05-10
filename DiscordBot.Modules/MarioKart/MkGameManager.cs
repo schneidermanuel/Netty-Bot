@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
@@ -23,21 +24,23 @@ internal class MkGameManager
         return _runningGames.ContainsKey(channelId);
     }
 
-    public async Task StartGameAsync(ulong channelId, MkGame game)
+    public async Task<long> StartGameAsync(ulong channelId, MkGame game)
     {
         var preparedRace = _resultsInProcess[channelId];
         var gameId = await _domain.SaveOrUpdateGameAsync(channelId, preparedRace);
         _runningGames.Add(channelId, game);
         game.GameId = gameId;
-        await RegisterResultAsync(preparedRace, channelId);
+        var id = await RegisterResultAsync(preparedRace, channelId);
+        Debug.Assert(id != null, nameof(id) + " != null");
+        return id.Value;
     }
 
-    public async Task RegisterResultAsync(MkResult result, ulong channelId)
+    public async Task<long?> RegisterResultAsync(MkResult result, ulong channelId)
     {
         if (!_runningGames.ContainsKey(channelId))
         {
             _resultsInProcess.Add(channelId, result);
-            return;
+            return null;
         }
 
         var game = _runningGames[channelId];
@@ -52,7 +55,7 @@ internal class MkGameManager
             GameId = game.GameId,
             Map = result.Map
         };
-        await _domain.SaveHistoryItemAsync(history);
+        return await _domain.SaveHistoryItemAsync(history);
     }
 
     public MkGame RetrieveGame(ulong channelId)

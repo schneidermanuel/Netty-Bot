@@ -2,6 +2,8 @@ using Autofac;
 using DiscordBot.Framework.BootSteps;
 using DiscordBot.Framework.Buttons;
 using DiscordBot.Framework.Contract.Boot;
+using DiscordBot.Framework.Contract.Helper;
+using DiscordBot.Framework.Helper;
 using DiscordBot.Framework.Interpretors.DateTime;
 using DiscordBot.Framework.MessageCommands;
 using DiscordBot.Framework.Modals;
@@ -20,5 +22,6 @@ public class FrameworkModule : Module
         builder.RegisterType<ModalManager>().As<IBootStep>();
         builder.RegisterType<MarioKartRestrictionResolver>().As<IRestrictionResolver>();
         builder.RegisterType<AutocompletionResolver>().As<IBootStep>();
+        builder.RegisterType<ImageHelper>().As<IImageHelper>();
     }
 }

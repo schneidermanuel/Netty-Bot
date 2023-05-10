@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -9,10 +8,9 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.DataAccess.Contract;
 using DiscordBot.DataAccess.Contract.MkCalculator;
-using DiscordBot.DataAccess.Modules.MkCalculator.Domain;
+using DiscordBot.Framework.Contract.Helper;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modularity.Commands;
-using NHibernate.Engine.Query;
 
 namespace DiscordBot.Modules.MarioKart;
 
@@ -22,15 +20,18 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     private readonly MkGameManager _gameManager;
     private readonly IMkWorldRecordLoader _worldRecordLoader;
     private readonly IMarioKartWarCacheDomain _warCacheDomain;
+    private readonly IImageHelper _imageHelper;
 
     public MkCalculatorCommands(IModuleDataAccess dataAccess, IMkCalculator calculator, MkGameManager gameManager,
-        IMkWorldRecordLoader worldRecordLoader, IMarioKartWarCacheDomain warCacheDomain) :
+        IMkWorldRecordLoader worldRecordLoader, IMarioKartWarCacheDomain warCacheDomain,
+        IImageHelper imageHelper) :
         base(dataAccess)
     {
         _calculator = calculator;
         _gameManager = gameManager;
         _worldRecordLoader = worldRecordLoader;
         _warCacheDomain = warCacheDomain;
+        _imageHelper = imageHelper;
     }
 
     [Command("race")]
@@ -47,6 +48,10 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var placesString = await RequireString(context);
         var comment = RequireStringOrEmpty(context, 3);
         var map = await RequireString(context, 2);
+        if (map.Contains(' '))
+        {
+            map = map.Split(' ')[0];
+        }
 
         List<int> places;
         try
@@ -75,17 +80,31 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         var result = _calculator.Calculate(places);
         result.Map = map;
         result.Comment = comment;
-        await _gameManager.RegisterResultAsync(result, context.Channel.Id);
-        var game = _gameManager.RetrieveGame(context.Channel.Id).Totals;
+        var resultId = await _gameManager.RegisterResultAsync(result, context.Channel.Id);
 
-        ExecuteShellCommand(
-            $"firefox -screenshot --selector \".table\" -headless --window-size=1024,220 \"https://mk-leaderboard.netty-bot.com/table.php?language={GetPreferedLanguage()}&teamPoints={result.Points}&enemyPoints={result.EnemyPoints}&teamTotal={game.Points}&enemyTotal={game.EnemyPoints}\"");
+        if (!resultId.HasValue)
+        {
+            return;
+        }
+
+        _imageHelper.Screenshot(
+            $"https://mk-leaderboard.netty-bot.com/v2/table.php?language={GetPreferedLanguage()}&raceId={resultId.Value}\"",
+            ".table");
         await context.ModifyOriginalResponseAsync(option =>
         {
             option.Content = "🤝";
             option.Attachments =
                 new Optional<IEnumerable<FileAttachment>>(new[] { new FileAttachment("screenshot.png") });
         });
+    }
+
+    [Command("mkSetTeams")]
+    public async Task ChangeTeamsCommandAsync(SocketSlashCommand context)
+    {
+        var guild = await RequireGuild(context);
+        var modal = await BuildTeamSetupModalAsync(guild.Id);
+        modal.WithCustomId($"mkWarTeam_Inactive_{context.Channel.Id}");
+        await context.RespondWithModalAsync(modal.Build());
     }
 
     private async Task<ModalBuilder> BuildTeamSetupModalAsync(ulong guildId)
@@ -98,29 +117,6 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         builder.AddTextInput("Enemy Name", "enemyName", value: data.EnemyName, required: false);
         builder.AddTextInput("Enemy Image", "enemyImage", value: data.EnemyImage, required: false);
         return builder;
-    }
-
-    private static void ExecuteShellCommand(string arguments)
-    {
-        // according to: https://stackoverflow.com/a/15262019/637142
-        // thans to this we will pass everything as one command
-        arguments = arguments.Replace("\"", "\"\"");
-
-        var proc = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "/bin/bash",
-                Arguments = "-c \"" + arguments + "\"",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            }
-        };
-
-        proc.Start();
-        proc.WaitForExit();
-        Console.WriteLine("Screenshot taken");
     }
 
 
@@ -168,7 +164,7 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         await _gameManager.EndGameAsync(context.Channel.Id);
         var url = BuildChartUrl(result);
         await context.DeferAsync();
-        ExecuteShellCommand($"firefox -screenshot --selector \".table\" -headless \"{url}\"");
+        _imageHelper.Screenshot(url, ".table");
         await context.ModifyOriginalResponseAsync(option =>
         {
             option.Content = "🤝";
