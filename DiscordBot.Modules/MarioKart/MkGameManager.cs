@@ -45,6 +45,7 @@ internal class MkGameManager
 
         var game = _runningGames[channelId];
         result.Track = game.Races.Count + 1;
+        game.Races.Add(result);
 
         return await _domain.SaveRaceAsync(result, game.GameId);
     }
