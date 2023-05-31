@@ -56,7 +56,9 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
         List<int> places;
         try
         {
-            places = placesString.Split(' ').Select(int.Parse).ToList();
+            places = placesString.Split(' ').Where(place => !string.IsNullOrWhiteSpace(place))
+                .Select(int.Parse)
+                .ToList();
         }
         catch (Exception)
         {
