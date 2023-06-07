@@ -26,6 +26,7 @@ internal class MkGameManager
     public async Task<long> StartGameAsync(ulong channelId, ulong guildId, MkGame game)
     {
         var preparedRace = _resultsInProcess[channelId];
+        _resultsInProcess.Remove(channelId);
         game.Races.Add(preparedRace);
         var gameId = await _domain.StartGameAsync(channelId, guildId, game);
         _runningGames.Add(channelId, game);

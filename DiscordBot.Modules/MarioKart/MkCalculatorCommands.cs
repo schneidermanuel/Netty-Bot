@@ -161,11 +161,10 @@ internal class MkCalculatorCommands : CommandModuleBase, ICommandModule
     [Description("Completes the current Mario Kart War")]
     public async Task FinishAsync(SocketSlashCommand context)
     {
-        var guild = await RequireGuild(context);
+        await context.DeferAsync();
         var result = _gameManager.RetrieveGame(context.Channel.Id);
         await _gameManager.EndGameAsync(context.Channel.Id);
         var url = BuildChartUrl(result);
-        await context.DeferAsync();
         _imageHelper.Screenshot(url, "--selector \".table\"");
         await context.ModifyOriginalResponseAsync(option =>
         {
