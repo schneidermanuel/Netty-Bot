@@ -23,17 +23,15 @@ internal class MkGameRepository : IMkGameRepository
     {
         using (var session = _provider.OpenSession())
         {
-            var entity = await session.Query<MarioKartRunningGameEntity>()
+            var entities = await session.Query<MarioKartRunningGameEntity>()
                 .Where(entity =>
                     entity.ChannelId == channelId
-                    && entity.IsCompleted == false)
-                .SingleOrDefaultAsync();
-            if (entity != null)
+                    && entity.IsCompleted == false).ToListAsync();
+            foreach (var entity in entities)
             {
                 entity.IsCompleted = true;
+                await session.SaveOrUpdateAsync(entity);
             }
-
-            await session.SaveOrUpdateAsync(entity);
 
             await session.FlushAsync();
         }
