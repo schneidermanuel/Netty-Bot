@@ -48,9 +48,6 @@
       <EmbeddedResource Include="Entities\TwitchNotificationRegistrationEntity.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
-      <EmbeddedResource Include="Entities\TwitterRegistrationEntity.hbm.xml">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </EmbeddedResource>
       <EmbeddedResource Include="Entities\UserConfigurationEntity.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>

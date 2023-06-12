@@ -9,7 +9,6 @@
     <LavalinkPort><!--LAVALINK PORT--></LavalinkPort>
     <LavalinkPassword><!--LAVALINK PASSWORD--></LavalinkPassword>
     <LavalinkSsl><!--LAVALINK SSL--></LavalinkSsl>
-    <TwitterApiKeySecret><!-- TWITTER API KEY SECRET --></TwitterApiKeySecret>
     <SpotifyClientId><!--SPOTIFY CLIENT ID--></SpotifyClientId>
     <SpotifyClientSecret><!--SPOTIFY CLIENT SECRET --></SpotifyClientSecret>
 </MainConfig>

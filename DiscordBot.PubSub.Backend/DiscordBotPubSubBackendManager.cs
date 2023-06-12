@@ -14,7 +14,6 @@ using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.Framework.Contract.Modules.AutoRole;
 using DiscordBot.Framework.Contract.Modules.ReactionRoles;
 using DiscordBot.Framework.Contract.Modules.TwitchRegistrations;
-using DiscordBot.Framework.Contract.Modules.Twitter;
 using DiscordBot.Framework.Contract.Modules.YoutubeRegistrations;
 using DiscordBot.PubSub.Backend.Data;
 using DiscordBot.PubSub.Backend.Data.Guild;
@@ -40,7 +39,6 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IReactionRoleRefresher _reactionRoleRefresher;
     private readonly IYoutubeRefresher _youtubeRefresher;
     private readonly ITwitchRefresher _twitchRefresher;
-    private readonly ITwitterRefresher _twitterRefresher;
     private Func<YoutubeNotification, Task> _youtubeCallback;
     private Func<string, Task> _twitchCallback;
 
@@ -54,8 +52,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IReactionRoleDomain reactionRoleDomain,
         IReactionRoleRefresher reactionRoleRefresher,
         IYoutubeRefresher youtubeRefresher,
-        ITwitchRefresher twitchRefresher,
-        ITwitterRefresher twitterRefresher)
+        ITwitchRefresher twitchRefresher
+        )
     {
         _client = client;
         _modules = modules;
@@ -68,7 +66,6 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _reactionRoleRefresher = reactionRoleRefresher;
         _youtubeRefresher = youtubeRefresher;
         _twitchRefresher = twitchRefresher;
-        _twitterRefresher = twitterRefresher;
     }
 
     public void Run(Func<YoutubeNotification, Task> youtubeCallback, Func<string, Task> callback)
@@ -95,20 +92,9 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapPut("/Modules/Refresh/ReactionRole", RefreshReactionRole);
         app.MapPut("/Modules/Refresh/Youtube", RefreshYoutube);
         app.MapPut("/Modules/Refresh/Twitch", RefreshTwitch);
-        app.MapPut("/Modules/Refresh/Twitter", RefreshTwitter);
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
-    }
-
-    private async Task RefreshTwitter(HttpContext context)
-    {
-        await RequireAuthenticationAsync(context);
-
-        var guildId = ulong.Parse(context.Request.Query["guildId"]);
-        context.Response.StatusCode = 202;
-        await context.Response.CompleteAsync(); 
-        _ = _twitterRefresher.RefreshTwitterAsync(guildId);
     }
 
     private async Task RefreshTwitch(HttpContext context)

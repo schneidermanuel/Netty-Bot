@@ -10,7 +10,6 @@ using DiscordBot.Modules.MusicPlayer;
 using DiscordBot.Modules.ReactionRoles;
 using DiscordBot.Modules.ServerCounter;
 using DiscordBot.Modules.TwitchNotifications;
-using DiscordBot.Modules.TwitterNotification;
 using DiscordBot.Modules.WebBackend;
 using DiscordBot.Modules.YoutubeNotifications;
 using DiscordBot.Modules.ZenQuote;
@@ -34,7 +33,6 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<ServerCoutnerModule>();
         builder.RegisterModule<ConfigurationModule>();
         builder.RegisterModule<EventModule>();
-        builder.RegisterModule<TwitterModule>();
         builder.RegisterModule<WebBackendModule>();
     }
 }

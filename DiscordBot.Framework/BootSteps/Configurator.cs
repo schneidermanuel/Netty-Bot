@@ -23,7 +23,6 @@ public static class Configurator
         BotClientConstants.LavalinkPort = (config?.LavalinkPort).GetValueOrDefault(443);
         BotClientConstants.YoutubeApiKey = (config?.YoutubeApiKey);
         BotClientConstants.Port = (config?.Port).GetValueOrDefault();
-        BotClientConstants.TwitterBearerToken = config?.TwitterBearerToken;
         BotClientConstants.SpotifyClientId = config?.SpotifyClientId;
         BotClientConstants.SpotifyClientSecret = config?.SpotifyClientSecret;
     }

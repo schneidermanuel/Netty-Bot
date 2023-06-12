@@ -8,7 +8,6 @@ using DiscordBot.DataAccess.Modules.MkCalculator;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
 using DiscordBot.DataAccess.Modules.ReactionRoles;
 using DiscordBot.DataAccess.Modules.TwitchNotifications;
-using DiscordBot.DataAccess.Modules.TwitterRegistration;
 using DiscordBot.DataAccess.Modules.UserConfiguration;
 using DiscordBot.DataAccess.Modules.WebAccess;
 using DiscordBot.DataAccess.Modules.YoutubeNotifications;
@@ -34,7 +33,6 @@ public class DataAccessModule : Module
         builder.RegisterModule<MkCalculatorModule>();
         builder.RegisterModule<EventModule>();
         builder.RegisterModule<UserConfigurationModule>();
-        builder.RegisterModule<TwitterRegistrationModule>();
         builder.RegisterModule<WebAccessModule>();
     }
 }
