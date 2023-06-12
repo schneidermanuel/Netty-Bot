@@ -55,7 +55,6 @@ internal class TwitterStreamManager
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
                     _client.CancelTweetStream();
                 }
             }
