@@ -84,6 +84,14 @@ public static class MarioKartMapProvider
         { "bBR", "Tour Bangkok Rush" },
         { "bMC", "DS Mario Circuit" },
         { "bWS", "GNC Waluigi Stadium" },
-        { "bSSy", "Tour Singapore Speedway" }
+        { "bSSy", "Tour Singapore Speedway" },
+        { "bKC", "Wii Koopa Cape" },
+        { "bLAL", "Tour Los Angeles Laps" },
+        { "bMH", "Wii Moonview Highway" },
+        { "bSCS", "Squeaky Clean Sprint" },
+        { "bAtD", "Tour Athens Dash" },
+        { "bDC", "GCN Daisy Cruiser" },
+        { "bSW", "GBA Sunset Wilds" },
+        { "bVV", "Tour Vancouver Velocity" }
     };
 }

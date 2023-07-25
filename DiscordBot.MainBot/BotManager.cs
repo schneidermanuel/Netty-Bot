@@ -14,7 +14,6 @@ using DiscordBot.Framework.Contract;
 using DiscordBot.Framework.Contract.Modularity;
 using DiscordBot.Framework.Contract.Modularity.Commands;
 using DiscordBot.Framework.Contract.TimedAction;
-using DiscordBot.Framework.RestrictionResolver;
 using CommandInfo = DiscordBot.Framework.Contract.Modularity.Commands.CommandInfo;
 
 // ReSharper disable LocalizableElement
