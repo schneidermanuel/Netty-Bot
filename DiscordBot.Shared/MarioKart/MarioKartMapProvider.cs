@@ -97,7 +97,7 @@ public static class MarioKartMapProvider
         { "bDKM", "GCN DK Mountain" },
         { "bDCt", "Wii Daisy Circuit" },
         { "bPPC", "Tour Piranha Plant Cove" },
-        { "bMD", "Tour Madrid Dive" },
+        { "bMD", "Tour Madrid Drive" },
         { "bRIW", "3DS Rosalina's Ice World" },
         { "bBC3", "SNES Bowser's Castle 3" },
         { "bRRw", "Wii Rainbow Road" }
