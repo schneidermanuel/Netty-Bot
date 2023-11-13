@@ -92,6 +92,14 @@ public static class MarioKartMapProvider
         { "bAtD", "Tour Athens Dash" },
         { "bDC", "GCN Daisy Cruiser" },
         { "bSW", "GBA Sunset Wilds" },
-        { "bVV", "Tour Vancouver Velocity" }
+        { "bVV", "Tour Vancouver Velocity" },
+        { "bRA", "Tour Rome Avanti" },
+        { "bDKM", "GCN DK Mountain" },
+        { "bDCt", "Wii Daisy Circuit" },
+        { "bPPC", "Tour Piranha Plant Cove" },
+        { "bMD", "Tour Madrid Dive" },
+        { "bRIW", "3DS Rosalina's Ice World" },
+        { "bBC3", "SNES Bowser's Castle 3" },
+        { "bRRw", "Wii Rainbow Road" },
     };
 }
