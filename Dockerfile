@@ -1,4 +1,4 @@
-ROM	alpine
+FROM	alpine
 RUN	apk add dotnet6-sdk git bash firefox ttf-dejavu ttf-liberation
 WORKDIR	/opt/netty
 RUN	git clone https://github.com/BrainyXS/Netty-Bot
