@@ -100,6 +100,6 @@ public static class MarioKartMapProvider
         { "bMD", "Tour Madrid Dive" },
         { "bRIW", "3DS Rosalina's Ice World" },
         { "bBC3", "SNES Bowser's Castle 3" },
-        { "bRRw", "Wii Rainbow Road" },
+        { "bRRw", "Wii Rainbow Road" }
     };
 }
