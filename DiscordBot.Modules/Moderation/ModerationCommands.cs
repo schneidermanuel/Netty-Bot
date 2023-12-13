@@ -22,9 +22,13 @@ internal class ModerationCommands : CommandModuleBase, ICommandModule
     [Description("cleans n messages from the channel")]
     [Parameter(Name = "count", Description = "The amount of messages to delete",
         ParameterType = ApplicationCommandOptionType.Integer, IsOptional = true)]
+    [Parameter(Name = "user", Description = "only delete messages from a specific user",
+        ParameterType = ApplicationCommandOptionType.User, IsOptional = true)]
     public async Task CleanAsync(SocketSlashCommand context)
     {
         var count = RequireIntArgOrDefault(context, 1, 100);
+        var user = context.Data.Options.SingleOrDefault(option => option.Name == "user")?.Value;
+        var guildUser = (SocketGuildUser)user;
         var guild = await RequireGuild(context);
         await RequirePermissionAsync(context, guild, GuildPermission.Administrator);
 
@@ -33,6 +37,11 @@ internal class ModerationCommands : CommandModuleBase, ICommandModule
         var messages =
             (await channel.GetMessagesAsync(count).FlattenAsync()).Where(message =>
                 message.Timestamp.DateTime.AddDays(14) > DateTime.Now);
+        if (guildUser != null)
+        {
+            messages = messages.Where(message => message.Author.Id == guildUser.Id);
+        }
+
         await channel.DeleteMessagesAsync(messages);
         await context.DeleteOriginalResponseAsync();
     }
