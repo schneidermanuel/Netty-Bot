@@ -14,8 +14,7 @@ internal class ServerCoutnerAction : ITimedAction
 
     public async Task ExecuteAsync(DiscordSocketClient client)
     {
-        var guildCount = client.Guilds.Count;
-        var message = $"We now support Slash Commands. Type / to see a list of available commands. Hosted with love by Brainy for {guildCount} Servers";
+        var message = "Sorry for the recent instability and thanks for trusting in netty-bot <3";
         await client.SetActivityAsync(new Game(message));
     }
 }
