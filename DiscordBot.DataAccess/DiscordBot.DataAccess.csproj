@@ -44,6 +44,8 @@
       <EmbeddedResource Include="Entities\MarioKartRunningGame.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Include="Entities\MkTournamentEntity.hbm.xml" />
+      <EmbeddedResource Include="Entities\MkTournamentRegistrationEntity.hbm.xml" />
       <EmbeddedResource Include="Entities\PlaylistItemEntity.hbm.xml" />
       <EmbeddedResource Include="Entities\TwitchNotificationRegistrationEntity.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -112,6 +112,20 @@ public abstract class CommandModuleBase : ICommandModule
         throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Int Arg: {arg}");
     }
 
+    protected async Task<bool> RequireBool(SocketSlashCommand context, int position = 1)
+    {
+        await RequireArg(context, position);
+        var arg = context.Data.Options.Skip(position - 1).First().Value.ToString();
+        if (bool.TryParse(arg, out var result))
+        {
+            return result;
+        }
+
+        await context.RespondAsync(
+            string.Format(Localize(nameof(BaseRessources.Error_NotAnInt), typeof(BaseRessources)), arg));
+        throw new ArgumentException($"{ModuleUniqueIdentifier}: Required Bool Arg: {arg}");
+    }
+
     protected async Task<long> RequireLongArg(SocketSlashCommand context, int position = 1)
     {
         await RequireArg(context, position);

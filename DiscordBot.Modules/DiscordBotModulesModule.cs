@@ -9,6 +9,7 @@ using DiscordBot.Modules.Moderation;
 using DiscordBot.Modules.MusicPlayer;
 using DiscordBot.Modules.ReactionRoles;
 using DiscordBot.Modules.ServerCounter;
+using DiscordBot.Modules.Tournaments;
 using DiscordBot.Modules.TwitchNotifications;
 using DiscordBot.Modules.WebBackend;
 using DiscordBot.Modules.YoutubeNotifications;
@@ -34,5 +35,6 @@ public class DiscordBotModulesModule : Module
         builder.RegisterModule<ConfigurationModule>();
         builder.RegisterModule<EventModule>();
         builder.RegisterModule<WebBackendModule>();
+        builder.RegisterModule<TournamentModule>();
     }
 }

@@ -7,6 +7,7 @@ using DiscordBot.DataAccess.Modules.GeburtstagList;
 using DiscordBot.DataAccess.Modules.MkCalculator;
 using DiscordBot.DataAccess.Modules.MusicPlayer;
 using DiscordBot.DataAccess.Modules.ReactionRoles;
+using DiscordBot.DataAccess.Modules.Tournaments;
 using DiscordBot.DataAccess.Modules.TwitchNotifications;
 using DiscordBot.DataAccess.Modules.UserConfiguration;
 using DiscordBot.DataAccess.Modules.WebAccess;
@@ -24,6 +25,7 @@ public class DataAccessModule : Module
         builder.RegisterType<SessionProvider>().As<ISessionProvider>();
         builder.RegisterModule<ReactionRolesDataAccessModule>();
         builder.RegisterModule<ZenQuoteDataAccessModule>();
+        builder.RegisterModule<TournamentsDataAccessModule>();
         builder.RegisterModule<GeburtstagListModule>();
         builder.RegisterModule<MusicPlayerModule>();
         builder.RegisterModule<AutoRoleModule>();

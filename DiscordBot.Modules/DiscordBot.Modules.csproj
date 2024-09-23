@@ -81,6 +81,10 @@
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>EventResources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <EmbeddedResource Update="Tournaments\TournamentResources.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>TournamentResources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -158,6 +162,11 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>EventResources.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Tournaments\TournamentResources.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>TournamentResources.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 

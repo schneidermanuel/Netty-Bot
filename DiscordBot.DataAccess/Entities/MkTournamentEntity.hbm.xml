@@ -1,0 +1,16 @@
+﻿<?xml version="1.0"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="DiscordBot.DataAccess"
+                   namespace="DiscordBot.DataAccess.Entities">
+    <class name="MkTournamentEntity" table="mk_tournament">
+        <id name="TournamentId" column="tournamentId" type="Int64">
+            <generator class="increment"/>
+        </id>
+        <property name="Name" type="String" column="name"/>
+        <property name="OrganisatorDcId" type="String" column="organisatorDcId"/>
+        <property name="Status" type="String" column="status"/>
+        <property name="GuildId" type="String" column="guildId"/>
+        <property name="Created" type="DateTime" column="created"/>
+        <property name="OrganisatorDisplayName" type="string" column="organiserDisplayName"/>
+        <property name="Identifier" type="string" column="identifier"/>
+    </class>
+</hibernate-mapping>
