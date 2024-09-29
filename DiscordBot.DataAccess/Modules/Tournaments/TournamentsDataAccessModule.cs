@@ -11,7 +11,7 @@ internal class TournamentsDataAccessModule : Module
     {
         base.Load(builder);
 
-        builder.RegisterType<TournamentRepository>().As<TournamentRepository>();
+        builder.RegisterType<TournamentRepository>().As<ITournamentRepository>();
         builder.RegisterType<TournamentsDomain>().As<ITournamentsDomain>();
     }
 }

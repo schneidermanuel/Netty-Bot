@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
@@ -34,7 +35,7 @@ internal class TournamentRepository : ITournamentRepository
             var players = registrations
                 .Select(entity => ulong.Parse(entity.DiscordUserId))
                 .ToArray();
-            var data = new TournamentData(tournament.Status, players);
+            var data = new TournamentData(tournament.Status, ulong.Parse(tournament.GuildId), players);
             return data;
         }
     }
@@ -53,8 +54,10 @@ internal class TournamentRepository : ITournamentRepository
                 Friendcode = friendcode,
                 PlayerName = username,
                 TournamentId = tournament.TournamentId,
+                RegistrationDate = DateTime.Now
             };
             await session.SaveAsync(registration);
+            await session.FlushAsync();
         }
     }
 }

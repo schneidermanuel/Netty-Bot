@@ -13,7 +13,7 @@ internal class TournamentsDomain : ITournamentsDomain
         _repository = repository;
     }
 
-    public async Task<CanJoinResult> CanJoinTournamentAsync(ulong userId, string code)
+    public async Task<CanJoinResult> CanJoinTournamentAsync(ulong userId, ulong guildId, string code)
     {
         var tournament = await _repository.RetrieveDataByCodeAsync(code);
         if (tournament == null)
@@ -29,6 +29,11 @@ internal class TournamentsDomain : ITournamentsDomain
         if (tournament.Users.Contains(userId))
         {
             return CanJoinResult.No("ALREADY_JOINED");
+        }
+
+        if (tournament.GuildId != guildId)
+        {
+            return CanJoinResult.No("NOT_FOUND");
         }
 
         return CanJoinResult.Yes();

@@ -31,19 +31,23 @@ public class TournamentCommands : CommandModuleBase, ICommandModule
         ParameterType = ApplicationCommandOptionType.Boolean)]
     public async Task JoinTournamentAsync(SocketSlashCommand context)
     {
+        await context.DeferAsync();
         var code = await RequireString(context);
-        var canJoin = await _domain.CanJoinTournamentAsync(context.User.Id, code);
+        var guild = await RequireGuild(context);
+        var canJoin = await _domain.CanJoinTournamentAsync(context.User.Id, guild.Id, code);
         if (!canJoin.CanJoin)
         {
-            await context.RespondAsync(Localize(canJoin.Reason));
+            await context.ModifyOriginalResponseAsync(x => x.Content = Localize(canJoin.Reason));
             return;
         }
+
+        await context.DeferAsync();
 
         var friendcode = await RequireString(context, 2);
         var canHost = await RequireBool(context, 3);
 
         await _domain.JoinTournamentAsync(context.User.Id, context.User.Username, code, friendcode, canHost);
-        await context.RespondAsync("🤝");
+        await context.ModifyOriginalResponseAsync(x => x.Content = "🤝");
     }
 
     protected override Type RessourceType => typeof(TournamentResources);
