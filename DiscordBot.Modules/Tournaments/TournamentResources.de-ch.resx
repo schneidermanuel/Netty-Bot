@@ -12,10 +12,10 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="ALREADY_JOINED" xml:space="preserve">
-        <value>Du bisch scho i dem Tournier</value>
+        <value>Du bisch scho i dem Turnierli</value>
     </data>
     <data name="NOT_FOUND" xml:space="preserve">
-        <value>Da Tournier gits gar nöd, du honk</value>
+        <value>Da Turnierli gits gar nöd, du honk</value>
     </data>
     <data name="STATUS_NOT_OPEN" xml:space="preserve">
         <value>Da dörfsch aktuell gar nöd mache</value>
