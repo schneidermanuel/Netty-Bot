@@ -41,8 +41,6 @@ public class TournamentCommands : CommandModuleBase, ICommandModule
             return;
         }
 
-        await context.DeferAsync();
-
         var friendcode = await RequireString(context, 2);
         var canHost = await RequireBool(context, 3);
 
