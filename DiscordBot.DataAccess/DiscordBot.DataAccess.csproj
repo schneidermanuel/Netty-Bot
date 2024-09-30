@@ -56,6 +56,9 @@
       <EmbeddedResource Include="Entities\YoutubeNotificationRegistrationEntity.hbm.xml">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </EmbeddedResource>
+      <EmbeddedResource Include="hibernate.cfg.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
       <None Remove="Entities\ZenQuoteEntity.hbm.xml" />
       <None Remove="Entities\BirthdayEntity.hbm.xml" />
       <EmbeddedResource Include="Entities\BirthdayEntity.hbm.xml">
