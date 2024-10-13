@@ -45,6 +45,14 @@ internal class TournamentsDomain : ITournamentsDomain
         return data.RoleId;
     }
 
+    public async Task<TournamentDetails> RetrieveTournamentDataAsync(string code)
+    {
+        var data = await _repository.RetrieveDataByCodeAsync(code);
+        var role = string.IsNullOrEmpty(data.RoleId)? (ulong?)null : ulong.Parse(data.RoleId);
+        var details = new TournamentDetails(data.Users, role, data.GuildId);
+        return details;
+    }
+
     public async Task JoinTournamentAsync(ulong userId, string username, string code, string friendcode, bool canHost)
     {
         await _repository.JoinTournamentAsync(userId, username, code, friendcode, canHost);

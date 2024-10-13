@@ -13,6 +13,7 @@ using DiscordBot.Framework.Contract.Modules.AutoMod;
 using DiscordBot.Framework.Contract.Modules.AutoMod.Rules;
 using DiscordBot.Framework.Contract.Modules.AutoRole;
 using DiscordBot.Framework.Contract.Modules.ReactionRoles;
+using DiscordBot.Framework.Contract.Modules.Tournaments;
 using DiscordBot.Framework.Contract.Modules.TwitchRegistrations;
 using DiscordBot.Framework.Contract.Modules.YoutubeRegistrations;
 using DiscordBot.PubSub.Backend.Data;
@@ -39,6 +40,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
     private readonly IReactionRoleRefresher _reactionRoleRefresher;
     private readonly IYoutubeRefresher _youtubeRefresher;
     private readonly ITwitchRefresher _twitchRefresher;
+    private readonly ITournamentCompletionDomain _tournamentCompletionDomain;
     private Func<YoutubeNotification, Task> _youtubeCallback;
     private Func<string, Task> _twitchCallback;
 
@@ -52,7 +54,8 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IReactionRoleDomain reactionRoleDomain,
         IReactionRoleRefresher reactionRoleRefresher,
         IYoutubeRefresher youtubeRefresher,
-        ITwitchRefresher twitchRefresher
+        ITwitchRefresher twitchRefresher,
+        ITournamentCompletionDomain tournamentCompletionDomain
         )
     {
         _client = client;
@@ -66,6 +69,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _reactionRoleRefresher = reactionRoleRefresher;
         _youtubeRefresher = youtubeRefresher;
         _twitchRefresher = twitchRefresher;
+        _tournamentCompletionDomain = tournamentCompletionDomain;
     }
 
     public void Run(Func<YoutubeNotification, Task> youtubeCallback, Func<string, Task> callback)
@@ -92,9 +96,26 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapPut("/Modules/Refresh/ReactionRole", RefreshReactionRole);
         app.MapPut("/Modules/Refresh/Youtube", RefreshYoutube);
         app.MapPut("/Modules/Refresh/Twitch", RefreshTwitch);
+        app.MapPost("/Tournaments/Complete", CompleteTournamentAsync);
 
         var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
         thread.Start();
+    }
+
+    private async Task CompleteTournamentAsync(HttpContext context)
+    {
+        await RequireAuthenticationAsync(context);
+        var body = context.Request.Body;
+        string tournamentCode;
+        using (var reader = new StreamReader(body))
+        {
+            tournamentCode = await reader.ReadToEndAsync();
+        }
+
+        await _tournamentCompletionDomain.CompleteTournamentAsync(tournamentCode);
+        context.Response.StatusCode = 200;
+        context.Response.CompleteAsync();
+
     }
 
     private async Task RefreshTwitch(HttpContext context)
@@ -162,7 +183,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             Name = emote.ToString(),
             Url = emote.Url
         });
-        await Responsd(context, JsonConvert.SerializeObject(emoji));
+        await RespondAsync(context, JsonConvert.SerializeObject(emoji));
         await context.Response.CompleteAsync();
     }
 
@@ -178,7 +199,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             ChannelId = channel.Id.ToString(),
             ChannelName = channel.Name
         });
-        await Responsd(context, JsonConvert.SerializeObject(textChannel));
+        await RespondAsync(context, JsonConvert.SerializeObject(textChannel));
         await context.Response.CompleteAsync();
     }
 
@@ -202,7 +223,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             }
         }
 
-        await Responsd(context, JsonConvert.SerializeObject(list));
+        await RespondAsync(context, JsonConvert.SerializeObject(list));
         await context.Response.CompleteAsync();
     }
 
@@ -274,7 +295,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
                 IsAdmin = role.Permissions.Administrator,
             });
         var json = JsonConvert.SerializeObject(roles);
-        await Responsd(context, json);
+        await RespondAsync(context, json);
         await context.Response.CompleteAsync();
     }
 
@@ -326,7 +347,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             .ToArray();
 
         var json = JsonConvert.SerializeObject(keys);
-        await Responsd(context, json);
+        await RespondAsync(context, json);
         await context.Response.CompleteAsync();
     }
 
@@ -340,7 +361,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
             if (_client.Guilds.All(guild => !guild.Id.ToString().Equals(guildId.ToString())))
             {
-                await Responsd(context, "Guild does not exist", 400);
+                await RespondAsync(context, "Guild does not exist", 400);
                 await context.Response.CompleteAsync();
                 return;
             }
@@ -374,7 +395,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             };
 
             var json = JsonConvert.SerializeObject(responseGuild);
-            await Responsd(context, json);
+            await RespondAsync(context, json);
         }
         catch (Exception)
         {
@@ -396,7 +417,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             var userId = context.Request.Query["userId"];
             if (_client.Guilds.All(guild => !guild.Id.ToString().Equals(guildId.ToString())))
             {
-                await Responsd(context, "NotAdded");
+                await RespondAsync(context, "NotAdded");
                 await context.Response.CompleteAsync();
                 return;
             }
@@ -404,11 +425,11 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             var guild = _client.Guilds.Single(guild => guild.Id.ToString().Equals(guildId.ToString()));
             if (guild.GetUser(ulong.Parse(userId)).GuildPermissions.Administrator)
             {
-                await Responsd(context, "Normal");
+                await RespondAsync(context, "Normal");
             }
             else
             {
-                await Responsd(context, "MissingPermission");
+                await RespondAsync(context, "MissingPermission");
             }
 
             await context.Response.CompleteAsync();
@@ -489,7 +510,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
             if (!string.IsNullOrEmpty(challenge))
             {
-                await Responsd(context, challenge);
+                await RespondAsync(context, challenge);
             }
 
             await context.Response.CompleteAsync();
@@ -500,7 +521,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         }
     }
 
-    private static async Task Responsd(HttpContext context, StringValues response, int statusCode = 200)
+    private static async Task RespondAsync(HttpContext context, StringValues response, int statusCode = 200)
     {
         var bytes = Encoding.UTF8.GetBytes(response);
         context.Response.StatusCode = statusCode;
