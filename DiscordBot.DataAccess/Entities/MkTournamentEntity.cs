@@ -12,4 +12,6 @@ public class MkTournamentEntity
     public virtual DateTime Created { get; set; }
     public virtual string OrganisatorDisplayName { get; set; }
     public virtual string Identifier { get; set; }
+    public virtual string RoleId { get; set; }
+    
 }

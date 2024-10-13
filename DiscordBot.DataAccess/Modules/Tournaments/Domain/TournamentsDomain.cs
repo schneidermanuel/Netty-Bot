@@ -39,6 +39,12 @@ internal class TournamentsDomain : ITournamentsDomain
         return CanJoinResult.Yes();
     }
 
+    public async Task<string> RetrieveRoleIdAsync(string code)
+    {
+        var data = await _repository.RetrieveDataByCodeAsync(code);
+        return data.RoleId;
+    }
+
     public async Task JoinTournamentAsync(ulong userId, string username, string code, string friendcode, bool canHost)
     {
         await _repository.JoinTournamentAsync(userId, username, code, friendcode, canHost);

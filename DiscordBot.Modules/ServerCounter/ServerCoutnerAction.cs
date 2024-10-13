@@ -14,7 +14,7 @@ internal class ServerCoutnerAction : ITimedAction
 
     public async Task ExecuteAsync(DiscordSocketClient client)
     {
-        var message = "Sorry for the recent instability and thanks for trusting in netty-bot <3";
+        var message = "https://brainyxs.com/";
         await client.SetActivityAsync(new Game(message));
     }
 }

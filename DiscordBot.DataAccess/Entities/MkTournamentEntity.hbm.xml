@@ -12,5 +12,6 @@
         <property name="Created" type="DateTime" column="created"/>
         <property name="OrganisatorDisplayName" type="string" column="organiserDisplayName"/>
         <property name="Identifier" type="string" column="identifier"/>
+        <property name="RoleId" type="string" column="roleId"/>
     </class>
 </hibernate-mapping>

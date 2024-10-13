@@ -40,11 +40,18 @@ public class TournamentCommands : CommandModuleBase, ICommandModule
             await context.ModifyOriginalResponseAsync(x => x.Content = Localize(canJoin.Reason));
             return;
         }
+        var roleTask = _domain.RetrieveRoleIdAsync(code);
 
         var friendcode = await RequireString(context, 2);
         var canHost = await RequireBool(context, 3);
 
         await _domain.JoinTournamentAsync(context.User.Id, context.User.Username, code, friendcode, canHost);
+        var roleId = await roleTask;
+        if (!string.IsNullOrEmpty(roleId))
+        {
+            await ((SocketGuildUser)context.User).AddRoleAsync(ulong.Parse(roleId));
+        }
+        
         await context.ModifyOriginalResponseAsync(x => x.Content = "🤝");
     }
 

@@ -35,7 +35,7 @@ internal class TournamentRepository : ITournamentRepository
             var players = registrations
                 .Select(entity => ulong.Parse(entity.DiscordUserId))
                 .ToArray();
-            var data = new TournamentData(tournament.Status, ulong.Parse(tournament.GuildId), players);
+            var data = new TournamentData(tournament.Status, ulong.Parse(tournament.GuildId), players, tournament.RoleId);
             return data;
         }
     }

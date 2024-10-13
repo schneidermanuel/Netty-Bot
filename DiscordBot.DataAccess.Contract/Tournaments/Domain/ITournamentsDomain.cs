@@ -6,4 +6,5 @@ public interface ITournamentsDomain
 {
     Task<CanJoinResult> CanJoinTournamentAsync(ulong userId, ulong guildId, string code);
     Task JoinTournamentAsync(ulong userId, string username, string code, string friendcode, bool canHost);
+    Task<string> RetrieveRoleIdAsync(string code);
 }
