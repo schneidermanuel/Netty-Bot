@@ -56,7 +56,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IYoutubeRefresher youtubeRefresher,
         ITwitchRefresher twitchRefresher,
         ITournamentCompletionDomain tournamentCompletionDomain
-        )
+    )
     {
         _client = client;
         _modules = modules;
@@ -114,8 +114,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
         await _tournamentCompletionDomain.CompleteTournamentAsync(tournamentCode);
         context.Response.StatusCode = 200;
-        context.Response.CompleteAsync();
-
+        await context.Response.CompleteAsync();
     }
 
     private async Task RefreshTwitch(HttpContext context)
@@ -124,7 +123,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
         var guildId = ulong.Parse(context.Request.Query["guildId"]);
         context.Response.StatusCode = 202;
-        await context.Response.CompleteAsync(); 
+        await context.Response.CompleteAsync();
         _ = _twitchRefresher.RefreshAsync(guildId);
     }
 
@@ -140,6 +139,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         {
             body = await reader.ReadToEndAsync();
         }
+
         var veryfyString = messageId + timestamp + body;
         if (PubSubSecret.Check256(veryfyString, signature))
         {
@@ -267,7 +267,6 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             };
             list.Add(role);
         }
-
     }
 
     private async Task RefreshAutoRole(HttpContext context)
@@ -460,7 +459,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
             var signature = checksumHeader.ToString().Split('=')[1];
             var stream = context.Request.Body;
             string body;
-            using (var reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 body = await reader.ReadToEndAsync();
             }
@@ -469,8 +468,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
 
             if (!isValid)
             {
-                await context.Response.CompleteAsync();
-                return;
+                Console.WriteLine("Attention: Invalid signature");
             }
 
             await using (var newStream = GenerateStreamFromString(body))

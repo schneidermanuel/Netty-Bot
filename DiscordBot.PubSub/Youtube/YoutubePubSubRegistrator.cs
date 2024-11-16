@@ -9,7 +9,7 @@ internal class YoutubePubSubRegistrator : IYoutubePubSubRegistrator
 
     public async Task SubscribeAsync(string channelId)
     {
-        var topic = $"https://www.youtube.com/xml/feeds/videos.xml?channel_id={channelId}";
+        var topic = $"https://www.youtube.com/feeds/videos.xml?channel_id={channelId}";
 
         var client = new HttpClient();
         client.DefaultRequestHeaders.Add("ContentType", "application/x-www-form-urlencoded");
@@ -20,8 +20,7 @@ internal class YoutubePubSubRegistrator : IYoutubePubSubRegistrator
                 new("hub.callback", $"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"),
                 new("hub.topic", topic),
                 new("hub.verify", "async"),
-                new("hub.verify_token", Guid.NewGuid().ToString()),
-                new("hub.secret", PubSubSecret.Secret)
+                new("hub.secret", "hello")
             }));
 
 

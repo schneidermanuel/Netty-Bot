@@ -40,6 +40,7 @@ public class TournamentCommands : CommandModuleBase, ICommandModule
             await context.ModifyOriginalResponseAsync(x => x.Content = Localize(canJoin.Reason));
             return;
         }
+
         var roleTask = _domain.RetrieveRoleIdAsync(code);
 
         var friendcode = await RequireString(context, 2);
@@ -51,7 +52,27 @@ public class TournamentCommands : CommandModuleBase, ICommandModule
         {
             await ((SocketGuildUser)context.User).AddRoleAsync(ulong.Parse(roleId));
         }
-        
+
+        await context.ModifyOriginalResponseAsync(x => x.Content = "🤝");
+    }
+
+    [Command("leave-tournament")]
+    [Description("Leave a tournament")]
+    [Parameter(Name = "Code", Description = "The Code of the tournament", IsOptional = false,
+        ParameterType = ApplicationCommandOptionType.String)]
+    public async Task LeaveTournamentAsync(SocketSlashCommand context)
+    {
+        await context.DeferAsync();
+        var code = await RequireString(context);
+        var guild = await RequireGuild(context);
+        var roleTask = _domain.RetrieveRoleIdAsync(code);
+
+        var roleId = await roleTask;
+        if (!string.IsNullOrEmpty(roleId))
+        {
+            await ((SocketGuildUser)context.User).RemoveRoleAsync(ulong.Parse(roleId));
+        }
+
         await context.ModifyOriginalResponseAsync(x => x.Content = "🤝");
     }
 

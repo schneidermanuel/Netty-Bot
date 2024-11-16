@@ -16,6 +16,7 @@ internal class TournamentCompletionDomain : ITournamentCompletionDomain
         _client = client;
         _domain = domain;
     }
+
     public async Task CompleteTournamentAsync(string code)
     {
         var data = await _domain.RetrieveTournamentDataAsync(code);
@@ -34,6 +35,5 @@ internal class TournamentCompletionDomain : ITournamentCompletionDomain
                 await user.RemoveRoleAsync(data.RoleId.Value);
             }
         }
-
     }
 }
