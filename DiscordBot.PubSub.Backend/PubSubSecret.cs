@@ -20,15 +20,16 @@ public class PubSubSecret
         }
     }
 
-    public static bool Check(string body, string signature)
+    public static bool Check(Stream body, string signature)
     {
         using (var hmac = new HMACSHA1(Encoding.UTF8.GetBytes(Secret)))
         {
-            var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(body));
+            var hashBytes = hmac.ComputeHash(body);
             var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             return signature.Equals(hash);
         }
     }
+
     public static bool Check256(string body, string signature)
     {
         using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(Secret)))
@@ -38,5 +39,4 @@ public class PubSubSecret
             return signature.Remove(0, 7).Equals(hash);
         }
     }
-
 }

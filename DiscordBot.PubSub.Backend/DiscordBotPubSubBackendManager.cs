@@ -55,7 +55,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IReactionRoleRefresher reactionRoleRefresher,
         IYoutubeRefresher youtubeRefresher,
         ITwitchRefresher twitchRefresher,
-        ITournamentCompletionDomain tournamentCompletionDomain
+    ITournamentCompletionDomain tournamentCompletionDomain
     )
     {
         _client = client;
@@ -457,39 +457,46 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         {
             var checksumHeader = context.Request.Headers["X-Hub-Signature"];
             var signature = checksumHeader.ToString().Split('=')[1];
-            var stream = context.Request.Body;
-            string body;
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
+            using (var stream = new MemoryStream())
             {
-                body = await reader.ReadToEndAsync();
-            }
+                await context.Request.Body.CopyToAsync(stream);
+                stream.Position = 0;
 
-            var isValid = PubSubSecret.Check(body, signature);
+                var isValid = PubSubSecret.Check(stream, signature);
 
-            if (!isValid)
-            {
-                Console.WriteLine("Attention: Invalid signature");
-            }
-
-            await using (var newStream = GenerateStreamFromString(body))
-            {
-                var data = ConvertAtomToSyndication(newStream);
-                if (data != null)
+                if (!isValid)
                 {
-                    if (data.IsNewVideo)
-                    {
-                        _ = _youtubeCallback.Invoke(data);
-                    }
-
-                    context.Response.StatusCode = 200;
                     await context.Response.CompleteAsync();
                     return;
                 }
+
+                string body;
+                stream.Position = 0;
+                using (var reader = new StreamReader(stream))
+                {
+                    body = await reader.ReadToEndAsync();
+                }
+
+                await using (var newStream = GenerateStreamFromString(body))
+                {
+                    var data = ConvertAtomToSyndication(newStream);
+                    if (data != null)
+                    {
+                        if (data.IsNewVideo)
+                        {
+                            _ = _youtubeCallback.Invoke(data);
+                        }
+
+                        context.Response.StatusCode = 200;
+                        await context.Response.CompleteAsync();
+                        return;
+                    }
+                }
+
+
+                context.Response.StatusCode = 400;
+                await context.Response.CompleteAsync();
             }
-
-
-            context.Response.StatusCode = 400;
-            await context.Response.CompleteAsync();
         }
         catch (Exception e)
         {
