@@ -1,7 +1,5 @@
-using System;
 using System.Threading.Tasks;
 using Discord.WebSocket;
-using DiscordBot.DataAccess.Contract.ReactionRoles;
 using DiscordBot.Framework.Contract.TimedAction;
 
 namespace DiscordBot.Modules.ReactionRoles;

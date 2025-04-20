@@ -27,7 +27,14 @@ public class ReactionRoleManager
         var reactionRoles = ReactionRoles.Where(role => role.MessageId == message.Id);
         foreach (var reactionRole in reactionRoles)
         {
-            await ProcessReactionRoleAsync(message, reaction, reactionRole);
+            try
+            {
+                await ProcessReactionRoleAsync(message, reaction, reactionRole);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 
