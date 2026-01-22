@@ -188,8 +188,8 @@ internal class EventCommands : CommandModuleBase
         var modal = new ModalBuilder()
             .WithTitle("Configure Lineup")
             .WithCustomId($"eventLineup_{((IGuildChannel)message.Channel).GuildId}_{message.Channel.Id}_{message.Id}")
-            .AddTextInput(enemyInput)
-            .AddTextInput(fcInput)
+            .AddTextInput(enemyInput, 1)
+            .AddTextInput(fcInput, 2)
             .Build();
 
         await context.RespondWithModalAsync(modal);

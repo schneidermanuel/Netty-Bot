@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
+using DiscordBot.DataAccess.Hibernate;
 using DiscordBot.DataAccess.Modules.Event.Domain;
-using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Action;
 using NHibernate.Linq;
 

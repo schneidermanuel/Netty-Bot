@@ -1,0 +1,24 @@
+name: CI/CD Bot
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker build -t netty-bot:latest .
+
+      - name: Push to GHCR (optional)
+        run: |
+          echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker tag netty-bot:latest ghcr.io/schneidermanuel/netty-bot:latest
+          docker push ghcr.io/schneidermanuel/netty-bot:latest

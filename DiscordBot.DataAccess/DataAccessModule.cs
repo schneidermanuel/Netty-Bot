@@ -1,5 +1,6 @@
 using Autofac;
 using DiscordBot.DataAccess.Contract;
+using DiscordBot.DataAccess.Hibernate;
 using DiscordBot.DataAccess.Modules.AutoMod;
 using DiscordBot.DataAccess.Modules.AutoRole;
 using DiscordBot.DataAccess.Modules.Event;
@@ -13,7 +14,6 @@ using DiscordBot.DataAccess.Modules.UserConfiguration;
 using DiscordBot.DataAccess.Modules.WebAccess;
 using DiscordBot.DataAccess.Modules.YoutubeNotifications;
 using DiscordBot.DataAccess.Modules.ZenQuote;
-using DiscordBot.DataAccess.NHibernate;
 
 namespace DiscordBot.DataAccess;
 

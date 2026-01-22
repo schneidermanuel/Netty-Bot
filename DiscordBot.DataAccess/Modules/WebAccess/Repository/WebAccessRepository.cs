@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
+using DiscordBot.DataAccess.Hibernate;
 using DiscordBot.DataAccess.Modules.WebAccess.Domain;
-using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.WebAccess.Repository;

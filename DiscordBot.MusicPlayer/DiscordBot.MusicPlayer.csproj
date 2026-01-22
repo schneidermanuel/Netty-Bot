@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Autofac" Version="7.0.1" />
-      <PackageReference Include="Google.Apis.YouTube.v3" Version="1.60.0.2945" />
-      <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
+      <PackageReference Include="Autofac" Version="9.0.0" />
+      <PackageReference Include="Google.Apis.YouTube.v3" Version="1.73.0.4029" />
+      <PackageReference Include="System.ServiceModel.Syndication" Version="10.0.2" />
     </ItemGroup>
 
     <ItemGroup>

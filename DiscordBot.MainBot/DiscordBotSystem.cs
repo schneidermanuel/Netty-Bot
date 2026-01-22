@@ -21,18 +21,6 @@ public class DiscordBotSystem
 
     public static void Main(string[] args)
     {
-        if (args.Length > 0 && args[0] == "SkipDaily")
-        {
-            MainConfig.SkipDaily = true;
-            Console.WriteLine("Skip Daily");
-        }
-
-        if (args.Length > 1 && args[1] == "Debug")
-        {
-            MainConfig.Debug = true;
-            Console.WriteLine("STARTING IN DEBUG MODE");
-        }
-        Configurator.Configure();
         BuildContainer();
         BootAsync().GetAwaiter().GetResult();
         var manager = _container.Resolve<BotManager>();
@@ -71,5 +59,4 @@ public class DiscordBotSystem
         var endStepTask = endSteps.Select(step => step.BootAsync());
         await Task.WhenAll(endStepTask);
     }
-
 }

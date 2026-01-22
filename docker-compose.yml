@@ -1,0 +1,15 @@
+services:
+  netty-bot:
+    build: .
+    container_name: netty-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - netty-net
+
+networks:
+  netty-net:
+    driver: bridge

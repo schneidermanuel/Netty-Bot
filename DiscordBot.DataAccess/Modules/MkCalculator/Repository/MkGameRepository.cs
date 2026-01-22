@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Contract.MkCalculator;
 using DiscordBot.DataAccess.Entities;
+using DiscordBot.DataAccess.Hibernate;
 using DiscordBot.DataAccess.Modules.MkCalculator.Domain;
-using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.MkCalculator.Repository;

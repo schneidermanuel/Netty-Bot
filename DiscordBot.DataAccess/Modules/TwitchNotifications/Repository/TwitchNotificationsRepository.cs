@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DiscordBot.DataAccess.Entities;
+using DiscordBot.DataAccess.Hibernate;
 using DiscordBot.DataAccess.Modules.TwitchNotifications.Domain;
-using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.TwitchNotifications.Repository;

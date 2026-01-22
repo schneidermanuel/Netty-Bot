@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using DiscordBot.DataAccess.Entities;
+using DiscordBot.DataAccess.Hibernate;
 using DiscordBot.DataAccess.Modules.ReactionRoles.Domain;
-using DiscordBot.DataAccess.NHibernate;
 using NHibernate.Linq;
 
 namespace DiscordBot.DataAccess.Modules.ReactionRoles.Repository;

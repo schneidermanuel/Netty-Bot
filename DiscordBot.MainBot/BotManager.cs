@@ -203,11 +203,6 @@ public class BotManager
 
     private async void DailyStuff()
     {
-        if (!MainConfig.SkipDaily)
-        {
-            await DoDailyTasks();
-        }
-
         while (true)
         {
             var now = DateTime.Now;
