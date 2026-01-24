@@ -19,6 +19,7 @@ using DiscordBot.Framework.Contract.Modules.YoutubeRegistrations;
 using DiscordBot.PubSub.Backend.Data;
 using DiscordBot.PubSub.Backend.Data.Guild;
 using DiscordBot.PubSub.Backend.Data.Guild.AutoModRule;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
@@ -55,7 +56,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         IReactionRoleRefresher reactionRoleRefresher,
         IYoutubeRefresher youtubeRefresher,
         ITwitchRefresher twitchRefresher,
-    ITournamentCompletionDomain tournamentCompletionDomain
+        ITournamentCompletionDomain tournamentCompletionDomain
     )
     {
         _client = client;
@@ -77,9 +78,16 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         _youtubeCallback = youtubeCallback;
         _twitchCallback = callback;
         var builder = WebApplication.CreateBuilder();
-        builder.Services.Configure<KestrelServerOptions>(options => { options.AllowSynchronousIO = true; });
+        builder.Services.Configure<KestrelServerOptions>(options =>
+        {
+            options.AllowSynchronousIO = true;
+            options.ListenAnyIP(BotClientConstants.Port);
+        });
         var app = builder.Build();
-
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
+        });
 
         app.MapGet("/", ProcessGet);
         app.MapPost("/", ProcessPost);
@@ -98,8 +106,7 @@ internal class DiscordBotPubSubBackendManager : IDiscordBotPubSubBackendManager
         app.MapPut("/Modules/Refresh/Twitch", RefreshTwitch);
         app.MapPost("/Tournaments/Complete", CompleteTournamentAsync);
 
-        var thread = new Thread(() => app.Run($"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"));
-        thread.Start();
+        _ = Task.Run(() => app.Run());
     }
 
     private async Task CompleteTournamentAsync(HttpContext context)
