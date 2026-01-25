@@ -17,7 +17,7 @@ internal class YoutubePubSubRegistrator : IYoutubePubSubRegistrator
             new List<KeyValuePair<string, string>>
             {
                 new("hub.mode", "subscribe"),
-                new("hub.callback", $"https://{BotClientConstants.Hostname}:{BotClientConstants.Port}"),
+                new("hub.callback", $"https://{BotClientConstants.Hostname}"),
                 new("hub.topic", topic),
                 new("hub.verify", "async"),
                 new("hub.verify_token", Guid.NewGuid().ToString()),
@@ -26,6 +26,9 @@ internal class YoutubePubSubRegistrator : IYoutubePubSubRegistrator
 
 
         var responseData = await response.Content.ReadAsStringAsync();
+        Console.WriteLine("Subscribing to Youtube hub: ");
+        Console.WriteLine("token: " + PubSubSecret.Secret);
+        Console.WriteLine("topic: " + topic);
         Console.WriteLine(responseData);
     }
 }
