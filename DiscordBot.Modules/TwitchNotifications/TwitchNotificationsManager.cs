@@ -38,7 +38,6 @@ internal class TwitchNotificationsManager : ITimedAction
 
     private async Task CallbackTwitch(string username)
     {
-        await Task.Delay(5000);
         Console.WriteLine("CALLBACK: STREAM UP " + username);
 
         var infos = await _api.Helix.Streams.GetStreamsAsync(userLogins: new List<string> { username });
@@ -152,4 +151,5 @@ internal class TwitchNotificationsManager : ITimedAction
     {
         await RefreshAsync();
     }
+
 }
