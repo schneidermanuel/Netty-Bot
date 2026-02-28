@@ -7,13 +7,7 @@ RUN dotnet restore
 
 RUN dotnet build DiscordBot.MainBot/DiscordBot.MainBot.csproj -c Release -o /app/build
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
-
-RUN apt-get update && \
-    apt-get install -y firefox-esr && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
+FROM mcr.microsoft.com/playwright/dotnet:v1.42.0-jammy AS runtime
 WORKDIR /app
 COPY --from=build /app/build .
 
