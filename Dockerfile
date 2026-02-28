@@ -14,11 +14,11 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 libdbus-glib-1-2 libxt6 \
     && rm -rf /var/lib/apt/lists/*
 
-# Firefox installieren
-RUN wget -qO- https://ftp.mozilla.org/pub/firefox/releases/117.0/linux-x86_64/en-US/firefox-117.0.tar.bz2 \
-    | tar xjf - -C /opt/ && \
-    ln -s /opt/firefox/firefox /usr/bin/firefox
-
+RUN wget -O /tmp/firefox.tar.bz2 https://ftp.mozilla.org/pub/firefox/releases/117.0/linux-x86_64/en-US/firefox-117.0.tar.bz2 \
+    && tar -xjf /tmp/firefox.tar.bz2 -C /opt/ \
+    && ln -s /opt/firefox/firefox /usr/bin/firefox \
+    && rm /tmp/firefox.tar.bz2
+    
 WORKDIR /app
 
 FROM base AS runtime
